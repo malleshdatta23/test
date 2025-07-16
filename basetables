@@ -1,0 +1,315 @@
+import os
+import xml.etree.ElementTree as ET
+import pandas as pd
+import re
+import configparser
+import teradatasql
+
+# ----------------------------- CONFIG -----------------------------
+# !!! IMPORTANT: Update these paths for your local environment !!!
+SEARCH_DIRECTORY = r"C:\Users\kovurma\Downloads\Alteryx_workflows-20250710T202032Z-1-001\Alteryx_workflows"
+OUTPUT_DIRECTORY = r"C:\Users\kovurma\Downloads\Alteryx_workflows-20250710T202032Z-1-001\Output"
+CONFIG_FILE = r"C:\Users\kovurma\Downloads\Alteryx_workflows-20250710T202032Z-1-001\teradata_config.txt"
+
+
+# ------------------------ TERADATA CONNECTION ----------------------
+def load_teradata_credentials(config_path):
+    """Loads Teradata credentials from the config file."""
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    td = config['teradata']
+    return td['host'], td['username'], td['password'], td.get('authentication')
+
+def get_view_ddls(view_names, config_path):
+    """Connects to Teradata and fetches SHOW VIEW DDL for a list of views."""
+    view_names = {v for v in view_names if v}
+    if not view_names:
+        return {}
+
+    host, user, pwd, auth_mechanism = load_teradata_credentials(config_path)
+    ddls = {}
+    print(f"Connecting to Teradata to fetch DDLs for {len(view_names)} views...")
+    try:
+        with teradatasql.connect(host=host, user=user, password=pwd, logmech=auth_mechanism) as conn:
+            cursor = conn.cursor()
+            for view in sorted(list(view_names)):
+                try:
+                    print(f"  -> Fetching DDL for view: {view}")
+                    cursor.execute(f"SHOW VIEW {view};")
+                    ddls[view] = '\n'.join(row[0] for row in cursor.fetchall())
+                except Exception as e:
+                    print(f"  -> ERROR fetching DDL for {view}: {e}")
+                    ddls[view] = f"ERROR: {e}"
+    except Exception as e:
+        print(f"Connection error: {e}")
+    return ddls
+
+
+# ------------------------ COMPLEXITY & UTILITIES -------------------
+def get_workflow_complexity(root):
+    """Analyzes the workflow's XML root to determine a complexity level."""
+    score = 0
+    nodes = root.findall('.//Node')
+    score += len(nodes) // 5
+    connections = root.findall('.//Connection')
+    score += len(connections) // 5
+    complex_tools = ['Macro', 'Python', 'RTool', 'Dynamic', 'Iterative']
+    for node in nodes:
+        gui = node.find('GuiSettings')
+        if gui is not None and any(id in gui.get('Plugin', '') for id in complex_tools):
+            score += 5
+    score += len(root.findall(".//Node/GuiSettings[@Plugin='AlteryxGuiToolkit.ToolContainer.ToolContainer']"))
+    if score >= 25: return 'Complex'
+    if score >= 10: return 'Medium'
+    return 'Low'
+
+def get_sql_complexity(sql_string):
+    """Analyzes a SQL query string to determine its complexity level."""
+    if not sql_string or not sql_string.strip(): return 'Low'
+    score = 0
+    upper_sql = sql_string.upper()
+    score += upper_sql.count('JOIN ') * 2
+    score += upper_sql.count('UNION') * 2
+    score += upper_sql.count('WITH ') * 3
+    score += upper_sql.count('GROUP BY')
+    score += upper_sql.count('OVER(') * 4
+    select_count = upper_sql.count('SELECT ')
+    if select_count > 1: score += (select_count - 1) * 2
+    if len(sql_string) > 1000: score += 4
+    elif len(sql_string) > 500: score += 2
+    if score >= 11: return 'Complex'
+    if score >= 5: return 'Medium'
+    return 'Low'
+
+def remove_sql_comments(sql_string):
+    """Removes single-line and multi-line comments from a SQL string."""
+    sql_string = re.sub(r'/\*.*?\*/', '', sql_string, flags=re.DOTALL)
+    return re.sub(r'--.*', '', sql_string)
+
+def extract_sql_metadata(sql_string):
+    """Extracts table and view names from a SQL string."""
+    if not sql_string or not sql_string.strip(): return []
+    sql_no_comments = remove_sql_comments(sql_string)
+    sql_flat = re.sub(r'\s+', ' ', sql_no_comments).strip()
+    pattern = re.compile(r'\b(?:FROM|JOIN|UPDATE|INTO|TABLE)\s+([\w\.\[\]`"]+)', re.IGNORECASE)
+    matches = pattern.findall(sql_flat)
+    return sorted({re.sub(r'[\[\]`"]', '', m) for m in matches})
+
+def is_likely_view(name):
+    """Heuristic to guess if an object name is a view."""
+    if not name: return False
+    l_name = name.lower()
+    return l_name.endswith(('_v', '_view')) or l_name.startswith('vw_') or '_vw_' in l_name
+
+
+# ------------------------ CONNECTION PARSING ----------------------
+def parse_indbc_file(file_path):
+    """Parses a single Alteryx In-Database Connection file (.indbc)."""
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+        conn_node = root.find('.//DbToAlteryx/Connection')
+        if conn_node is None: return None
+        conn_str = conn_node.text
+        conn_type = root.find('.//ConnectionType').text if root.find('.//ConnectionType') is not None else "Database"
+        if (m := re.search(r'Data Source=([^;]+)', conn_str, re.I)): return {'type': conn_type, 'detail': f"Server: {m.group(1)}"}
+        if (m := re.search(r'DSN=([^;]+)', conn_str, re.I)): return {'type': conn_type, 'detail': f"DSN: {m.group(1)}"}
+        return {'type': conn_type, 'detail': f"Details: {conn_str}"}
+    except Exception as e:
+        print(f"   - Warning: Could not parse .indbc file {os.path.basename(file_path)}. Error: {e}")
+        return None
+
+def load_indbc_connections(directory):
+    """Scans a directory for .indbc files and loads their connection details into a cache."""
+    cache = {}
+    print("\n--- Step 1: Caching In-Database Connections (.indbc) ---")
+    for dirpath, _, filenames in os.walk(directory):
+        for filename in filenames:
+            if filename.lower().endswith('.indbc'):
+                name = os.path.splitext(filename)[0]
+                detail = parse_indbc_file(os.path.join(dirpath, filename))
+                if detail:
+                    cache[name] = detail
+                    print(f"   + Cached '{name}': Type: {detail.get('type')}, Details: {detail.get('detail')}")
+    print(f"--- Finished Caching. Found {len(cache)} connection files. ---")
+    return cache
+
+def parse_connection_string(connection_string, connections_cache):
+    """Parses a database connection string, resolving DSN aliases using the cache."""
+    if not connection_string: return {'detail': "Not specified", 'type': "Unknown", 'sql': None}
+    conn_clean = connection_string.strip().replace('\t', ' ')
+
+    if (m := re.search(r'^(aka:[\w-]+)\|\|\|(.*)', conn_clean, re.I | re.S)):
+        sql = m.group(2).strip() if 'select' in m.group(2).lower() else None
+        info = "Custom SQL Query" if sql else f"Table/Details: {m.group(2).strip()}"
+        return {'detail': f"DCM Connection: {m.group(1).strip()} | {info}", 'type': 'DCM', 'sql': sql}
+
+    if (m := re.search(r'((?:\w+:|dsn=)[^|]+)\|\|\|(.*)', conn_clean, re.I | re.S)):
+        alias = re.search(r'DSN=([^;]+)', m.group(1), re.I).group(1).strip() if 'DSN=' in m.group(1) else "N/A"
+        res_conn = connections_cache.get(alias)
+        conn_type = res_conn['type'] if res_conn else "Database"
+        res_detail = f"Type: {conn_type}, {res_conn['detail']}" if res_conn else "Alias not found"
+        sql = m.group(2).strip() if 'select' in m.group(2).lower() else None
+        info = "Custom SQL Query" if sql else f"Table: {m.group(2).strip()}"
+        return {'detail': f"Alias: {alias} ({res_detail}) | {info}", 'type': conn_type, 'sql': sql}
+
+    if conn_clean.lower().endswith('.indbc'):
+        name = os.path.splitext(os.path.basename(conn_clean))[0]
+        res_conn = connections_cache.get(name)
+        res_detail = f"Type: {res_conn['type']}, {res_conn['detail']}" if res_conn else "Details not found"
+        return {'detail': f"In-DB File: {conn_clean} ({res_detail})", 'type': res_conn['type'] if res_conn else 'INDBC File', 'sql': None}
+
+    if any(c in conn_clean.split('|||')[0] for c in ['\\', '/']) or re.search(r'\.\w+$', conn_clean.split('|||')[0]):
+        ext = (m.group(1).upper() if (m := re.search(r'\.([a-zA-Z0-9]+)$', conn_clean.split('|||')[0])) else "File")
+        return {'detail': f"File: {conn_clean}", 'type': f"{ext} File", 'sql': None}
+
+    return {'detail': f"Raw: {conn_clean}", 'type': 'Raw', 'sql': None}
+
+# ------------------------ WORKFLOW PARSER -------------------------
+def parse_alteryx_workflow(file_path, connections_cache):
+    """Parses a single Alteryx file and resolves its connections."""
+    sources, targets, source_pre_post, target_pre_post = [], [], [], []
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+        wf_complexity = get_workflow_complexity(root)
+
+        for node in root.findall('.//Node'):
+            gui = node.find('GuiSettings')
+            if gui is None: continue
+            plugin = gui.get('Plugin', '')
+            is_input, is_output = 'Input' in plugin, 'Output' in plugin
+            if not (is_input or is_output): continue
+
+            cfg = node.find('Properties/Configuration')
+            if cfg is None: continue
+
+            if (file_node := cfg.find('File')) is not None and (conn_str := file_node.get('value', file_node.text)):
+                parsed = parse_connection_string(conn_str, connections_cache)
+                (sources if is_input else targets).append(parsed)
+
+            if (opts := cfg.find('FormatSpecificOptions')) is not None:
+                for tag in ['PreSQL', 'PostSQL']:
+                    if (sql_node := opts.find(tag)) is not None and sql_node.text:
+                        stmts = [f"{tag}: {s.strip()}" for s in sql_node.text.split(';') if s.strip()]
+                        (source_pre_post if is_input else target_pre_post).extend(stmts)
+        return sources, targets, source_pre_post, target_pre_post, wf_complexity
+    except Exception as e:
+        print(f"Error processing {file_path}: {e}")
+        return None, None, None, None, 'Unknown'
+
+# ----------------------------- MAIN -------------------------------
+def main():
+    """Main function to drive the script."""
+    print("--- Script Started ---")
+    if not os.path.isdir(SEARCH_DIRECTORY):
+        print(f"Error: Search directory not found: '{SEARCH_DIRECTORY}'")
+        return
+    os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
+
+    connections_cache = load_indbc_connections(SEARCH_DIRECTORY)
+    
+    print(f"\n--- Step 2: Parsing Alteryx Workflows in '{SEARCH_DIRECTORY}' ---")
+    all_data, all_initial_views = [], set()
+
+    workflow_files = [os.path.join(dp, fn) for dp, _, fns in os.walk(SEARCH_DIRECTORY) for fn in fns if fn.lower().endswith(('.yxmd', '.yxmc', '.yxwz'))]
+    print(f"Found {len(workflow_files)} workflow files to process.")
+
+    for i, full_path in enumerate(workflow_files):
+        filename = os.path.basename(full_path)
+        print(f"\n   -> Processing file {i+1} of {len(workflow_files)}: {filename}")
+        
+        sources, targets, source_pre_post, target_pre_post, wf_complexity = parse_alteryx_workflow(full_path, connections_cache)
+        if sources is None: continue
+
+        source_sql = ';\n\n'.join(s['sql'] for s in sources if s.get('sql'))
+        target_sql = ';\n\n'.join(t['sql'] for t in targets if t.get('sql'))
+        source_pre_post_str = ';\n\n'.join(source_pre_post)
+        target_pre_post_str = ';\n\n'.join(target_pre_post)
+        full_sql = "\n".join(filter(None, [source_sql, target_sql, source_pre_post_str, target_pre_post_str]))
+        sql_metadata = extract_sql_metadata(full_sql)
+        
+        initial_views = {v for v in sql_metadata if is_likely_view(v)}
+        all_initial_views.update(initial_views)
+
+        all_data.append({
+            'Filename': filename, 'Directory': os.path.dirname(full_path),
+            'Workflow Complexity Level': wf_complexity, 'Connection_Found': 'Yes' if sources or targets else 'No',
+            'Source Connection Types': ', '.join(sorted({s['type'] for s in sources})),
+            'Target Connection Types': ', '.join(sorted({t['type'] for t in targets})),
+            'Source': '\n'.join(s['detail'] for s in sources), 'Target': '\n'.join(t['detail'] for t in targets),
+            'Source SQL': source_sql, 'Target SQL': target_sql,
+            'Source Pre/Post SQL': source_pre_post_str, 'Target Pre/Post SQL': target_pre_post_str,
+            'Source SQL Complexity Level': get_sql_complexity(source_sql + "\n" + source_pre_post_str),
+            'SQL Metadata (Tables)': '\n'.join(sql_metadata),
+            # Add placeholders for DDL columns
+            'Teradata View DDLs (_v)': '', 'Base Tables from _v Views': '',
+            'Second-level View DDLs': '', 'Base Tables from 2nd-level Views': '',
+            'Third-level View DDLs': '',
+            '_initial_views': initial_views # Internal tracking
+        })
+
+    print("\n--- Step 3: Fetching Recursive View DDLs from Teradata ---")
+    all_fetched_ddls = {}
+    views_to_fetch = all_initial_views
+    for level in range(1, 4): # Fetch up to 3 levels of nested views
+        if not views_to_fetch: break
+        print(f"\n--- Fetching Level {level} DDLs for {len(views_to_fetch)} views ---")
+        ddls = get_view_ddls(views_to_fetch, CONFIG_FILE)
+        all_fetched_ddls.update(ddls)
+        
+        next_level_views = set()
+        for ddl in ddls.values():
+            if "ERROR:" not in ddl:
+                next_level_views.update(v for v in extract_sql_metadata(ddl) if is_likely_view(v))
+        views_to_fetch = next_level_views - set(all_fetched_ddls.keys())
+
+    print("\n--- Step 4: Populating DDLs and Base Tables in Results ---")
+    for item in all_data:
+        # Level 1
+        ddls1 = [f"-- {v}\n{all_fetched_ddls.get(v, 'DDL not found.')}" for v in item['_initial_views']]
+        item['Teradata View DDLs (_v)'] = '\n\n'.join(ddls1)
+        base1 = {b for v in item['_initial_views'] for b in extract_sql_metadata(all_fetched_ddls.get(v, ''))}
+        item['Base Tables from _v Views'] = '\n'.join(sorted(base1))
+        
+        # Level 2
+        views2 = {v for v in base1 if is_likely_view(v)}
+        ddls2 = [f"-- {v}\n{all_fetched_ddls.get(v, 'DDL not found.')}" for v in views2]
+        item['Second-level View DDLs'] = '\n\n'.join(ddls2)
+        base2 = {b for v in views2 for b in extract_sql_metadata(all_fetched_ddls.get(v, ''))}
+        item['Base Tables from 2nd-level Views'] = '\n'.join(sorted(base2))
+
+        # Level 3
+        views3 = {v for v in base2 if is_likely_view(v)}
+        ddls3 = [f"-- {v}\n{all_fetched_ddls.get(v, 'DDL not found.')}" for v in views3]
+        item['Third-level View DDLs'] = '\n\n'.join(ddls3)
+        
+        del item['_initial_views'] # Clean up internal tracking field
+
+    print("\n--- Step 5: Writing Individual DDL Files ---")
+    ddl_export_path = os.path.join(OUTPUT_DIRECTORY, 'ddl_exports')
+    os.makedirs(ddl_export_path, exist_ok=True)
+    for name, ddl in all_fetched_ddls.items():
+        if "ERROR:" not in ddl:
+            with open(os.path.join(ddl_export_path, f"{name.replace('.', '__')}.sql"), 'w', encoding='utf-8') as f:
+                f.write(ddl)
+    print(f"Wrote {len(all_fetched_ddls)} DDL files to '{ddl_export_path}'")
+
+    print("\n--- Step 6: Generating Final Excel Report ---")
+    df = pd.DataFrame(all_data)
+    # Define the final, complete column order
+    final_column_order = [
+        'Filename', 'Directory', 'Workflow Complexity Level', 'Connection_Found',
+        'Source Connection Types', 'Target Connection Types', 'Source', 'Target',
+        'Source SQL', 'Target SQL', 'Source Pre/Post SQL', 'Target Pre/Post SQL',
+        'Source SQL Complexity Level', 'SQL Metadata (Tables)', 'Teradata View DDLs (_v)',
+        'Base Tables from _v Views', 'Second-level View DDLs',
+        'Base Tables from 2nd-level Views', 'Third-level View DDLs'
+    ]
+    df = df[final_column_order]
+    df.to_excel(os.path.join(OUTPUT_DIRECTORY, "Alteryx_workflow_analysis.xlsx"), index=False, engine='openpyxl')
+    print(f"\n✅ Success! Report saved to '{OUTPUT_DIRECTORY}'")
+    print("\n--- Script Finished ---")
+
+if __name__ == '__main__':
+    main()
