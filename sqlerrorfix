@@ -19,38 +19,39 @@ WITH
       AND NOT (COALESCE(a.rate, 0) <> 0 AND a.chrg_amt = 0)
       AND CAST(z.insert_tms AS TIMESTAMP) < TIMESTAMP('2021-07-09 00:00:00')
   ),
-  -- (CTEs 2 through 7: same as yours, unchanged, except SAFE_CAST added where needed — omitted here for space but should be kept in actual script)
-  ...
+  initial_data_build AS (
+    SELECT
+      a.*, NULL AS cmpnt_type_cd, NULL AS cmpnt_typ_val_info, NULL AS spd_info,
+      NULL AS billdisplaygroupcd, NULL AS bolt_on_iosc, NULL AS bolt_on_speed, NULL AS bolt_on_skey,
+      NULL AS base_iosc, NULL AS base_speed, NULL AS base_speed_skey,
+      NULL AS vid_pckg_isoc, NULL AS video_pckg, NULL AS video_pckg_skey,
+      NULL AS pup_iosc
+    FROM base_revenue a
+  ),
   second_level_aggregation AS (
     SELECT
       a.close_yr_mth, a.src_sys_id, f.sub_seg_id, f.sub_seg, f.seg_lvl_9, f.seg_lvl_8, f.seg_lvl_7, f.seg_lvl_6,
       a.crir_idn_code, a.comp_code, b.gl_acct_id, b.regl_gl_acct_id, b.l4_prod_desc AS orig_pr4, b.l5_prod_desc AS orig_pr5,
       SUBSTR(a.geo_code, 1, 2) AS state, a.chrg_basis_code, a.line_of_bus, a.bus_res_ind, a.usoc_iosc, a.chrg_code,
       'Unknown' AS chrg_code_desc_text, a.disc_iosc, a.promo_id, a.offer_id,
-      CASE WHEN a.chrg_basis_code IN ('R', 'D') THEN a.base_speed ELSE ' ' END AS base_speed,
-      CASE WHEN a.chrg_basis_code IN ('R', 'D') THEN COALESCE(a.bolt_on_speed, a.base_speed) ELSE ' ' END AS fnl_data_speed,
-      CASE WHEN a.chrg_basis_code IN ('R', 'D') THEN a.video_pckg ELSE ' ' END AS video_pckg,
-      CASE WHEN a.chrg_basis_code IN ('R', 'D') THEN a.pup_iosc ELSE ' ' END AS pup_iosc,
-      CASE WHEN a.chrg_basis_code IN ('R', 'D') THEN a.bolt_on_iosc ELSE ' ' END AS bolt_on_iosc,
-      CASE
-        WHEN a.chrg_basis_code IN ('R', 'D') AND a.billdisplaygroupcd IN ('PUPVIDEO') AND a.video_pckg_skey IS NOT NULL THEN a.video_pckg_skey
-        WHEN a.chrg_basis_code IN ('R', 'D') AND a.billdisplaygroupcd IN ('PUPVIDEO') AND a.video_pckg_skey IS NULL THEN a.map_sur_sk
-        WHEN a.chrg_basis_code IN ('R', 'D') AND a.billdisplaygroupcd IN ('PUPDATA') AND a.bolt_on_skey IS NOT NULL THEN a.bolt_on_skey
-        WHEN a.chrg_basis_code IN ('R', 'D') AND a.billdisplaygroupcd IN ('PUPDATA') AND a.base_speed_skey IS NOT NULL THEN a.base_speed_skey
-        WHEN a.chrg_basis_code IN ('R', 'D') AND a.billdisplaygroupcd IN ('PUPDATA') AND COALESCE(a.bolt_on_skey, a.base_speed_skey) IS NULL THEN a.map_sur_sk
-        WHEN a.chrg_basis_code IN ('R', 'D') AND a.gpc_id_01_val = a.base_iosc AND a.bolt_on_skey IS NOT NULL THEN a.bolt_on_skey
-        WHEN a.chrg_basis_code IN ('R', 'D') AND a.cmpnt_type_cd = 'DISCOUNT' AND a.crir_idn_code = '09304' AND a.bolt_on_skey IS NOT NULL THEN a.bolt_on_skey
-        ELSE a.map_sur_sk
-      END AS fnl_map_sur_key,
+      NULL AS base_speed,
+      NULL AS fnl_data_speed,
+      NULL AS video_pckg,
+      NULL AS pup_iosc,
+      NULL AS bolt_on_iosc,
+      a.map_sur_sk AS fnl_map_sur_key,
       a.map_sur_sk AS orig_map_sur_key,
-      a.cmpnt_type_cd, a.cmpnt_typ_val_info, a.spd_info,
-      CASE WHEN a.bolt_on_speed IS NULL THEN 'N' ELSE 'Y' END AS bolt_on,
+      NULL AS cmpnt_type_cd, NULL AS cmpnt_typ_val_info, NULL AS spd_info,
+      'N' AS bolt_on,
       a.rate, SUM(a.chrg_amt) AS amt, SUM(a.usoc_qty) AS qty
-    FROM initial_data_build AS a
-    JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_sum_vw.rev_loc_hier` AS e ON SAFE_CAST(a.revloc AS STRING) = e.rev_loc AND e.prod_year_month = a.close_yr_mth
-    JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_frr_vw.vsap_sub_seg_hier_dim` AS f ON SAFE_CAST(e.sap_sales_reg_code AS STRING) = CAST(f.sub_seg_id AS STRING)
-    JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_frr_vw.vzt_static_dim_prod_hier` AS b ON SAFE_CAST(a.map_sur_sk AS INT64) = b.map_sk AND a.close_yr_mth = b.close_yr_mth
-    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36
+    FROM initial_data_build a
+    JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_sum_vw.rev_loc_hier` AS e
+      ON SAFE_CAST(a.revloc AS STRING) = e.rev_loc AND a.close_yr_mth = e.prod_year_month
+    JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_frr_vw.vsap_sub_seg_hier_dim` AS f
+      ON SAFE_CAST(e.sap_sales_reg_code AS STRING) = CAST(f.sub_seg_id AS STRING)
+    JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_frr_vw.vzt_static_dim_prod_hier` AS b
+      ON SAFE_CAST(a.map_sur_sk AS INT64) = b.map_sk AND a.close_yr_mth = b.close_yr_mth
+    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33
   ),
   final_pre_aggregation AS (
     SELECT
@@ -59,10 +60,10 @@ WITH
       b.gl_acct_id, b.regl_gl_acct_id, a.usoc_iosc, a.chrg_code,
       a.fnl_data_speed, a.video_pckg, a.cmpnt_type_cd, a.cmpnt_typ_val_info, a.spd_info,
       a.bolt_on, a.disc_iosc, a.promo_id, a.offer_id, a.rate, a.amt, a.qty
-    FROM
-      second_level_aggregation AS a
-    JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_frr_vw.vzt_static_dim_prod_hier` AS b ON SAFE_CAST(a.fnl_map_sur_key AS INT64) = b.map_sk AND a.close_yr_mth = b.close_yr_mth
-    WHERE a.cmpnt_typ_val_info = 'PUPADDER' AND b.l3_prod_desc = 'FiOS - Video Services'
+    FROM second_level_aggregation a
+    JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_frr_vw.vzt_static_dim_prod_hier` AS b
+      ON SAFE_CAST(a.fnl_map_sur_key AS INT64) = b.map_sk AND a.close_yr_mth = b.close_yr_mth
+    WHERE b.l3_prod_desc = 'FiOS - Video Services'
   )
 SELECT
   seg_lvl_7, crir_idn_code, comp_code, state, chrg_basis_code,
@@ -79,6 +80,8 @@ SELECT
   SUM(qty) AS qty
 FROM final_pre_aggregation
 GROUP BY
-  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23;
-
-Syntax error: Expected keyword SELECT but got "." at [23:3]
+  seg_lvl_7, crir_idn_code, comp_code, state, chrg_basis_code,
+  l3_prod_desc, l4_prod_desc, l5_prod_desc, l6_prod_desc,
+  gl_acct_id, regl_gl_acct_id, usoc_iosc, chrg_code, fnl_data_speed,
+  video_pckg, cmpnt_type_cd, cmpnt_typ_val_info, spd_info,
+  bolt_on, disc_iosc, promo_id, offer_id, rate;
