@@ -43,7 +43,7 @@ WITH
       a.map_sur_sk AS orig_map_sur_key,
       NULL AS cmpnt_type_cd, NULL AS cmpnt_typ_val_info, NULL AS spd_info,
       'N' AS bolt_on,
-      MAX(a.rate), SUM(a.chrg_amt) AS amt, SUM(a.usoc_qty) AS qty
+      MAX(a.rate) AS rate, SUM(a.chrg_amt) AS amt, SUM(a.usoc_qty) AS qty
     FROM initial_data_build a
     JOIN `vz-nonit-np-k65v-dev-fpardo-0.bods_sum_vw.rev_loc_hier` AS e
       ON SAFE_CAST(a.revloc AS STRING) = e.rev_loc AND a.close_yr_mth = e.prod_year_month
@@ -85,6 +85,3 @@ GROUP BY
   gl_acct_id, regl_gl_acct_id, usoc_iosc, chrg_code, fnl_data_speed,
   video_pckg, cmpnt_type_cd, cmpnt_typ_val_info, spd_info,
   bolt_on, disc_iosc, promo_id, offer_id, rate;
-
-Name rate not found inside a at [62:57]
-Name rate not found inside a at [62:57]
