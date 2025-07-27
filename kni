@@ -1,0 +1,1 @@
+jdbc:bigquery://https://www.googleapis.com/bigquery/v2:443;ProjectId=vz-it-np-gk1v-dev-cwlspr-0;OAuthType=0;ServiceAccountEmail=sa-dev-gk1v-app-cwlspr-0@vz-it-np-gk1v-dev-cwlspr-0.iam.gserviceaccount.com;ServiceAccountPrivateKeyPath=C:/Users/peelash/Downloads/sa-dev-gk1v-app-cwlspr-0_key.json;Timeout=60;
