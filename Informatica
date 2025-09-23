@@ -1,0 +1,46 @@
+df = pd.read_sql_query(sql_query, conn)   # <-- keep this
+# ================== DEBUG START (3, 4, 5, 6) ==================
+print(f"rows fetched: {len(df)}")
+
+# (3) dtypes after extract
+print("dtypes after extract:", df.dtypes.to_dict())
+
+# (4) first 10 raw rows (before any transform)
+print("sample rows (raw, first 10):")
+print(df.head(10).to_dict(orient="records"))
+
+# (5) numeric/int probes
+expected_int = ["net_acts","gross_acts","bonus","gross_acts_quota_orig","net_acts_quota","tot_spiff"]
+expected_num = ["at_risk","sls_dlrs_quota_orig","grand_tot_comm","sls_dlrs","commission_after_multiplier","total_adjustment_amount"]
+
+import numpy as np
+def show_samples(s, n=5):
+    try:
+        return list(s.dropna().astype(str).unique())[:n]
+    except Exception:
+        return []
+
+print("\n=== INTEGER columns probe ===")
+for c in expected_int:
+    if c in df.columns:
+        s = pd.to_numeric(df[c], errors="coerce")
+        non_numeric = df[c][s.isna() & df[c].notna()]
+        fractional = s[(~s.isna()) & ((s % 1) != 0)]
+        print(f"{c}: rows={len(df)}, non_numeric={non_numeric.shape[0]}, "
+              f"fractional={fractional.shape[0]}, "
+              f"samples(non_numeric)={show_samples(non_numeric)}, "
+              f"samples(frac)={show_samples(fractional)}")
+
+print("\n=== NUMERIC columns probe ===")
+for c in expected_num:
+    if c in df.columns:
+        s = pd.to_numeric(df[c], errors="coerce")
+        non_numeric = df[c][s.isna() & df[c].notna()]
+        print(f"{c}: rows={len(df)}, non_numeric={non_numeric.shape[0]}, "
+              f"samples(non_numeric)={show_samples(non_numeric)}")
+
+# (6) house_account domain
+if "house_account" in df.columns:
+    print("house_account uniques (first 10):",
+          df["house_account"].dropna().astype(str).str.strip().str.upper().unique()[:10])
+# ================== DEBUG END ==================
