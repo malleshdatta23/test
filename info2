@@ -1,0 +1,261 @@
+from __future__ import annotations
+
+import pendulum
+import pandas as pd
+import numpy as np
+import oracledb
+from decimal import Decimal
+from typing import List, Dict, Any
+
+from airflow.models.dag import DAG
+from airflow.operators.python import PythonOperator
+from airflow.hooks.base import BaseHook
+from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
+
+
+# =========================
+# CONSTANTS (edit as needed)
+# =========================
+ORACLE_CONN_ID   = "airflow_oracle_ccrs"
+GCP_CONN_ID      = "sa-vz-nonit-k65v-fpardo-0-app"
+GCP_PROJECT_ID   = "vz-nonit-pr-k65v-plefpardo-0"   # fallback if connection lacks project
+BQ_LOCATION      = "US"                              # dataset location
+
+BIGQUERY_DATASET = "fpas_vbg_bi_temp"
+BIGQUERY_TABLE   = "ccrs_direct_b2b_sled_query_ldg"
+
+# BigQuery table schema (matches your BQ table)
+BQ_SCHEMA: List[Dict[str, Any]] = [
+    {"name": "rpt_mth",                    "type": "STRING"},
+    {"name": "full_name",                  "type": "STRING"},
+    {"name": "hr_num",                     "type": "STRING"},
+    {"name": "sls_id",                     "type": "STRING"},
+    {"name": "sls_id_type",                "type": "STRING"},
+    {"name": "channel",                    "type": "STRING"},
+    {"name": "sls_id_type_desc",           "type": "STRING"},
+    {"name": "at_risk",                    "type": "NUMERIC"},
+    {"name": "net_acts",                   "type": "INTEGER"},
+    {"name": "gross_acts",                 "type": "INTEGER"},
+    {"name": "bonus",                      "type": "INTEGER"},
+    {"name": "sls_dlrs_quota_orig",        "type": "NUMERIC"},
+    {"name": "gross_acts_quota_orig",      "type": "INTEGER"},
+    {"name": "grand_tot_comm",             "type": "NUMERIC"},
+    {"name": "net_acts_quota",             "type": "INTEGER"},
+    {"name": "tot_spiff",                  "type": "INTEGER"},
+    {"name": "sls_dlrs",                   "type": "NUMERIC"},
+    {"name": "incentive_allowance",        "type": "STRING"},
+    {"name": "commission_after_multiplier","type": "NUMERIC"},
+    {"name": "house_account",              "type": "STRING"},
+    {"name": "total_adjustment_amount",    "type": "NUMERIC"},
+    {"name": "insert_dt",                  "type": "DATE"},
+    {"name": "update_dt",                  "type": "DATE"},
+    {"name": "comp_plan_id",               "type": "STRING"},
+    {"name": "pay_scope",                  "type": "STRING"},
+]
+
+
+def _normalize_for_gbq(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Normalize Oracle result for BigQuery CSV load and align to BQ_SCHEMA.
+    """
+    df.columns = [c.lower() for c in df.columns]
+
+    # bytes -> utf-8 strings
+    for col in df.select_dtypes(include=["object"]).columns:
+        if df[col].map(lambda v: isinstance(v, (bytes, bytearray))).any():
+            df[col] = df[col].apply(lambda v: v.decode("utf-8") if isinstance(v, (bytes, bytearray)) else v)
+
+    # NUMERIC columns in BQ: write as 2dp strings (safe for NUMERIC CSV load)
+    numeric_cols_2dp = [
+        "at_risk",
+        "sls_dlrs_quota_orig",
+        "grand_tot_comm",
+        "sls_dlrs",
+        "commission_after_multiplier",
+        "total_adjustment_amount",
+    ]
+    for col in numeric_cols_2dp:
+        if col in df.columns:
+            def _to_two_dp(v):
+                if v is None or (isinstance(v, float) and pd.isna(v)):
+                    return None
+                if isinstance(v, Decimal):
+                    v = float(v)
+                try:
+                    return f"{float(v):.2f}"
+                except Exception:
+                    return None
+            df[col] = df[col].apply(_to_two_dp)
+
+    # INTEGER columns: numeric -> round -> Python int or None (object dtype)
+    int_cols = ["net_acts", "gross_acts", "bonus", "gross_acts_quota_orig", "net_acts_quota", "tot_spiff"]
+    for col in int_cols:
+        if col in df.columns:
+            s = pd.to_numeric(df[col], errors="coerce")  # -> float with NaN for non-numeric
+            s = s.round(0)
+            df[col] = s.apply(lambda v: None if pd.isna(v) else int(v))
+
+    # House account is STRING in BQ
+    if "house_account" in df.columns:
+        df["house_account"] = df["house_account"].astype(str).where(df["house_account"].notna(), None)
+
+    # Dates
+    if "insert_dt" not in df.columns:
+        df["insert_dt"] = pendulum.today("UTC").to_date_string()
+    if "update_dt" not in df.columns:
+        df["update_dt"] = None
+
+    # Ensure all expected columns exist, then order
+    expected = [c["name"] for c in BQ_SCHEMA]
+    for c in expected:
+        if c not in df.columns:
+            df[c] = None
+    df = df[expected]
+
+    # Replace NaN with None for CSV serialization
+    df = df.where(pd.notnull(df), None)
+
+    return df
+
+
+def oracle_to_bigquery_etl(**kwargs):
+    # --------- Extract from Oracle ----------
+    oconn = BaseHook.get_connection(ORACLE_CONN_ID)
+    user = oconn.login
+    password = oconn.password
+    host = oconn.host
+    port = oconn.port
+    service_name = oconn.extra_dejson.get("SERVICE_NAME") or oconn.extra_dejson.get("service_name")
+    if not service_name:
+        raise ValueError(f"'SERVICE_NAME' not found in Extra for connection '{ORACLE_CONN_ID}'")
+    dsn = f"{host}:{port}/{service_name}"
+
+    sql_query = """
+    SELECT
+        CAST(BSI.TRAN_YEAR AS CHAR(4)) || LPAD(BSI.TRAN_PERIOD, 2, '0') AS RPT_MTH,
+        E.FIRST_NAME || ' ' || E.LAST_NAME AS FULL_NAME,
+        SI.HR_NUMBER AS HR_NUM,
+        BSI.SALES_ID AS SLS_ID,
+        BSI.SALES_ID_TYPE AS SLS_ID_TYPE,
+        SIT.SALES_CHANNEL AS CHANNEL,
+        BSI.SALES_ID_TYPE_DESCRIPTION AS SLS_ID_TYPE_DESC,
+        BSI.AT_RISK_DOLLARS AS AT_RISK,
+        BSI.NET_NEW_ACTIVATIONS AS NET_ACTS,
+        BSI.TOT_ACTS_TOWARD_QUOTA + BSI.NET_ENH_TOWARD_QUOTA + BSI.TOTAL_REACTIVATIONS AS GROSS_ACTS,
+        BSI.BONUS AS BONUS,
+        SQ.SALES_DOLLAR_QUOTA AS SLS_DLRS_QUOTA_ORIG,
+        SQ.GROSS_ACTS_QUOTA AS GROSS_ACTS_QUOTA_ORIG,
+        BSI.GRAND_TOTAL_COMMISSION AS GRAND_TOT_COMM,
+        SQ.NET_ACTS_QUOTA AS NET_ACTS_QUOTA,
+        BSI.TOTAL_SPIFF AS TOT_SPIFF,
+        BSI.SALES_DOLLAR_ATTAINMENT AS SLS_DLRS,
+        SQ.INCENTIVE_ALLOWANCE,
+        BSI.COMMISSION_AFTER_MULTIPLIER,
+        SI.HOUSE_ACCOUNT,
+        (
+            BSI.MISC_ADJUSTMENT_1_AMOUNT + BSI.MISC_ADJUSTMENT_2_AMOUNT +
+            BSI.MISC_ADJUSTMENT_3_AMOUNT + BSI.MISC_ADJUSTMENT_4_AMOUNT +
+            BSI.MISC_ADJUSTMENT_5_AMOUNT + BSI.MISC_ADJUSTMENT_6_AMOUNT
+        ) AS TOTAL_ADJUSTMENT_AMOUNT,
+        SQ.COMP_PLAN_ID,
+        BSI.PAY_SCOPE
+    FROM
+        DADM.V_BUSINESS_SUMMARY_INFO BSI
+        INNER JOIN DADM.SALES_ID SI ON BSI.SALES_ID = SI.SALES_ID
+        INNER JOIN DADM.SALES_ID_TYPE SIT ON BSI.SALES_ID_TYPE = SIT.SALES_ID_TYPE
+        LEFT OUTER JOIN DADM.V_EMPLOYEE E ON SI.HR_NUMBER = E.HR_NUMBER AND SI.SALES_ID = E.SALES_ID
+        LEFT OUTER JOIN DADM.SALES_QUOTA SQ ON BSI.SALES_ID = SQ.SALES_ID
+            AND BSI.TRAN_YEAR = SQ.TRAN_YEAR
+            AND BSI.TRAN_PERIOD = SQ.TRAN_PERIOD
+    WHERE
+        BSI.TRAN_YEAR >= 2019
+        AND TO_DATE(BSI.TRAN_YEAR || LPAD(BSI.TRAN_PERIOD, 2, '0'), 'YYYYMM') >= ADD_MONTHS(TRUNC(SYSDATE, 'MON'), -2)
+    """
+
+    conn = None
+    try:
+        conn = oracledb.connect(user=user, password=password, dsn=dsn)
+        df = pd.read_sql_query(sql_query, conn)
+
+        # ================== DEBUG START (3, 4, 5, 6) ==================
+        print(f"rows fetched: {len(df)}")
+        print("dtypes after extract:", df.dtypes.to_dict())
+
+        print("sample rows (raw, first 10):")
+        print(df.head(10).to_dict(orient="records"))
+
+        expected_int = ["net_acts","gross_acts","bonus","gross_acts_quota_orig","net_acts_quota","tot_spiff"]
+        expected_num = ["at_risk","sls_dlrs_quota_orig","grand_tot_comm","sls_dlrs","commission_after_multiplier","total_adjustment_amount"]
+
+        def show_samples(s, n=5):
+            try:
+                return list(s.dropna().astype(str).unique())[:n]
+            except Exception:
+                return []
+
+        print("\n=== INTEGER columns probe ===")
+        for c in expected_int:
+            if c in df.columns:
+                s = pd.to_numeric(df[c], errors="coerce")
+                non_numeric = df[c][s.isna() & df[c].notna()]
+                fractional = s[(~s.isna()) & ((s % 1) != 0)]
+                print(f"{c}: rows={len(df)}, non_numeric={non_numeric.shape[0]}, "
+                      f"fractional={fractional.shape[0]}, "
+                      f"samples(non_numeric)={show_samples(non_numeric)}, "
+                      f"samples(frac)={show_samples(fractional)}")
+
+        print("\n=== NUMERIC columns probe ===")
+        for c in expected_num:
+            if c in df.columns:
+                s = pd.to_numeric(df[c], errors="coerce")
+                non_numeric = df[c][s.isna() & df[c].notna()]
+                print(f"{c}: rows={len(df)}, non_numeric={non_numeric.shape[0]}, "
+                      f"samples(non_numeric)={show_samples(non_numeric)}")
+
+        if "house_account" in df.columns:
+            print("house_account uniques (first 10):",
+                  df["house_account"].dropna().astype(str).str.strip().str.upper().unique()[:10])
+        # ================== DEBUG END ==================
+
+    finally:
+        if conn:
+            conn.close()
+
+    if df.empty:
+        print("No rows returned from Oracle. Skipping BigQuery load.")
+        return
+
+    # --------- Normalize ----------
+    df = _normalize_for_gbq(df)
+    print("Preview after normalization (first 5 rows):")
+    print(df.head())
+
+    # --------- Load to BigQuery (CSV path with explicit schema) ----------
+    gcp_hook = GoogleBaseHook(gcp_conn_id=GCP_CONN_ID)
+    project_id = gcp_hook.project_id or GCP_PROJECT_ID
+    destination_table = f"{BIGQUERY_DATASET}.{BIGQUERY_TABLE}"
+
+    df.to_gbq(
+        destination_table=destination_table,
+        project_id=project_id,
+        credentials=gcp_hook.get_credentials(),
+        if_exists="append",            # change to "replace" for full overwrite
+        location=BQ_LOCATION,
+        table_schema=BQ_SCHEMA,        # enforce target types
+        api_method="load_csv",         # avoid Parquet conversion issues
+    )
+    print(f"Loaded {len(df)} rows to {project_id}.{destination_table} ({BQ_LOCATION})")
+
+
+with DAG(
+    dag_id="oracle_to_bigquery_ccrs_direct_b2b",
+    start_date=pendulum.datetime(2025, 9, 17, tz="America/New_York"),
+    schedule=None,
+    catchup=False,
+    tags=["oracle", "bigquery", "etl"],
+    doc_md="Oracle → BigQuery load using CSV method with schema-aligned normalization + debug probes.",
+) as dag:
+    run_etl_task = PythonOperator(
+        task_id="run_oracle_to_bigquery_etl",
+        python_callable=oracle_to_bigquery_etl,
+    )
