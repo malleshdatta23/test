@@ -1,0 +1,56 @@
+default-hostname
+*** Reading remote logs from Cloud Logging.
+[2025-09-23, 01:18:42 UTC] {local_task_job_runner.py:123} ▶ Pre task execution logs
+[2025-09-23, 01:18:42 UTC] {base.py:84} INFO - Retrieving connection 'airflow_oracle_ccrs'
+[2025-09-23, 01:18:43 UTC] {warnings.py:110} WARNING - /home/airflow/gcs/dags/vz-nonit-k65v-fpardo-0/dg_oracle_bq_otest4.py:178: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  df = pd.read_sql_query(sql_query, conn)
+
+[2025-09-23, 01:19:01 UTC] {logging_mixin.py:190} INFO - rows fetched: 19999
+[2025-09-23, 01:19:01 UTC] {logging_mixin.py:190} INFO - dtypes after extract: {'RPT_MTH': dtype('O'), 'FULL_NAME': dtype('O'), 'HR_NUM': dtype('O'), 'SLS_ID': dtype('O'), 'SLS_ID_TYPE': dtype('O'), 'CHANNEL': dtype('O'), 'SLS_ID_TYPE_DESC': dtype('O'), 'AT_RISK': dtype('float64'), 'NET_ACTS': dtype('int64'), 'GROSS_ACTS': dtype('int64'), 'BONUS': dtype('float64'), 'SLS_DLRS_QUOTA_ORIG': dtype('float64'), 'GROSS_ACTS_QUOTA_ORIG': dtype('float64'), 'GRAND_TOT_COMM': dtype('float64'), 'NET_ACTS_QUOTA': dtype('float64'), 'TOT_SPIFF': dtype('float64'), 'SLS_DLRS': dtype('float64'), 'INCENTIVE_ALLOWANCE': dtype('O'), 'COMMISSION_AFTER_MULTIPLIER': dtype('float64'), 'HOUSE_ACCOUNT': dtype('O'), 'TOTAL_ADJUSTMENT_AMOUNT': dtype('float64'), 'COMP_PLAN_ID': dtype('O'), 'PAY_SCOPE': dtype('O')}
+[2025-09-23, 01:19:01 UTC] {logging_mixin.py:190} INFO - sample rows (raw, first 10):
+[2025-09-23, 01:19:01 UTC] {logging_mixin.py:190} INFO - [{'RPT_MTH': '202507', 'FULL_NAME': 'TIMOTHY HOLDERNESS', 'HR_NUM': '2503966', 'SLS_ID': 'E1SQZ', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 689.32, 'NET_ACTS': 12, 'GROSS_ACTS': 12, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 12649.0, 'GROSS_ACTS_QUOTA_ORIG': 91.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 30.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': 1579.99, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'MTD'}, {'RPT_MTH': '202507', 'FULL_NAME': 'TIMOTHY HOLDERNESS', 'HR_NUM': '2503966', 'SLS_ID': 'E1SQZ', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 689.32, 'NET_ACTS': 12, 'GROSS_ACTS': 12, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 12649.0, 'GROSS_ACTS_QUOTA_ORIG': 91.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 30.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': 1579.99, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'QTD'}, {'RPT_MTH': '202508', 'FULL_NAME': 'TIMOTHY HOLDERNESS', 'HR_NUM': '2503966', 'SLS_ID': 'E1SQZ', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 0.0, 'NET_ACTS': 0, 'GROSS_ACTS': 0, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 0.0, 'GROSS_ACTS_QUOTA_ORIG': 0.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 0.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': 0.0, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'MTD'}, {'RPT_MTH': '202508', 'FULL_NAME': 'TIMOTHY HOLDERNESS', 'HR_NUM': '2503966', 'SLS_ID': 'E1SQZ', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 689.32, 'NET_ACTS': 12, 'GROSS_ACTS': 0, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 0.0, 'GROSS_ACTS_QUOTA_ORIG': 0.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 0.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': 1579.99, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'QTD'}, {'RPT_MTH': '202509', 'FULL_NAME': 'TIMOTHY HOLDERNESS', 'HR_NUM': '2503966', 'SLS_ID': 'E1SQZ', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 1464.91, 'NET_ACTS': 7, 'GROSS_ACTS': 7, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 13965.0, 'GROSS_ACTS_QUOTA_ORIG': 95.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 66.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': 560.0, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'MTD'}, {'RPT_MTH': '202509', 'FULL_NAME': 'TIMOTHY HOLDERNESS', 'HR_NUM': '2503966', 'SLS_ID': 'E1SQZ', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 2154.23, 'NET_ACTS': 19, 'GROSS_ACTS': 7, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 13965.0, 'GROSS_ACTS_QUOTA_ORIG': 95.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 66.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': 2139.99, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'QTD'}, {'RPT_MTH': '202507', 'FULL_NAME': 'sherry beaver', 'HR_NUM': '2510481', 'SLS_ID': 'E277H', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 0.0, 'NET_ACTS': -4, 'GROSS_ACTS': 0, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 0.0, 'GROSS_ACTS_QUOTA_ORIG': 0.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 0.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': -245.0, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'MTD'}, {'RPT_MTH': '202507', 'FULL_NAME': 'sherry beave
+[2025-09-23, 01:19:01 UTC] {logging_mixin.py:190} INFO - r', 'HR_NUM': '2510481', 'SLS_ID': 'E277H', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 0.0, 'NET_ACTS': -4, 'GROSS_ACTS': 0, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 0.0, 'GROSS_ACTS_QUOTA_ORIG': 0.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 0.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': -245.0, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'QTD'}, {'RPT_MTH': '202508', 'FULL_NAME': 'sherry beaver', 'HR_NUM': '2510481', 'SLS_ID': 'E277H', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 0.0, 'NET_ACTS': -6, 'GROSS_ACTS': 0, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 0.0, 'GROSS_ACTS_QUOTA_ORIG': 0.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 0.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': -408.0, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'QTD'}, {'RPT_MTH': '202508', 'FULL_NAME': 'sherry beaver', 'HR_NUM': '2510481', 'SLS_ID': 'E277H', 'SLS_ID_TYPE': 'BAE', 'CHANNEL': 'BUS', 'SLS_ID_TYPE_DESC': 'Sr Acct Manager-Business', 'AT_RISK': 0.0, 'NET_ACTS': -2, 'GROSS_ACTS': 0, 'BONUS': 0.0, 'SLS_DLRS_QUOTA_ORIG': 0.0, 'GROSS_ACTS_QUOTA_ORIG': 0.0, 'GRAND_TOT_COMM': 0.0, 'NET_ACTS_QUOTA': 0.0, 'TOT_SPIFF': 0.0, 'SLS_DLRS': -163.0, 'INCENTIVE_ALLOWANCE': 'N', 'COMMISSION_AFTER_MULTIPLIER': 0.0, 'HOUSE_ACCOUNT': 'N', 'TOTAL_ADJUSTMENT_AMOUNT': 0.0, 'COMP_PLAN_ID': 'VWB-US-Eng-Sales SAM B2B', 'PAY_SCOPE': 'MTD'}]
+[2025-09-23, 01:19:01 UTC] {logging_mixin.py:190} INFO - 
+=== INTEGER columns probe ===
+[2025-09-23, 01:19:01 UTC] {logging_mixin.py:190} INFO - 
+=== NUMERIC columns probe ===
+[2025-09-23, 01:19:02 UTC] {logging_mixin.py:190} INFO - Preview after normalization (first 5 rows):
+[2025-09-23, 01:19:02 UTC] {logging_mixin.py:190} INFO -   rpt_mth           full_name  ...              comp_plan_id pay_scope
+0  202507  TIMOTHY HOLDERNESS  ...  VWB-US-Eng-Sales SAM B2B       MTD
+1  202507  TIMOTHY HOLDERNESS  ...  VWB-US-Eng-Sales SAM B2B       QTD
+2  202508  TIMOTHY HOLDERNESS  ...  VWB-US-Eng-Sales SAM B2B       MTD
+3  202508  TIMOTHY HOLDERNESS  ...  VWB-US-Eng-Sales SAM B2B       QTD
+4  202509  TIMOTHY HOLDERNESS  ...  VWB-US-Eng-Sales SAM B2B       MTD
+
+[5 rows x 25 columns]
+[2025-09-23, 01:19:02 UTC] {connection.py:277} WARNING - Connection schemes (type: google_cloud_platform) shall not contain '_' according to RFC3986.
+[2025-09-23, 01:19:02 UTC] {base.py:84} INFO - Retrieving connection 'sa-vz-nonit-k65v-fpardo-0-app'
+[2025-09-23, 01:19:02 UTC] {credentials_provider.py:402} INFO - Getting connection using `google.auth.default()` since no explicit credentials are provided.
+[2025-09-23, 01:19:02 UTC] {taskinstance.py:3312} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 768, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 734, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 415, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/operators/python.py", line 238, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/operators/python.py", line 256, in execute_callable
+    return runner.run(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/gcs/dags/vz-nonit-k65v-fpardo-0/dg_oracle_bq_otest4.py", line 238, in oracle_to_bigquery_etl
+    df.to_gbq(
+TypeError: DataFrame.to_gbq() got an unexpected keyword argument 'api_method'
+[2025-09-23, 01:19:02 UTC] {taskinstance.py:1226} INFO - Marking task as UP_FOR_RETRY. dag_id=oracle_to_bigquery_ccrs_direct_b2b_ov4, task_id=run_oracle_to_bigquery_etl, run_id=manual__2025-09-23T01:18:39.413934+00:00, execution_date=20250923T011839, start_date=20250923T011842, end_date=20250923T011902
+[2025-09-23, 01:19:02 UTC] {taskinstance.py:340} ▶ Post task
