@@ -1,0 +1,18 @@
+# Dynamically locate outbound file (replaces shell wildcard logic like lines_*.out)
+prefix = os.path.join(full_data_path, "lines_")
+
+matching_blobs = list(bucket.list_blobs(prefix=prefix))
+
+if not matching_blobs:
+    raise FileNotFoundError(
+        f"No outbound files found with prefix '{prefix}' in bucket {data_gcs}"
+    )
+
+# Pick the latest generated file
+INIT_FILE_BLOB = sorted(
+    matching_blobs,
+    key=lambda b: b.updated or b.time_created,
+    reverse=True
+)[0]
+
+logging.info(f"Selected outbound file: {INIT_FILE_BLOB.name}")
