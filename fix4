@@ -1,0 +1,70 @@
+I've reviewed the provided Python code for indentation issues and have also noticed a critical logical bug in how the initial GCS file is located (a change from your previous code version).
+
+Here is a breakdown of the fixes:
+
+1. The GCS File Location Logic (Critical Fix)
+The file location logic in gcs_file_processor was changed from reading a single file named init_file_name to searching for files prefixed with "lines_". If this was not the intended behavior, the subsequent error you will face is a FileNotFoundError because the blob object you are looking for does not exist in GCS.
+
+Issue in gcs_file_processor (lines ~333-350):
+
+You changed the way the initial file blob (INIT_FILE_BLOB) is defined. It's now searching for the latest file with the prefix lines_, regardless of the init_file_name you passed (ftv1_vf_billable_lines.out).
+
+Python
+
+# Old/Correct way (if looking for a specific file):
+# INIT_FILE_BLOB = bucket.blob(os.path.join(full_data_path, init_file_name))
+
+# New, potentially wrong way (if file is not named 'lines_*'):
+prefix = os.path.join(full_data_path, "lines_")
+matching_blobs = list(bucket.list_blobs(prefix=prefix)) 
+# ... and then it picks the latest matching blob
+If the file you want is exactly named ftv1_vf_billable_lines.out (as defined in the task call), you should revert the GCS file discovery logic.
+
+✅ Proposed Fix for File Discovery
+If your intent is to read the file exactly named by init_file_name (ftv1_vf_billable_lines.out), replace lines 333-349 in gcs_file_processor with the original definition:
+
+Python
+
+# --- Replacement for lines 333 - 349 in gcs_file_processor ---
+INIT_FILE_BLOB = bucket.blob(os.path.join(full_data_path, init_file_name))
+
+# --- Keep the rest of the code from line 351 onwards ---
+source_blobs_to_compose = []
+compose_needed = False
+# ... (rest of the function)
+If your intent is to find the latest file prefixed lines_, then you must ensure that such a file exists in the correct GCS path.
+
+2. Indentation and Formatting Review
+The primary concern I found previously (the handling of gcs_object_path=None) has been addressed, but I'll implement it more robustly by setting a default value in the function signature for clarity.
+
+✅ Proposed Fix for gcs_file_processor Function Signature
+The code you provided uses an explicit check, which is fine, but adding a default value to the function signature is better practice in Python.
+
+In the gcs_file_processor function (lines ~307-321):
+
+Python
+
+@task
+def gcs_file_processor(
+    gcs_bucket_name,
+    gcs_object_path=None, # <-- ADD =None here for robust argument passing
+    data_path,
+    archive_path,
+# ... (rest of args)
+):
+    if not gcs_object_path: # This line handles both "" and None gracefully
+        gcs_object_path = ""
+    # ... rest of the code
+Note: Your current check if not gcs_object_path: already handles both None and an empty string (""), so the only change needed is defining a default of None in the signature.
+
+3. All Other Indentation
+The rest of the indentation, particularly in the long function definitions and control flow structures (if/else in get_updated_session_parameters), appears correct according to Python's syntax rules.
+
+Summary of Changes to Apply
+Revert the GCS File Discovery Logic: Change how INIT_FILE_BLOB is defined if you need to access the file named ftv1_vf_billable_lines.out.
+
+Add None Default to gcs_object_path: Improve the function signature for clarity and robustness.
+
+If you apply these changes and re-deploy, the file processing task should either succeed or give you a true indication that the expected file path is empty/wrong, rather than failing on structural Python code issues.
+
+Would you like me to focus on a specific part of the code, like the parameter passing functions, or are you satisfied with the review of the GCS file processor logic?
