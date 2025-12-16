@@ -1,0 +1,621 @@
+from airflow.models import Variable
+import airflow
+from airflow import DAG
+from airflow.utils.task_group import TaskGroup
+import sys
+sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
+from datetime import datetime, timedelta
+from airflow.utils.db import provide_session
+from airflow.operators.dummy import DummyOperator
+import os
+from pathlib import Path
+import json
+import re
+from collections import defaultdict
+from airflow.settings import Session
+from airflow.decorators import task
+from MDR_Billing.wkfl_FINANCE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.m_100_CTL_ETL_FEED_PROCESS_START import *
+from airflow.providers.ssh.operators.ssh import SSHOperator
+from airflow.providers.ssh.hooks.ssh import SSHHook
+from MDR_Billing.wkfl_FINANCE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS.s_m_FINANCE_300_O_FTV_MNTHLY_LIS.m_FINANCE_300_O_FTV_MNTHLY_LIS import *
+from MDR_Billing.wkfl_FINANCE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS.s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.m_500_CTL_ETL_FEED_PROCESS_END import *
+from operators.dm_status import DMStatusOperator
+
+from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
+from airflow.exceptions import AirflowFailException
+import logging
+import time
+
+from google.cloud import storage
+from airflow.operators.python import PythonOperator
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from google.api_core.exceptions import NotFound
+
+def get_Status(dag_run, id):
+    try:
+        status = dag_run.get_task_instance(id).state
+        if status == "success":
+            return "succeeded"
+        if status == "failed":
+            return "failed"
+        return None
+    except Exception:
+        return "disabled"
+
+def get_PrevTaskStatus(dag_run, id):
+    id = list(dag_run.dag.get_task(id).upstream_task_ids)[0]
+    return get_Status(dag_run, id)
+
+# def parse_prm_file(paramFilePath):
+
+#     abs_path = Variable.get('PARAMFILE_ABS_PATH')
+#     ssh_id = Variable.get('SSH_CONN_ID')
+#     ssh_hook = SSHHook(ssh_conn_id=ssh_id)
+#     ssh_client = ssh_hook.get_conn()
+#     sftp_client = ssh_client.open_sftp()
+    
+#     remote_expr_path = abs_path + paramFilePath
+#     stdin, stdout, stderr = ssh_client.exec_command(f'echo {remote_expr_path}')
+#     resolved_path = stdout.read().decode().strip()
+#     error_output = stderr.read().decode().strip()
+#     if not resolved_path or error_output:
+#         raise Exception(f"Failed to resolve remote path: {remote_expr_path}\nError: {error_output}")
+
+#     with sftp_client.open(resolved_path, mode='r') as remote_file:
+#         output = remote_file.read().decode('utf-8')
+#     sftp_client.close()
+#     ssh_client.close()
+    
+#     data = defaultdict(dict)
+#     current_section = None
+#     if output:
+#         for line in output.splitlines():
+#             line = line.strip()
+#             if not line or line.startswith(('#', '//', ';')):
+#                 continue  # skip comments and blank lines
+#             if line.startswith('[') and line.endswith(']'):
+#                 current_section = line[1:-1]
+#                 continue
+#             match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
+#             if match and current_section:
+#                 key = match.group(1)
+#                 value = match.group(2).strip()
+#                 if value.lower() in ('true', 'false'):
+#                     value = value.lower() == 'true'
+#                 else:
+#                     try:
+#                         if '.' in value:
+#                             value = float(value)
+#                         else:
+#                             value = int(value)
+#                     except ValueError:
+#                         value = value.strip('"').strip("'")  # treat as string
+#                 data[current_section][key] = value
+#     else:
+#         return None
+#     return dict(data)
+#new-line-start     
+def parse_prm_file(paramFilePath):
+    gcs_base_uri = '/home/airflow/gcs/data/'
+    logging.info(f"Using GCS local mount base path: {gcs_base_uri}")
+    full_file_path = os.path.join(gcs_base_uri, paramFilePath.lstrip('/'))
+    logging.info(f"Attempting to read parameter file from local path: {full_file_path}")
+    output = None
+    try:
+        output = open(os.path.join(gcs_base_uri, paramFilePath.lstrip('/')), "r").read()
+
+        logging.info("Successfully read parameter file using local file I/O.")
+        logging.info(f"output: {output}")
+            
+    except Exception as e:
+        raise Exception(f"Failed to read parameter file from local mount point at {full_file_path}. Error: {e}")
+      
+    data = defaultdict(dict)
+    current_section = None
+    
+    if output:
+        for line in output.splitlines():
+            line = line.strip()
+            if not line or line.startswith(('#', '//', ';')):
+                continue  # skip comments and blank lines
+            
+            if line.startswith('[') and line.endswith(']'):
+                current_section = line[1:-1]
+                continue
+            
+            match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
+            if match and current_section:
+                key = match.group(1)
+                value = match.group(2).strip()
+                
+                if value.lower() in ('true', 'false'):
+                    value = value.lower() == 'true'
+                else:
+                    try:
+                        if '.' in value:
+                            value = float(value)
+                        else:
+                            value = int(value)
+                    except ValueError:
+                        value = value.strip('"').strip("'") 
+                        
+                data[current_section][key] = value
+        
+    else:
+        return None
+
+    parsed_data = dict(data)
+    logging.info(f"data: {parsed_data}")
+    return parsed_data
+#new-line-end           
+
+def is_existing_file(paramFile):
+
+    if Path(paramFile).exists() and Path(paramFile).is_file():
+        return paramFile
+    else:
+        return None
+                  
+
+def get_updated_session_parameters(session_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables):
+    #new line
+     if session_param_json and not wkfl_default_param and not mapping_default_param and not workflowParamFile:
+         return session_param_json
+     if wkfl_default_param and session_param_json and not workflowParamFile and not mapping_default_param:
+         variables.update(session_param_json)   
+         return variables
+     if wkfl_default_param and mapping_default_param and session_param_json and not workflowParamFile:  
+         mapping_default_param.update(variables)
+         mapping_default_param.update(session_param_json)
+         return mapping_default_param
+     if mapping_default_param and wkfl_default_param and not workflowParamFile and not session_param_json:
+         variables.update(mapping_default_param)
+         return variables
+     if mapping_default_param and session_param_json and not wkfl_default_param and not workflowParamFile:
+         mapping_default_param.update(session_param_json)
+         return mapping_default_param
+     if workflowParamFile and session_param_json and mapping_default_param:
+         mapping_default_param.update(session_param_json)  
+         mapping_default_param.update(variables or {})
+         return mapping_default_param
+     if workflowParamFile and session_param_json:
+         session_param_json.update(workflowParamFile) 
+         return session_param_json
+     if wkfl_default_param and mapping_default_param and workflowParamFile and not session_param_json:
+         mapping_default_param.update(variables)
+         return mapping_default_param
+     else:
+         return mapping_default_param if mapping_default_param else variables if wkfl_default_param else {}
+                  
+
+def set_mapping_params(id, mapping_name, session_name, wkfl_name, session_param_json, workflowParamFile, variables):
+    abs_path = '/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/data'
+    mapping_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties"))
+    mapping_default_param = eval(open(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties")).read()) if mapping_file_path else None
+    workflow_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + wkfl_name + ".properties"))
+    wkfl_default_param = workflow_file_path if workflow_file_path else None
+    if session_param_json:
+        if session_param_json.get(session_name):
+            session_level_param_json = session_param_json.get(session_name)
+        elif session_param_json.get(wkfl_name):
+            session_level_param_json = session_param_json.get(wkfl_name).get(session_name)
+        elif session_param_json.get('GLOBAL'):
+            session_level_param_json = session_param_json.get('GLOBAL')
+        else:
+            session_level_param_json = {}
+    else:
+        session_level_param_json = {}
+    var_dict = get_updated_session_parameters(session_level_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables)
+    keys = list(var_dict.keys())
+    for k in range(len(var_dict)):
+        key = keys[k]
+        Variable.set(id + "." + key, var_dict[key])
+
+#new-line-start
+@task
+def check_fact_load_status(target_data_mart: str, target_fact_table: str):
+    MAX_LOOP_COUNT = 480
+    SLEEP_TIME_IN_SECONDS = 180
+    
+    try:
+        BQ_CONN_ID = Variable.get('GCP_CONNECTION_ID')
+    except:
+        BQ_CONN_ID = 'google_cloud_default' 
+    
+    hook = BigQueryHook(gcp_conn_id=BQ_CONN_ID, use_legacy_sql=False)
+
+    # PROJECT_ID = "{{ var.value.BQ_ProjectID }}"
+    PROJECT_ID = Variable.get("BQ_ProjectID")
+    
+    query = f"""
+        SELECT DATE_DIFF(
+            (SELECT DATE_ADD(report_date, INTERVAL 1 DAY) 
+             FROM {PROJECT_ID}.dw_ssp.business_process_date), 
+            MAX(t.snapshot_dt), 
+            DAY
+        )
+        FROM {PROJECT_ID}.os_bbb_userv.v_bbb_ctl_target_fact AS t
+        WHERE LOWER(t.tgt_fact_table) = LOWER('{target_fact_table}')
+          AND LOWER(t.tgt_fact_schema) = LOWER('{target_data_mart}')
+          AND LOWER(t.stat_cd) = 'c'
+    """
+
+    for loop_count in range(1, MAX_LOOP_COUNT + 1):
+        print(f"Checking load status for {target_data_mart}.{target_fact_table} (Loop {loop_count}/{MAX_LOOP_COUNT}).")
+        
+        try:
+            result = hook.get_first(sql=query, parameters=None)
+            
+            stat_cd_value = result[0] if result and result[0] is not None else 1
+
+            if stat_cd_value <= 0:
+                print(f"Confirmed that {target_data_mart}.{target_fact_table} has completed successfully (Status: {stat_cd_value}).")
+                return 
+            
+            print(f"The load is still running (Status: {stat_cd_value}). Sleeping for {SLEEP_TIME_IN_SECONDS} seconds.")
+            time.sleep(SLEEP_TIME_IN_SECONDS)
+
+        except Exception as e:
+            print(f"An error occurred during BigQuery execution: {e}")
+            time.sleep(SLEEP_TIME_IN_SECONDS)
+            
+    raise AirflowFailException(
+        f"ERROR: After checking for {round(MAX_LOOP_COUNT * SLEEP_TIME_IN_SECONDS / 3600)} hours, "
+        f"{target_data_mart}.{target_fact_table} has not yet completed loading. Aborting."
+    )
+
+#new-line-end  
+
+class KeepAliveSSHHook(SSHHook):
+    def get_conn(self):
+        client = super().get_conn()
+        client.get_transport().set_keepalive(int(Variable.get('KEEP_TIME_ALIVE')))
+        return client
+
+SSH_CONNECTION_ID = Variable.get('SSH_CONN_ID')
+ssh_hook = KeepAliveSSHHook(ssh_conn_id=SSH_CONNECTION_ID)
+
+def get_storage_client():
+    GCP_CONN_ID = Variable.get('GCP_CONNECTION_ID')
+    hook = GCSHook(gcp_conn_id=GCP_CONN_ID)
+    return hook.get_conn()
+
+@task
+def gcs_file_processor(
+    gcs_bucket_name,
+    gcs_object_path,
+    data_path,
+    archive_path,
+    init_file_name,
+    output_file_prefix,
+    output_file_suffix,    
+    date_time_str,
+    mail_recipient=None,
+    header_file_name=None,
+    trailer_file_name=None,    
+    **kwargs
+
+):
+    if not gcs_object_path:
+        gcs_object_path = ""
+    logging.info(f"gcs_bucket_name: {gcs_bucket_name}")
+    logging.info(f"gcs_object_path: {gcs_object_path}")
+    
+    project = Variable.get("BQ_ProjectID")
+    storage_client = get_storage_client()
+    
+    data_gcs = gcs_bucket_name.replace('gs://', '')
+    bucket = storage_client.bucket(data_gcs)
+
+    archive_gcs = data_gcs.replace('outbound', 'archive')
+    archive_bucket = storage_client.bucket(archive_gcs)
+
+    full_data_path = f"{gcs_object_path}{data_path}"
+    full_archive_path = f"{gcs_object_path}{archive_path}"
+
+    #INIT_FILE_BLOB = bucket.blob(os.path.join(full_data_path, init_file_name))
+    # Dynamically locate outbound file (replaces shell wildcard logic like lines_*.out)
+    prefix = os.path.join(full_data_path, "lines_")
+
+    matching_blobs = list(bucket.list_blobs(prefix=prefix))
+
+    if not matching_blobs:
+        raise FileNotFoundError(
+            f"No outbound files found with prefix '{prefix}' in bucket {data_gcs}"
+        )
+
+# Pick the latest generated file
+    INIT_FILE_BLOB = sorted(
+        matching_blobs,
+        key=lambda b: b.updated or b.time_created,
+        reverse=True
+    )[0]
+
+    logging.info(f"Selected outbound file: {INIT_FILE_BLOB.name}")
+    
+    source_blobs_to_compose = []
+    compose_needed = False
+    
+    if header_file_name:
+        HEADER_BLOB = bucket.blob(os.path.join(full_data_path, header_file_name))
+        source_blobs_to_compose.append(HEADER_BLOB)
+        compose_needed = True
+    
+    source_blobs_to_compose.append(INIT_FILE_BLOB)
+    
+    if trailer_file_name:
+        TRAILER_BLOB = bucket.blob(os.path.join(full_data_path, trailer_file_name))
+        source_blobs_to_compose.append(TRAILER_BLOB)
+        compose_needed = True
+
+    run_date_part = str(date_time_str)[:8]
+    SRC_FILE_NAME = f"{output_file_prefix}_{run_date_part}_{date_time_str}{output_file_suffix}"
+    
+    GCS_PROCESSING_BLOB_NAME = os.path.join(full_data_path, SRC_FILE_NAME)
+    GCS_PROCESSING_BLOB = bucket.blob(GCS_PROCESSING_BLOB_NAME)
+    
+    ARCHIVE_BLOB_NAME = os.path.join(full_archive_path, SRC_FILE_NAME)
+    ARCHIVE_BLOB = archive_bucket.blob(ARCHIVE_BLOB_NAME)
+
+    ti = kwargs['ti']
+    date_time_str = str(date_time_str)
+
+    try:
+        logging.info("Starting file availability and size validation...")
+
+        try:
+            INIT_FILE_BLOB.reload(client=storage_client) 
+        except NotFound as e:
+            raise FileNotFoundError(f"Data file not available: {init_file_name}. GCS Error: {e}")
+
+        if INIT_FILE_BLOB.size is None:
+            raise FileNotFoundError(f"Data file not available: {init_file_name}")
+        elif INIT_FILE_BLOB.size == 0:
+            raise ValueError(f"Data file ({init_file_name}) has zero bytes. Process aborted.")
+        
+        logging.info(f"Data file size check passed. Size: {INIT_FILE_BLOB.size} bytes.")
+
+        if compose_needed:
+            GCS_PROCESSING_BLOB.compose(source_blobs_to_compose)
+            logging.info(f"Composition successful. Uncompressed file created at {GCS_PROCESSING_BLOB.name}")
+        else:
+            bucket.copy_blob(INIT_FILE_BLOB, bucket, new_name=GCS_PROCESSING_BLOB.name)
+            logging.info(f"Single file copied/renamed to {GCS_PROCESSING_BLOB.name}")
+        
+        logging.info(f"Moving file to archive: {ARCHIVE_BLOB_NAME}")
+
+        bucket.copy_blob(GCS_PROCESSING_BLOB, archive_bucket, new_name=ARCHIVE_BLOB_NAME)
+        
+        GCS_PROCESSING_BLOB.delete()
+        logging.info(f"Deleted processing file: {GCS_PROCESSING_BLOB.name}")
+            
+        logging.info("GCS file processing completed successfully.")
+
+    except (FileNotFoundError, ValueError) as e:
+        error_message = f"GCS processing FAILED: {type(e).__name__}: {e}"
+        logging.error(error_message, exc_info=True)
+        raise
+        
+    except Exception as e:
+        error_message = f"An unexpected error occurred: {type(e).__name__}: {e}"
+        logging.error(error_message, exc_info=True)
+        raise
+
+def prepare_wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None) -> TaskGroup:
+    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+        Start = DummyOperator(
+                task_id = 'Start',
+                do_xcom_push = False,
+        )
+
+        @task(task_id = 's_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS_param_init_logic')
+        @provide_session
+        def fn_s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
+                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+           # session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/FINANCE/Params/aEDW_FINANCE_FEED.par')
+            session_param_json = parse_prm_file('ETL_SCRIPTS/FINANCE/Params/aEDW_FINANCE_FEED.par')
+            set_mapping_params(id + '.' + group_id, "m_100_CTL_ETL_FEED_PROCESS_START", "s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_finance_100_500_o_ftv_mnthly_lis", session_param_json, "", variables)
+
+        s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS__init = fn_s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS_param_init_logic()
+
+        s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS = prepare_s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS_TG(parent_group = task_group, groupId = 's_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS', trigger = 'none_skipped')
+
+        @task.branch(task_id = 'branch_logic_1', trigger_rule = 'none_skipped')
+        def fn_branch_logic_1(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if ("$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS" == "succeeded") or ("disabled" != ""):
+                targets.append(current_group_id + '.Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS')
+            return targets
+
+        branch_logic_1_task = fn_branch_logic_1()
+
+        # Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS = SSHOperator(
+        #         task_id = 'Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS',
+        #         ssh_hook = ssh_hook,
+        #         command = "/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FTV FTV_FACT_BL_DETAIL FINANCE_FTV_MNTHLY_LIS ".format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': Variable.get('INSTANCE_NAME'),
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 'cmd_200_bbb_check_fact_load_finance_ftv_mnthly_lis',
+        #   'task_type': 'bq_to_bq_load'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+        #new-line-start
+        Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS = check_fact_load_status.override(
+            task_id='Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS', 
+            trigger_rule='all_success'
+        )(
+            target_data_mart='DW_FTV',
+            target_fact_table='FTV_FACT_BL_DETAIL'
+        )
+        #new-line-end 
+        @task.branch(task_id = 'branch_logic_2', trigger_rule = 'none_skipped')
+        def fn_branch_logic_2(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if ((get_Status(context["dag_run"], current_group_id + '.' + "Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS")) == "succeeded") or ("disabled" != ""):
+                targets.append(current_group_id + '.s_m_FINANCE_300_O_FTV_MNTHLY_LIS_param_init_logic')
+            return targets
+
+        branch_logic_2_task = fn_branch_logic_2()
+
+        @task(task_id = 's_m_FINANCE_300_O_FTV_MNTHLY_LIS_param_init_logic')
+        @provide_session
+        def fn_s_m_FINANCE_300_O_FTV_MNTHLY_LIS_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)    
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
+                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+            #session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/FINANCE/Params/aedw_FIN_NT_TOGGLE.par')
+            session_param_json = parse_prm_file('ETL_SCRIPTS/FINANCE/Params/aEDW_FINANCE_FEED.par')
+            set_mapping_params(id + '.' + group_id, "m_FINANCE_300_O_FTV_MNTHLY_LIS", "s_m_FINANCE_300_O_FTV_MNTHLY_LIS", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_finance_100_500_o_ftv_mnthly_lis", session_param_json, "", variables)
+
+        s_m_FINANCE_300_O_FTV_MNTHLY_LIS__init = fn_s_m_FINANCE_300_O_FTV_MNTHLY_LIS_param_init_logic()
+
+        s_m_FINANCE_300_O_FTV_MNTHLY_LIS = prepare_s_m_FINANCE_300_O_FTV_MNTHLY_LIS_TG(parent_group = task_group, groupId = 's_m_FINANCE_300_O_FTV_MNTHLY_LIS', trigger = 'none_skipped')
+
+        @task.branch(task_id = 'branch_logic_3', trigger_rule = 'none_skipped')
+        def fn_branch_logic_3(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if (Variable.get(id + '.' + current_group_id + '.s_m_FINANCE_300_O_FTV_MNTHLY_LIS.$JobStatus') == "succeeded") or ("disabled" != ""):
+                targets.append(current_group_id + '.cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS')
+            return targets
+
+        branch_logic_3_task = fn_branch_logic_3()
+
+        # cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS = SSHOperator(
+        #         task_id = 'cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS',
+        #         ssh_hook = ssh_hook,
+        #         command = "/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/FINANCE/Bin/sftp_finance_ftv_mnthly_lis.ksh ".format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': Variable.get('INSTANCE_NAME'),
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 'cmd_400_sftp_finance_ftv_mnthly_lis',
+        #   'task_type': 'bq_to_bq_load'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+        RUN_DATE_TIME = "{{ dag_run.execution_date.strftime('%Y%m%d%H%M%S') }}"
+        GCS_BUCKET = Variable.get('GCS_OUTBOUND')
+        
+        # Using empty object path so it appends directly to data_path
+        gcs_object_path = "" 
+
+        cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS = gcs_file_processor.override(
+            task_id='cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS',
+            trigger_rule='all_success'
+        )(
+            gcs_bucket_name=GCS_BUCKET,
+            gcs_object_path=gcs_object_path,
+            data_path='MDR_FEEDS/FINANCE/Data',
+            archive_path='MDR_FEEDS/FINANCE/Archive',
+            init_file_name='ftv1_vf_billable_lines.out',  # Matches the export file from Item 3
+            header_file_name=None,
+            trailer_file_name=None,
+            output_file_prefix='ftv1_vf_billable_lines',   # Renaming prefix
+            output_file_suffix='.dat',
+            date_time_str=RUN_DATE_TIME,
+            mail_recipient=None,
+        )
+
+
+        @task.branch(task_id = 'branch_logic_4', trigger_rule = 'none_skipped')
+        def fn_branch_logic_4(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if ((get_Status(context["dag_run"], current_group_id + '.' + "cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS")) == "succeeded") or ("disabled" != ""):
+                targets.append(current_group_id + '.s_m_500_CTL_ETL_FEED_PROCESS_END_param_init_logic')
+            return targets
+
+        branch_logic_4_task = fn_branch_logic_4()
+
+        @task(task_id = 's_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS_param_init_logic')
+        @provide_session
+        def fn_s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
+                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+          #  session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/FINANCE/Params/aEDW_FINANCE_FEED.par')
+            session_param_json = parse_prm_file('ETL_SCRIPTS/FINANCE/Params/aEDW_FINANCE_FEED.par')
+            # set_mapping_params(id + '.' + group_id, "m_500_CTL_ETL_FEED_PROCESS_END", "s_m_500_CTL_ETL_FEED_PROCESS_END", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_finance_100_500_o_ftv_mnthly_lis", session_param_json, "", variables)
+            set_mapping_params(id + '.' + group_id, "m_500_CTL_ETL_FEED_PROCESS_END", "s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_finance_100_500_o_ftv_mnthly_lis", session_param_json, "", variables)
+
+        s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS__init = fn_s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS_param_init_logic()
+
+        s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS = prepare_s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS_TG(parent_group = task_group, groupId = 's_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS', trigger = 'none_skipped')
+
+        status = DMStatusOperator(
+                task_id = 'status',
+                group_id = task_group.group_id,
+                jobName = 'wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS',
+                userStatus = userStatus,
+                trigger_rule = 'all_done',
+        )
+
+
+        Start >> s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS__init >> s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS >> branch_logic_1_task >> Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS >> branch_logic_2_task >> s_m_FINANCE_300_O_FTV_MNTHLY_LIS__init >> s_m_FINANCE_300_O_FTV_MNTHLY_LIS >> branch_logic_3_task >> cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS >> branch_logic_4_task >> s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS__init >> s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS >> status
+    return task_group
