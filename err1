@@ -1,58 +1,16 @@
 default-hostname
 *** Reading remote logs from Cloud Logging.
-[2025-12-18, 01:55:31 UTC] {local_task_job_runner.py:123} ▶ Pre task execution logs
-[2025-12-18, 01:55:32 UTC] {wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.py:123} INFO - Using GCS local mount base path: /home/airflow/gcs/data/
-[2025-12-18, 01:55:32 UTC] {wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.py:125} INFO - Attempting to read parameter file from local path: /home/airflow/gcs/data/ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par
-[2025-12-18, 01:55:32 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
-Traceback (most recent call last):
-  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/taskGroups/wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.py", line 128, in parse_prm_file
-    output = open(os.path.join(gcs_base_uri, paramFilePath.lstrip('/')), "r").read()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/home/airflow/gcs/data/ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 769, in _execute_task
-    result = _execute_callable(context=context, **execute_callable_kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 735, in _execute_callable
-    return ExecutionCallableRunner(
-           ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/operator_helpers.py", line 252, in run
-    return self.func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
-    return func(self, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/decorators/base.py", line 266, in execute
-    return_value = super().execute(context)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
-    return func(self, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/operators/python.py", line 238, in execute
-    return_value = self.execute_callable()
-                   ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/operators/python.py", line 256, in execute_callable
-    return runner.run(*self.op_args, **self.op_kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/operator_helpers.py", line 252, in run
-    return self.func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/session.py", line 97, in wrapper
-    return func(*args, session=session, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/taskGroups/wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.py", line 499, in fn_s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic
-    session_param_json = parse_prm_file('ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/taskGroups/wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.py", line 134, in parse_prm_file
-    raise Exception(f"Failed to read parameter file from local mount point at {full_file_path}. Error: {e}")
-Exception: Failed to read parameter file from local mount point at /home/airflow/gcs/data/ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par. Error: [Errno 2] No such file or directory: '/home/airflow/gcs/data/ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par'
-[2025-12-18, 01:55:33 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
-[2025-12-18, 01:55:33 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
-[2025-12-18, 01:55:33 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-18T01:55:32.541806+00:00', 'eventType': 'FAIL', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': '_PythonDecoratedOperator', 'taskId': 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-18T01:53:06.779611+00:00'}}}}
-[2025-12-18, 01:55:33 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/3c5764c04b1b14a71a7b086c4a726a93, run=projects/1032455509101/locations/us-east4/processes/3c5764c04b1b14a71a7b086c4a726a93/runs/a52b80582cd2e115c9506fc36cbcd924
-[2025-12-18, 01:55:33 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `FAIL` event of id `019b2f29-2edb-7eff-803f-c6c39e70d44a`
-[2025-12-18, 01:55:33 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis, task_id=wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic, run_id=manual__2025-12-18T01:53:06.779611+00:00, execution_date=20251218T015306, start_date=20251218T015531, end_date=20251218T015532
-[2025-12-18, 01:55:33 UTC] {taskinstance.py:341} ▶ Post task execution logs
+*** Logs not found for Cloud Logging filter:
+logName=("projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker" OR "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-k8s-worker")
+resource.type="cloud_composer_environment"
+resource.labels.project_id="vz-it-pr-wdwg-pleaidcom-0"
+resource.labels.environment_name="vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+resource.labels.location="us-east4"
+timestamp>="2025-12-18T02:23:32.924078+00:00"
+timestamp<="2025-12-18T02:34:06.030966+00:00"
+labels.task-id="wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic"
+labels.workflow="dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis"
+labels.execution-date="2025-12-18T02:23:32.924078+00:00"
+labels.try-number="1"
+*** The task wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic from DAG dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis might not have been executed, logs were deleted as part of logs retention (default of 30 days), or worker executing it might have finished abnormally (e.g. was evicted).
+*** Please, refer to https://cloud.google.com/composer/docs/how-to/using/troubleshooting-dags#common_issues for hints to learn what might be possible reasons for a missing log.
