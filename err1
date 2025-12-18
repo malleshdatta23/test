@@ -1,16 +1,94 @@
 default-hostname
 *** Reading remote logs from Cloud Logging.
-*** Logs not found for Cloud Logging filter:
-logName=("projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker" OR "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-k8s-worker")
-resource.type="cloud_composer_environment"
-resource.labels.project_id="vz-it-pr-wdwg-pleaidcom-0"
-resource.labels.environment_name="vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-resource.labels.location="us-east4"
-timestamp>="2025-12-18T02:23:32.924078+00:00"
-timestamp<="2025-12-18T02:34:06.030966+00:00"
-labels.task-id="wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic"
-labels.workflow="dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis"
-labels.execution-date="2025-12-18T02:23:32.924078+00:00"
-labels.try-number="1"
-*** The task wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic from DAG dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis might not have been executed, logs were deleted as part of logs retention (default of 30 days), or worker executing it might have finished abnormally (e.g. was evicted).
-*** Please, refer to https://cloud.google.com/composer/docs/how-to/using/troubleshooting-dags#common_issues for hints to learn what might be possible reasons for a missing log.
+[2025-12-18, 04:44:51 UTC] {local_task_job_runner.py:123} ▼ Pre task execution logs
+[2025-12-18, 04:44:51 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status manual__2025-12-18T04:38:40.829905+00:00 [queued]>
+[2025-12-18, 04:44:51 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status manual__2025-12-18T04:38:40.829905+00:00 [queued]>
+[2025-12-18, 04:44:51 UTC] {taskinstance.py:2869} INFO - Starting attempt 1 of 1
+[2025-12-18, 04:44:51 UTC] {taskinstance.py:2892} INFO - Executing <Task(DMStatusOperator): wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status> on 2025-12-18 04:38:40.829905+00:00
+[2025-12-18, 04:44:51 UTC] {standard_task_runner.py:72} INFO - Started process 229110 to run task
+[2025-12-18, 04:44:51 UTC] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis', 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status', 'manual__2025-12-18T04:38:40.829905+00:00', '--job-id', '20255605', '--raw', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.py', '--cfg-path', '/tmp/tmpggj4r52v']
+[2025-12-18, 04:44:51 UTC] {standard_task_runner.py:105} INFO - Job 20255605: Subtask wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status
+[2025-12-18, 04:44:51 UTC] {task_command.py:473} INFO - Running <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status manual__2025-12-18T04:38:40.829905+00:00 [running]> on host airflow-worker-6lx56
+[2025-12-18, 04:44:51 UTC] {taskinstance.py:3136} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='sample@mail.com' AIRFLOW_CTX_DAG_OWNER='dm' AIRFLOW_CTX_DAG_ID='dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis' AIRFLOW_CTX_TASK_ID='wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status' AIRFLOW_CTX_EXECUTION_DATE='2025-12-18T04:38:40.829905+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-12-18T04:38:40.829905+00:00'
+[2025-12-18, 04:44:52 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
+[2025-12-18, 04:44:52 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
+[2025-12-18, 04:44:52 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-18T04:44:51.266976+00:00', 'eventType': 'START', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': 'DMStatusOperator', 'taskId': 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-18T04:38:40.829905+00:00'}}}}
+[2025-12-18, 04:44:52 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/78d66805cdafbaa19d4d481d0f2f3834, run=projects/1032455509101/locations/us-east4/processes/78d66805cdafbaa19d4d481d0f2f3834/runs/ac22e2c6162724666e49ae8fa5814229
+[2025-12-18, 04:44:52 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `START` event of id `019b2fc0-c3bd-7644-98a8-d5877db59a5b`
+[2025-12-18, 04:44:52 UTC] {taskinstance.py:733} ▲▲▲ Log group end
+[2025-12-18, 04:44:52 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 769, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 735, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/gcs/plugins/operators/dm_status.py", line 60, in execute
+    raise AirflowException(f"task group {self.group_id} has failed due to failure in : {failures}")
+airflow.exceptions.AirflowException: task group wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD has failed due to failure in : ['wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD']
+[2025-12-18, 04:44:53 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
+[2025-12-18, 04:44:53 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
+[2025-12-18, 04:44:53 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-18T04:44:52.617494+00:00', 'eventType': 'FAIL', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': 'DMStatusOperator', 'taskId': 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-18T04:38:40.829905+00:00'}}}}
+[2025-12-18, 04:44:53 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/78d66805cdafbaa19d4d481d0f2f3834, run=projects/1032455509101/locations/us-east4/processes/78d66805cdafbaa19d4d481d0f2f3834/runs/ac22e2c6162724666e49ae8fa5814229
+[2025-12-18, 04:44:53 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `FAIL` event of id `019b2fc0-c3bd-7644-98a8-d5877db59a5b`
+[2025-12-18, 04:44:53 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis, task_id=wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status, run_id=manual__2025-12-18T04:38:40.829905+00:00, execution_date=20251218T043840, start_date=20251218T044451, end_date=20251218T044452
+[2025-12-18, 04:44:53 UTC] {taskinstance.py:341} ▼ Post task execution logs
+[2025-12-18, 04:44:53 UTC] {standard_task_runner.py:124} ERROR - Failed to execute job 20255605 for task wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.status (task group wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD has failed due to failure in : ['wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD']; 229110)
+Traceback (most recent call last):
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/task/task_runner/standard_task_runner.py", line 117, in _start_by_fork
+    ret = args.func(args, dag=self.dag)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/cli/cli_config.py", line 49, in command
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/cli.py", line 116, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/cli/commands/task_command.py", line 489, in task_run
+    task_return_code = _run_task_by_selected_method(args, _dag, ti)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/cli/commands/task_command.py", line 256, in _run_task_by_selected_method
+    return _run_raw_task(args, ti)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/cli/commands/task_command.py", line 341, in _run_raw_task
+    return ti._run_raw_task(
+           ^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/session.py", line 97, in wrapper
+    return func(*args, session=session, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3008, in _run_raw_task
+    return _run_raw_task(
+           ^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 274, in _run_raw_task
+    TaskInstance._execute_task_with_callbacks(
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3163, in _execute_task_with_callbacks
+    result = self._execute_task(context, task_orig)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3187, in _execute_task
+    return _execute_task(self, context, task_orig)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 769, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 735, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/gcs/plugins/operators/dm_status.py", line 60, in execute
+    raise AirflowException(f"task group {self.group_id} has failed due to failure in : {failures}")
+airflow.exceptions.AirflowException: task group wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD has failed due to failure in : ['wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD']
+[2025-12-18, 04:44:53 UTC] {local_task_job_runner.py:266} INFO - Task exited with return code 1
+[2025-12-18, 04:44:53 UTC] {taskinstance.py:3904} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-12-18, 04:44:53 UTC] {local_task_job_runner.py:245} ▲▲▲ Log group end
