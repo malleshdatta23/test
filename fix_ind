@@ -1,142 +1,152 @@
-@task
-def gcs_file_processor(
-    gcs_bucket_name,
-    gcs_object_path,
-    data_path,
-    archive_path,
-    init_file_name,
-    output_file_prefix,
-    output_file_suffix,
-    date_time_str,
-    mail_recipient=None,
-    header_file_name=None,
-    trailer_file_name=None,
-    **kwargs
-):
-    # Normalize object path
-    if not gcs_object_path:
-        gcs_object_path = ""
+import sys
+sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
+from airflow.models import Variable
+import airflow
+from airflow import DAG
+from airflow.utils.task_group import TaskGroup
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+import os
+from airflow.providers.ssh.operators.ssh import SSHOperator
+from airflow.providers.ssh.hooks.ssh import SSHHook
+from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
+from google.cloud import bigquery
+from operators.dm_status import DMStatusOperator
+abs_path ='/home/airflow/gcs/data/sql/'
+#new
+from airflow.providers.google.cloud.transfers.bigquery_to_gcs import BigQueryToGCSOperator
+#2
+GCS_OUTBOUND = Variable.get('GCS_OUTBOUND')
+bq_project_id = Variable.get('BQ_ProjectID')
+#new
 
-    logging.info(f"gcs_bucket_name: {gcs_bucket_name}")
-    logging.info(f"gcs_object_path: {gcs_object_path}")
+def get_row_stats(context):
+    task_id = context["task"].task_id
+    # default conn_id = google_cloud_default
+    hook = GoogleBaseHook(gcp_conn_id=Variable.get('GCP_CONNECTION_ID'))
+    credentials = hook.get_credentials()
+    client = bigquery.Client(credentials=credentials)
+    job_id = context["ti"].xcom_pull(task_ids=task_id, key='return_value')
+    job = client.get_job(job_id, location="us", project=Variable.get('BQ_ProjectID'))
+    child_jobs = list(client.list_jobs(parent_job=job.job_id, project=job.project))
 
-    storage_client = get_storage_client()
+    if child_jobs:
+        for child in child_jobs:
+            set_job_stats(child, context, client)
+    else:
+        set_job_stats(job, context, client)
 
-    # Remove gs:// prefix
-    data_gcs = gcs_bucket_name.replace("gs://", "")
-    bucket = storage_client.bucket(data_gcs)
+def set_job_stats(job, context, client):
+    # fetch tgt row count
+    if job.destination and "__tmp__" not in job.destination.table_id:
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        tgt_row_count = Variable.get(id + '.' + context["task"].task_group.group_id + '.TgtSuccessRows', default_var=0)
+        current_tgt_row_count = job.dml_stats.inserted_row_count if job.dml_stats else 0
+        tgt_row_count = int(tgt_row_count) + current_tgt_row_count
+        Variable.set(id + '.' + context["task"].task_group.group_id + '.TgtSuccessRows', tgt_row_count)
+    
+    # fetch src row count
+    if job.destination or job.referenced_tables:
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        src_row_count = Variable.get(id + '.' + context["task"].task_group.group_id + '.SrcSuccessRows', default_var=0)
+        src_tables = [
+            table
+            for table in job.referenced_tables
+            if job.destination and table.table_id != job.destination.table_id and "__tmp__" not in table.table_id
+        ]
+        if src_tables == []:
+            src_tables.append(job.destination)
+        for table in src_tables:
+            table_name = table.table_id
+            project = table.project
+            dataset = table.dataset_id
+            
+            try:
+                table_ref = client.get_table(f"{project}.{dataset}.{table_name}")
+                current_src_row_count = table_ref.num_rows
+                src_row_count = int(src_row_count) + current_src_row_count
+                Variable.set(id + '.' + context["task"].task_group.group_id + '.SrcSuccessRows', src_row_count)
+            except Exception as e:
+                print(f"Failed to fetch row count for {table_name}: {e}")
 
-    # Archive bucket derivation
-    archive_gcs = data_gcs.replace("outbound", "archive")
-    archive_bucket = storage_client.bucket(archive_gcs)
+# class KeepAliveSSHHook(SSHHook):
+#     def get_conn(self):
+#         client = super().get_conn()
+#         client.get_transport().set_keepalive(int(Variable.get('KEEP_TIME_ALIVE')))
+#         return client
 
-    full_data_path = f"{gcs_object_path}{data_path}"
-    full_archive_path = f"{gcs_object_path}{archive_path}"
+# SSH_CONNECTION_ID = Variable.get('SSH_CONN_ID')
+# ssh_hook = KeepAliveSSHHook(ssh_conn_id=SSH_CONNECTION_ID)
 
-    # ----------------------------------------------------
-    # Dynamic outbound file discovery (lines_*.out)
-    # ----------------------------------------------------
-    prefix = os.path.join(full_data_path, "lines_")
-    matching_blobs = list(bucket.list_blobs(prefix=prefix))
 
-    if not matching_blobs:
-        raise FileNotFoundError(
-            f"No outbound files found with prefix '{prefix}' in bucket {data_gcs}"
+def prepare_s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None, bq_project_id = None, bq_project_pr_id = None) -> TaskGroup:
+    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+        m_FRANCHISE_300_O_FTV_MNTHLY_LIS = BigQueryInsertJobOperator(
+                task_id = 'm_FRANCHISE_300_O_FTV_MNTHLY_LIS',
+                project_id = bq_project_id,
+                configuration = {
+                        'query': {
+                                'query': open(os.path.join(abs_path,"dataMapping/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS/m_FRANCHISE_300_O_FTV_MNTHLY_LIS","m_FRANCHISE_300_O_FTV_MNTHLY_LIS.sql"), "r").read().format(task_group.group_id),
+                                'useLegacySql': False, 'params': {'BQ_ProjectID': bq_project_id, 'BQ_ProjectID_PR': bq_project_pr_id}
+                        } ,
+                        'labels': {
+                                'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+                                'instance_name': "{{ var.value.INSTANCE_NAME }}",
+                                'job_id' : 'wkfl_franchise_100_500_o_ftv_mnthly_lis',
+                                'task_id': 'm_franchise_300_o_ftv_mnthly_lis',
+                                'task_type': 'bq_to_bq_load'
+                        }
+                },
+                gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+                job_id = 'wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_m_FRANCHISE_300_O_FTV_MNTHLY_LIS',
+                on_success_callback = get_row_stats,
+                trigger_rule = trigger,
+        )
+#new
+# Construct Table ID
+        table_id = f"{bq_project_id}.aedw360_tbls.file_891635404"
+        
+        # Construct GCS Path
+        gcs_object_path = "MDR_FEEDS/FRANCHISE/Data/ftv_rpt_franchise_fee_report_file.out"
+        gcs_destination_uri = f"{GCS_OUTBOUND}/{gcs_object_path}"
+
+        export_File_891635404 = BigQueryToGCSOperator(
+                task_id = 'File_891635404',
+                source_project_dataset_table = table_id,
+                destination_cloud_storage_uris = [gcs_destination_uri],
+                export_format = 'CSV', 
+                field_delimiter = ',',
+                print_header = True, 
+                gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+                trigger_rule = 'all_success',
+        )
+#new
+        # export_File_891635404 = SSHOperator(
+        #         task_id = 'File_891635404',
+        #         ssh_hook = ssh_hook,
+        #         command = f"""bq_query_execute $PMRootDir/MDR_FEEDS/FRANCHISE/Data/ftv_rpt_franchise_fee_report_file.out $PMRootDir/MDR_FEEDS/FRANCHISE/Data/ftv_rpt_franchise_fee_report_file.out out true ',' 'select * from {bq_project_id.replace("{", "{{").replace("}", "}}")}.aedw360_tbls.file_891635404' file true """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = True,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 'file_891635404',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+
+        status = DMStatusOperator(
+                task_id = 'status',
+                group_id = task_group.group_id,
+                jobName = 'm_FRANCHISE_300_O_FTV_MNTHLY_LIS',
+                userStatus = userStatus,
+                trigger_rule = 'all_done',
         )
 
-    # Pick latest generated file
-    INIT_FILE_BLOB = sorted(
-        matching_blobs,
-        key=lambda b: b.updated or b.time_created,
-        reverse=True
-    )[0]
 
-    logging.info(f"Selected outbound file: {INIT_FILE_BLOB.name}")
-
-    # ----------------------------------------------------
-    # Header / trailer handling
-    # ----------------------------------------------------
-    source_blobs_to_compose = []
-    compose_needed = False
-
-    if header_file_name:
-        HEADER_BLOB = bucket.blob(os.path.join(full_data_path, header_file_name))
-        source_blobs_to_compose.append(HEADER_BLOB)
-        compose_needed = True
-
-    source_blobs_to_compose.append(INIT_FILE_BLOB)
-
-    if trailer_file_name:
-        TRAILER_BLOB = bucket.blob(os.path.join(full_data_path, trailer_file_name))
-        source_blobs_to_compose.append(TRAILER_BLOB)
-        compose_needed = True
-
-    # ----------------------------------------------------
-    # Target file naming
-    # ----------------------------------------------------
-    run_date_part = str(date_time_str)[:8]
-    SRC_FILE_NAME = (
-        f"{output_file_prefix}_{run_date_part}_{date_time_str}{output_file_suffix}"
-    )
-
-    GCS_PROCESSING_BLOB_NAME = os.path.join(full_data_path, SRC_FILE_NAME)
-    GCS_PROCESSING_BLOB = bucket.blob(GCS_PROCESSING_BLOB_NAME)
-
-    ARCHIVE_BLOB_NAME = os.path.join(full_archive_path, SRC_FILE_NAME)
-    ARCHIVE_BLOB = archive_bucket.blob(ARCHIVE_BLOB_NAME)
-
-    # ----------------------------------------------------
-    # Validation & processing
-    # ----------------------------------------------------
-    try:
-        logging.info("Starting file availability and size validation...")
-
-        try:
-            INIT_FILE_BLOB.reload(client=storage_client)
-        except NotFound as e:
-            raise FileNotFoundError(
-                f"Data file not available. GCS Error: {e}"
-            )
-
-        if INIT_FILE_BLOB.size is None:
-            raise FileNotFoundError("Data file size could not be determined")
-        elif INIT_FILE_BLOB.size == 0:
-            raise ValueError(
-                f"Data file ({INIT_FILE_BLOB.name}) has zero bytes. Process aborted."
-            )
-
-        logging.info(f"Data file size check passed: {INIT_FILE_BLOB.size} bytes")
-
-        # Compose or copy
-        if compose_needed:
-            GCS_PROCESSING_BLOB.compose(source_blobs_to_compose)
-            logging.info(
-                f"Composition successful: {GCS_PROCESSING_BLOB.name}"
-            )
-        else:
-            bucket.copy_blob(
-                INIT_FILE_BLOB, bucket, new_name=GCS_PROCESSING_BLOB.name
-            )
-            logging.info(
-                f"File copied to processing location: {GCS_PROCESSING_BLOB.name}"
-            )
-
-        # Archive
-        logging.info(f"Archiving file to: {ARCHIVE_BLOB_NAME}")
-        bucket.copy_blob(
-            GCS_PROCESSING_BLOB, archive_bucket, new_name=ARCHIVE_BLOB_NAME
-        )
-
-        # Cleanup
-        GCS_PROCESSING_BLOB.delete()
-        logging.info(f"Deleted processing file: {GCS_PROCESSING_BLOB.name}")
-
-        logging.info("GCS file processing completed successfully.")
-
-    except (FileNotFoundError, ValueError) as e:
-        logging.error(f"GCS processing FAILED: {e}", exc_info=True)
-        raise
-
-    except Exception as e:
-        logging.error(f"Unexpected error during GCS processing: {e}", exc_info=True)
-        raise
+        m_FRANCHISE_300_O_FTV_MNTHLY_LIS >> export_File_891635404 >> status
+    return task_group
