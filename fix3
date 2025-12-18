@@ -1,18 +1,95 @@
-# Dynamically locate outbound file (replaces shell wildcard logic like lines_*.out)
-prefix = os.path.join(full_data_path, "lines_")
+from airflow.models import Variable
+import airflow
+from airflow import DAG
+from airflow.utils.task_group import TaskGroup
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+import os
+from airflow.providers.ssh.operators.ssh import SSHOperator
+from airflow.providers.ssh.hooks.ssh import SSHHook
+from operators.dm_status import DMStatusOperator
+abs_path ='/home/airflow/gcs/data/sql/'
+from airflow.providers.google.cloud.transfers.bigquery_to_gcs import BigQueryToGCSOperator
+class KeepAliveSSHHook(SSHHook):
+    def get_conn(self):
+        client = super().get_conn()
+        client.get_transport().set_keepalive(int(Variable.get('KEEP_TIME_ALIVE')))
+        return client
 
-matching_blobs = list(bucket.list_blobs(prefix=prefix))
+SSH_CONNECTION_ID = Variable.get('SSH_CONN_ID')
+ssh_hook = KeepAliveSSHHook(ssh_conn_id=SSH_CONNECTION_ID)
 
-if not matching_blobs:
-    raise FileNotFoundError(
-        f"No outbound files found with prefix '{prefix}' in bucket {data_gcs}"
-    )
+GCS_OUTBOUND = Variable.get('GCS_OUTBOUND')
+bq_project_id = Variable.get('BQ_ProjectID')
 
-# Pick the latest generated file
-INIT_FILE_BLOB = sorted(
-    matching_blobs,
-    key=lambda b: b.updated or b.time_created,
-    reverse=True
-)[0]
+def prepare_s_m_FINANCE_300_O_FTV_MNTHLY_LIS_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None) -> TaskGroup:
+    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+        m_FINANCE_300_O_FTV_MNTHLY_LIS = BigQueryInsertJobOperator(
+                task_id = 'm_FINANCE_300_O_FTV_MNTHLY_LIS',
+                project_id = Variable.get('BQ_ProjectID'),
+                configuration = {
+                        'query': {
+                                'query': open(os.path.join(abs_path,"dataMapping/MDR_Billing/wkfl_FINANCE_100_500_O_FTV_MNTHLY_LIS/wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS/s_m_FINANCE_300_O_FTV_MNTHLY_LIS/m_FINANCE_300_O_FTV_MNTHLY_LIS","m_FINANCE_300_O_FTV_MNTHLY_LIS.sql"), "r").read().format(task_group.group_id),
+                                'useLegacySql': False,
+                        } ,
+                        'labels': {
+                                'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+                                'instance_name': "'" + Variable.get('INSTANCE_NAME') + "'",
+                                'job_id' : 'wkfl_finance_100_500_o_ftv_mnthly_lis',
+                                'task_id': 'm_finance_300_o_ftv_mnthly_lis',
+                                'task_type': 'bq_to_bq_load'
+                        }
+                },
+                gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+                trigger_rule = trigger,
+        )
 
-logging.info(f"Selected outbound file: {INIT_FILE_BLOB.name}")
+        # export_file_1008130672 = SSHOperator(
+        #         task_id = 'file_1008130672',
+        #         ssh_hook = ssh_hook,
+        #         command = "bq_query_execute $PMRootDir\\MDR_FEEDS\\FINANCE\\Data\\ftv1_vf_billable_lines.out $PMRootDir\\MDR_FEEDS\\FINANCE\\Data\\ftv1_vf_billable_lines.out out true '|' 'select * from defaultdatabase.defaultschema.file_1008130672' file true ".format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': Variable.get('INSTANCE_NAME'),
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 'file_1008130672',
+        #   'task_type': 'bq_to_bq_load'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+        #new_line start
+
+        # Construct Table ID (Assumed 'aedw360_tbls' based on shijin pattern, please verify dataset if different)
+        table_id = f"{bq_project_id}.aedw360_tbls.file_1008130672"
+        
+        # Construct GCS Path based on old path: MDR_FEEDS\FINANCE\Data\ftv1_vf_billable_lines.out
+        #gcs_object_path = "MDR_FEEDS/FINANCE/Data/ftv1_vf_billable_lines.out"
+        gcs_object_path = "MDR_FEEDS/FINANCE/Data/ftv1_vf_billable_lines_*.out"
+        gcs_destination_uri = f"{GCS_OUTBOUND}/{gcs_object_path}"
+
+        export_file_1008130672 = BigQueryToGCSOperator(
+                task_id = 'file_1008130672',
+                source_project_dataset_table = table_id,
+                destination_cloud_storage_uris = [gcs_destination_uri],
+                export_format = 'CSV', 
+                field_delimiter = '|',
+                print_header = True, 
+                gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+                trigger_rule = 'all_success',
+        )
+
+        status = DMStatusOperator(
+                task_id = 'status',
+                group_id = task_group.group_id,
+                jobName = 'm_FINANCE_300_O_FTV_MNTHLY_LIS',
+                userStatus = userStatus,
+                trigger_rule = 'all_done',
+        )
+
+
+        m_FINANCE_300_O_FTV_MNTHLY_LIS >> export_file_1008130672 >> status
+    return task_group
