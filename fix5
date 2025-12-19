@@ -1,830 +1,242 @@
+import sys
+sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
 from airflow.models import Variable
 import airflow
 from airflow import DAG
 from airflow.utils.task_group import TaskGroup
-import sys
-sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
-from datetime import datetime, timedelta
-from airflow.utils.db import provide_session
-from airflow.operators.dummy import DummyOperator
-from airflow.providers.ssh.hooks.ssh import SSHHook
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 import os
-from pathlib import Path
-import json
-import re
-from collections import defaultdict
-from airflow.settings import Session
-from airflow.decorators import task
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.m_100_CTL_ETL_FEED_PROCESS_START import *
-from airflow.providers.ssh.operators.ssh import SSHOperator
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD import *
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_220_T_FTV_TAX_CDS_UPDT.m_FRANCHISE_220_T_FTV_TAX_CDS_UPDT import *
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_240_T_FTV_RIBS_RATE_ST_CD_UPDT.m_FRANCHISE_240_T_FTV_RIBS_RATE_ST_CD_UPDT import *
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_260_T_FTV_VISION_RATE_ST_CD_UPDT.m_FRANCHISE_260_T_FTV_VISION_RATE_ST_CD_UPDT import *
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_280_T_FTV_LIS_SMRY_INS.m_FRANCHISE_280_T_FTV_LIS_SMRY_INS import *
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.m_FRANCHISE_300_O_FTV_MNTHLY_LIS import *
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.m_500_CTL_ETL_FEED_PROCESS_END import *
+from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
+from google.cloud import bigquery
 from operators.dm_status import DMStatusOperator
-#new
-from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
-from airflow.exceptions import AirflowFailException
-import logging
-import time
-#2
-from google.cloud import storage
-from airflow.operators.python import PythonOperator
-from airflow.providers.google.cloud.hooks.gcs import GCSHook
-from google.api_core import exceptions
-#new
+abs_path ='/home/airflow/gcs/data/sql/'
 
-def get_Status(dag_run, id):
-    try:
-        status = dag_run.get_task_instance(id).state
-        if status == "success":
-            return "succeeded"
-        if status == "failed":
-            return "failed"
-        return None
-    except Exception:
-        return "disabled"
+def get_row_stats(context):
+    task_id = context["task"].task_id
+    # default conn_id = google_cloud_default
+    hook = GoogleBaseHook(gcp_conn_id=Variable.get('GCP_CONNECTION_ID'))
+    credentials = hook.get_credentials()
+    client = bigquery.Client(credentials=credentials)
+    job_id = context["ti"].xcom_pull(task_ids=task_id, key='return_value')
+    job = client.get_job(job_id, location="us", project=Variable.get('BQ_ProjectID'))
+    child_jobs = list(client.list_jobs(parent_job=job.job_id, project=job.project))
 
-def get_PrevTaskStatus(dag_run, id):
-    id = list(dag_run.dag.get_task(id).upstream_task_ids)[0]
-    return get_Status(dag_run, id)
-
-# def get_resolved_path(filePath):
-#     ssh_id = Variable.get('SSH_CONN_ID')
-#     ssh_hook = SSHHook(ssh_conn_id=ssh_id)
-#     ssh_client = ssh_hook.get_conn()
-    
-    stdin, stdout, stderr = ssh_client.exec_command(f'echo {filePath}')
-    resolved_path = stdout.read().decode().strip()
-    error_output = stderr.read().decode().strip()
-    if not resolved_path or error_output:
-        raise Exception(f"Failed to resolve remote path: {filePath}\nError: {error_output}")
-    ssh_client.close()
-    return resolved_path
-            
-
-# def parse_prm_file(paramFilePath):
-
-#     abs_path = Variable.get('PARAMFILE_ABS_PATH')
-#     ssh_id = Variable.get('SSH_CONN_ID')
-#     ssh_hook = SSHHook(ssh_conn_id=ssh_id)
-#     ssh_client = ssh_hook.get_conn()
-#     sftp_client = ssh_client.open_sftp()
-    
-#     remote_expr_path = abs_path + paramFilePath
-#     stdin, stdout, stderr = ssh_client.exec_command(f'echo {remote_expr_path}')
-#     resolved_path = stdout.read().decode().strip()
-#     error_output = stderr.read().decode().strip()
-#     if not resolved_path or error_output:
-#         raise Exception(f"Failed to resolve remote path: {remote_expr_path}\nError: {error_output}")
-
-#     with sftp_client.open(resolved_path, mode='r') as remote_file:
-#         output = remote_file.read().decode('utf-8')
-#     sftp_client.close()
-#     ssh_client.close()
-    
-#     data = defaultdict(dict)
-#     current_section = None
-#     if output:
-#         for line in output.splitlines():
-#             line = line.strip()
-#             if not line or line.startswith(('#', '//', ';')):
-#                 continue  # skip comments and blank lines
-#             if line.startswith('[') and line.endswith(']'):
-#                 current_section = line[1:-1]
-#                 continue
-#             match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
-#             if match and current_section:
-#                 key = match.group(1)
-#                 value = match.group(2).strip()
-#                 if value.lower() in ('true', 'false'):
-#                     value = value.lower() == 'true'
-#                 else:
-#                     try:
-#                         if '.' in value:
-#                             value = float(value)
-#                         else:
-#                             value = int(value)
-#                     except ValueError:
-#                         value = value.strip('"').strip("'")  # treat as string
-#                 data[current_section][key] = value
-#     else:
-#         return None
-#     return dict(data)
-#new
-# =========================================================
-# EXACT COPY FROM FINANCE: parse_prm_file
-# =========================================================
-def parse_prm_file(paramFilePath):
-    gcs_base_uri = '/home/airflow/gcs/data/'
-    logging.info(f"Using GCS local mount base path: {gcs_base_uri}")
-    full_file_path = os.path.join(gcs_base_uri, paramFilePath.lstrip('/'))
-    logging.info(f"Attempting to read parameter file from local path: {full_file_path}")
-    output = None
-    try:
-        output = open(os.path.join(gcs_base_uri, paramFilePath.lstrip('/')), "r").read()
-
-        logging.info("Successfully read parameter file using local file I/O.")
-        logging.info(f"output: {output}")
-            
-    except Exception as e:
-        raise Exception(f"Failed to read parameter file from local mount point at {full_file_path}. Error: {e}")
-      
-    data = defaultdict(dict)
-    current_section = None
-    
-    if output:
-        for line in output.splitlines():
-            line = line.strip()
-            if not line or line.startswith(('#', '//', ';')):
-                continue  # skip comments and blank lines
-            
-            if line.startswith('[') and line.endswith(']'):
-                current_section = line[1:-1]
-                continue
-            
-            match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
-            if match and current_section:
-                key = match.group(1)
-                value = match.group(2).strip()
-                
-                if value.lower() in ('true', 'false'):
-                    value = value.lower() == 'true'
-                else:
-                    try:
-                        if '.' in value:
-                            value = float(value)
-                        else:
-                            value = int(value)
-                    except ValueError:
-                        value = value.strip('"').strip("'") 
-                        
-                data[current_section][key] = value
-        
+    if child_jobs:
+        for child in child_jobs:
+            set_job_stats(child, context, client)
     else:
-        return None
+        set_job_stats(job, context, client)
 
-    parsed_data = dict(data)
-    logging.info(f"data: {parsed_data}")
-    return parsed_data
-#new          
-
-def is_existing_file(paramFile):
-
-    if Path(paramFile).exists() and Path(paramFile).is_file():
-        return paramFile
-    else:
-        return None
-                  
-
-# def get_updated_session_parameters(session_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables):
- 
-#      if wkfl_default_param and session_param_json and not workflowParamFile and not mapping_default_param:
-#          variables.update(session_param_json)   
-#          return variables
-#      if wkfl_default_param and mapping_default_param and session_param_json and not workflowParamFile:  
-#          mapping_default_param.update(variables)
-#          mapping_default_param.update(session_param_json)
-#          return mapping_default_param
-#      if mapping_default_param and wkfl_default_param and not workflowParamFile and not session_param_json:
-#          variables.update(mapping_default_param)
-#          return variables
-#      if mapping_default_param and session_param_json and not wkfl_default_param and not workflowParamFile:
-#          mapping_default_param.update(session_param_json)
-#          return mapping_default_param
-#      if workflowParamFile and session_param_json and mapping_default_param:
-#          mapping_default_param.update(session_param_json)  
-#          mapping_default_param.update(variables or {})
-#          return mapping_default_param
-#      if workflowParamFile and session_param_json:
-#          session_param_json.update(workflowParamFile) 
-#          return session_param_json
-#      if wkfl_default_param and mapping_default_param and workflowParamFile and not session_param_json:
-#          mapping_default_param.update(variables)
-#          return mapping_default_param
-#      else:
-#          return mapping_default_param if mapping_default_param else variables if wkfl_default_param else {}
-def get_updated_session_parameters(
-    session_param_json,
-    mapping_default_param,
-    wkfl_default_param,
-    workflowParamFile,
-    variables
-):
-
-    if wkfl_default_param and session_param_json and not workflowParamFile and not mapping_default_param:
-        variables.update(session_param_json)
-        return variables
-
-    if wkfl_default_param and mapping_default_param and session_param_json and not workflowParamFile:
-        mapping_default_param.update(variables)
-        mapping_default_param.update(session_param_json)
-        return mapping_default_param
-
-    if mapping_default_param and wkfl_default_param and not workflowParamFile and not session_param_json:
-        variables.update(mapping_default_param)
-        return variables
-
-    if mapping_default_param and session_param_json and not wkfl_default_param and not workflowParamFile:
-        mapping_default_param.update(session_param_json)
-        return mapping_default_param
-
-    if workflowParamFile and session_param_json and mapping_default_param:
-        mapping_default_param.update(session_param_json)
-        mapping_default_param.update(variables or {})
-        return mapping_default_param
-
-    if workflowParamFile and session_param_json:
-        session_param_json.update(workflowParamFile)
-        return session_param_json
-
-    if wkfl_default_param and mapping_default_param and workflowParamFile and not session_param_json:
-        mapping_default_param.update(variables)
-        return mapping_default_param
-
-    return mapping_default_param if mapping_default_param else variables if wkfl_default_param else {}
-
-def set_mapping_params(id, mapping_name, session_name, wkfl_name, session_param_json, workflowParamFile, variables):
-    abs_path = '/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/data'
-    mapping_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties"))
-    mapping_default_param = eval(open(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties")).read()) if mapping_file_path else None
-    workflow_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + wkfl_name + ".properties"))
-    wkfl_default_param = workflow_file_path if workflow_file_path else None
-    if session_param_json:
-        if session_param_json.get(session_name):
-            session_level_param_json = session_param_json.get(session_name)
-        elif session_param_json.get(wkfl_name):
-            session_level_param_json = session_param_json.get(wkfl_name).get(session_name)
-        elif session_param_json.get('GLOBAL'):
-            session_level_param_json = session_param_json.get('GLOBAL')
-        else:
-            session_level_param_json = {}
-    else:
-        session_level_param_json = {}
-    var_dict = get_updated_session_parameters(session_level_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables)
-    keys = list(var_dict.keys())
-    for k in range(len(var_dict)):
-        key = keys[k]
-        Variable.set(id + "." + key, var_dict[key])
-#new
-@task
-def check_fact_load_status(target_data_mart: str, target_fact_table: str):
-    MAX_LOOP_COUNT = 480
-    SLEEP_TIME_IN_SECONDS = 180
+def set_job_stats(job, context, client):
+    # fetch tgt row count
+    if job.destination and "__tmp__" not in job.destination.table_id:
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        tgt_row_count = Variable.get(id + '.' + context["task"].task_group.group_id + '.TgtSuccessRows', default_var=0)
+        current_tgt_row_count = job.dml_stats.inserted_row_count if job.dml_stats else 0
+        tgt_row_count = int(tgt_row_count) + current_tgt_row_count
+        Variable.set(id + '.' + context["task"].task_group.group_id + '.TgtSuccessRows', tgt_row_count)
     
-    try:
-        BQ_CONN_ID = Variable.get('GCP_CONNECTION_ID')
-    except:
-        BQ_CONN_ID = 'google_cloud_default' 
-    
-    hook = BigQueryHook(gcp_conn_id=BQ_CONN_ID, use_legacy_sql=False)
-
-    # PROJECT_ID = "{{ var.value.BQ_ProjectID }}"
-    PROJECT_ID = Variable.get("BQ_ProjectID")
-    
-    query = f"""
-        SELECT DATE_DIFF(
-            (SELECT DATE_ADD(report_date, INTERVAL 1 DAY) 
-             FROM {PROJECT_ID}.dw_ssp.business_process_date), 
-            MAX(t.snapshot_dt), 
-            DAY
-        )
-        FROM {PROJECT_ID}.os_bbb_userv.v_bbb_ctl_target_fact AS t
-        WHERE LOWER(t.tgt_fact_table) = LOWER('{target_fact_table}')
-          AND LOWER(t.tgt_fact_schema) = LOWER('{target_data_mart}')
-          AND LOWER(t.stat_cd) = 'c'
-    """
-
-    for loop_count in range(1, MAX_LOOP_COUNT + 1):
-        print(f"Checking load status for {target_data_mart}.{target_fact_table} (Loop {loop_count}/{MAX_LOOP_COUNT}).")
-        
-        try:
-            result = hook.get_first(sql=query, parameters=None)
+    # fetch src row count
+    if job.destination or job.referenced_tables:
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        src_row_count = Variable.get(id + '.' + context["task"].task_group.group_id + '.SrcSuccessRows', default_var=0)
+        src_tables = [
+            table
+            for table in job.referenced_tables
+            if job.destination and table.table_id != job.destination.table_id and "__tmp__" not in table.table_id
+        ]
+        if src_tables == []:
+            src_tables.append(job.destination)
+        for table in src_tables:
+            table_name = table.table_id
+            project = table.project
+            dataset = table.dataset_id
             
-            stat_cd_value = result[0] if result and result[0] is not None else 1
-
-            if stat_cd_value <= 0:
-                print(f"Confirmed that {target_data_mart}.{target_fact_table} has completed successfully (Status: {stat_cd_value}).")
-                return 
-            
-            print(f"The load is still running (Status: {stat_cd_value}). Sleeping for {SLEEP_TIME_IN_SECONDS} seconds.")
-            time.sleep(SLEEP_TIME_IN_SECONDS)
-
-        except Exception as e:
-            print(f"An error occurred during BigQuery execution: {e}")
-            time.sleep(SLEEP_TIME_IN_SECONDS)
-            
-    raise AirflowFailException(
-        f"ERROR: After checking for {round(MAX_LOOP_COUNT * SLEEP_TIME_IN_SECONDS / 3600)} hours, "
-        f"{target_data_mart}.{target_fact_table} has not yet completed loading. Aborting."
-    )
-#new
-#new
-def get_storage_client():
-    GCP_CONN_ID = Variable.get('GCP_CONNECTION_ID')
-    hook = GCSHook(gcp_conn_id=GCP_CONN_ID)
-    return hook.get_conn()
-
-
-@task
-def gcs_file_processor(
-    gcs_bucket_name,
-    gcs_object_path,
-    data_path,
-    archive_path,
-    init_file_name,
-    output_file_prefix,
-    output_file_suffix,    
-    date_time_str,
-    mail_recipient=None,
-    header_file_name=None,
-    trailer_file_name=None,    
-    **kwargs
-):
-    
-    logging.info(f"gcs_bucket_name: {gcs_bucket_name}")
-    logging.info(f"gcs_object_path: {gcs_object_path}")
-    logging.info(f"data_path: {data_path}")
-    logging.info(f"archive_path: {archive_path}")
-    logging.info(f"init_file_name: {init_file_name}")
-    logging.info(f"output_file_prefix: {output_file_prefix}")
-    logging.info(f"output_file_suffix: {output_file_suffix}")
-    logging.info(f"date_time_str: {date_time_str}")
-    logging.info(f"mail_recipient: {mail_recipient}")
-    logging.info(f"header_file_name: {header_file_name}")
-    logging.info(f"trailer_file_name: {trailer_file_name}")
-
-    project = Variable.get("BQ_ProjectID")
-    logging.info(f"project: {project}")
-
-    storage_client = get_storage_client()
-    
-    data_gcs = gcs_bucket_name.replace('gs://', '')
-    logging.info(f"data_gcs: {data_gcs}") 
-    bucket = storage_client.bucket(data_gcs)
-
-    archive_gcs = data_gcs.replace('outbound', 'archive')
-    logging.info(f"archive_gcs: {archive_gcs}") 
-    archive_bucket = storage_client.bucket(archive_gcs)
-
-    full_data_path = f"{gcs_object_path}{data_path}"
-    logging.info(f"full_data_path: {full_data_path}") 
-    full_archive_path = f"{gcs_object_path}{archive_path}"
-    logging.info(f"full_archive_path: {full_archive_path}") 
-
-    #INIT_FILE_BLOB = bucket.blob(os.path.join(full_data_path, init_file_name))
-    # ----------------------------------------------------
-    # Dynamic outbound file discovery (Matches Finance Pattern)
-    # ----------------------------------------------------
-    prefix = os.path.join(full_data_path, output_file_prefix)
-    matching_blobs = list(bucket.list_blobs(prefix=prefix))
-
-    if not matching_blobs:
-        raise FileNotFoundError(
-            f"No outbound files found with prefix '{prefix}' in bucket {data_gcs}"
-        )
-
-    # Pick latest generated file to handle sharding/wildcards
-    INIT_FILE_BLOB = sorted(
-        matching_blobs,
-        key=lambda b: b.updated or b.time_created,
-        reverse=True
-    )[0]
-    
-    source_blobs_to_compose = []
-    compose_needed = False
-    
-    if header_file_name:
-        HEADER_BLOB = bucket.blob(os.path.join(full_data_path, header_file_name))
-        source_blobs_to_compose.append(HEADER_BLOB)
-        compose_needed = True
-    
-    source_blobs_to_compose.append(INIT_FILE_BLOB)
-    
-    if trailer_file_name:
-        TRAILER_BLOB = bucket.blob(os.path.join(full_data_path, trailer_file_name))
-        source_blobs_to_compose.append(TRAILER_BLOB)
-        compose_needed = True
-
-    run_date_part = date_time_str[:8]
-    SRC_FILE_NAME = f"{output_file_prefix}_{run_date_part}_{date_time_str}{output_file_suffix}"
-    
-    GCS_PROCESSING_BLOB_NAME = os.path.join(full_data_path, SRC_FILE_NAME)
-    GCS_PROCESSING_BLOB = bucket.blob(GCS_PROCESSING_BLOB_NAME)
-    
-    ARCHIVE_BLOB_NAME = os.path.join(full_archive_path, SRC_FILE_NAME)
-    ARCHIVE_BLOB = archive_bucket.blob(ARCHIVE_BLOB_NAME)
-
-    ti = kwargs['ti']
-
-    try:
-        logging.info("Starting file availability and size validation...")
-        
-
-
-        try:
-            INIT_FILE_BLOB.reload(client=storage_client) 
-        except exceptions.NotFound as e:
-            raise FileNotFoundError(f"Data file not available: {init_file_name}. GCS Error: {e}")
-
-        if INIT_FILE_BLOB.size is None:
-            raise FileNotFoundError(f"Data file not available: {init_file_name}")
-        elif INIT_FILE_BLOB.size == 0:
-            raise ValueError(f"Data file ({init_file_name}) has zero bytes. Process aborted.")
-        
-        logging.info(f"Data file size check passed. Size: {INIT_FILE_BLOB.size} bytes.")
-
-        if compose_needed:
-            GCS_PROCESSING_BLOB.compose(source_blobs_to_compose)
-            logging.info(f"Composition successful. Uncompressed file created at {GCS_PROCESSING_BLOB.name}")
-        else:
-            bucket.copy_blob(
-                    INIT_FILE_BLOB, 
-                    bucket, 
-                    new_name=GCS_PROCESSING_BLOB.name
-                )
-            logging.info(f"Single file copied/renamed to {GCS_PROCESSING_BLOB.name}")
-        
-        
-        logging.info(f"Moving file to archive: {ARCHIVE_BLOB_NAME}")
-
-        bucket.copy_blob(
-            GCS_PROCESSING_BLOB,
-            archive_bucket,
-            new_name=ARCHIVE_BLOB_NAME
-        )
-        
-        GCS_PROCESSING_BLOB.delete()
-        logging.info(f"Deleted processing file: {GCS_PROCESSING_BLOB.name}")
-            
-        logging.info("GCS file processing completed successfully.")
-        
-        subject = f"File Feed Processing - SUCCESS in Task {ti.task_id}"
-        html_content = (
-            f"<h3>Task Success Alert</h3>"
-            f"<p> File landed in the archive: {gcs_bucket_name}/{full_archive_path}</p>"
-        )
-        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
-
-    except (FileNotFoundError, ValueError) as e:
-        error_message = f"GCS processing FAILED: {type(e).__name__}: {e}"
-        logging.error(error_message, exc_info=True)
-        
-        subject = f"File Feed Processing - FAILED in Task {ti.task_id}"
-        html_content = (
-            f"<h3>Task Failure Alert</h3>"
-            f"<p>Error: <strong>{error_message}</strong></p>"
-            f"<p>Source Data Path: {gcs_bucket_name}/{full_data_path}</p>"
-            f"<p>Check Airflow logs for full trace: <a href='{ti.log_url}'>Log Link</a></p>"
-        )
-        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
-        raise
-
-        
-    except Exception as e:
-        error_message = f"An unexpected error occurred: {type(e).__name__}: {e}"
-        logging.error(error_message, exc_info=True)
-
-        subject = f"File Feed Processing - UNEXPECTED FAILURE in Task {ti.task_id}"
-        html_content = (
-            f"<h3>Unexpected Task Failure Alert</h3>"
-            f"<p>Error: <strong>{error_message}</strong></p>"
-            f"<p>Source Data Path: {gcs_bucket_name}/{full_data_path}</p>"
-            f"<p>Check Airflow logs for full trace: <a href='{ti.log_url}'>Log Link</a></p>"
-        )
-        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
-        raise
-#new
-
-# class KeepAliveSSHHook(SSHHook):
-#     def get_conn(self):
-#         client = super().get_conn()
-#         client.get_transport().set_keepalive(int(Variable.get('KEEP_TIME_ALIVE')))
-#         return client
-
-# SSH_CONNECTION_ID = Variable.get('SSH_CONN_ID')
-# ssh_hook = KeepAliveSSHHook(ssh_conn_id=SSH_CONNECTION_ID)
-
-
-def prepare_wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None) -> TaskGroup:
-    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
-        Start = DummyOperator(
-                task_id = 'Start',
-                do_xcom_push = False,
-        )
-
-        @task(task_id = 's_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic')
-        @provide_session
-        def fn_s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic(session=None, **context):
-            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
-            del task_qualifiers[-1]
-            group_id = ".".join(task_qualifiers)
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            session_param_json = None
-            variables = {}
             try:
-                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
-            finally:
-                session.close()
-        
-            #session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-            session_param_json = parse_prm_file('ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-            set_mapping_params(id + '.' + group_id, "m_100_CTL_ETL_FEED_PROCESS_START", "s_m_100_CTL_ETL_FEED_PROCESS_START", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis", session_param_json, "", variables)
+                table_ref = client.get_table(f"{project}.{dataset}.{table_name}")
+                current_src_row_count = table_ref.num_rows
+                src_row_count = int(src_row_count) + current_src_row_count
+                Variable.set(id + '.' + context["task"].task_group.group_id + '.SrcSuccessRows', src_row_count)
+            except Exception as e:
+                print(f"Failed to fetch row count for {table_name}: {e}")
 
-        s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS__init = fn_s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic()
-
-        s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS = prepare_s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS_TG(parent_group = task_group, groupId = 's_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS', trigger = 'none_skipped')
-
-        @task.branch(task_id = '    ', trigger_rule = 'none_skipped')
-        def fn_branch_logic_1(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS')
-            return targets
-
-        branch_logic_1_task = fn_branch_logic_1()
-#new
-        Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS = check_fact_load_status.override(
-            task_id='Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS', 
-            trigger_rule='all_success'
-        )(
-            target_data_mart='DW_FTV',
-            target_fact_table='FTV_FACT_BL_DETAIL'
-        )
-#new
-        # Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS = SSHOperator(
-        #         task_id = 'Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS',
-        #         ssh_hook = ssh_hook,
-        #         command = """/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FTV FTV_FACT_BL_DETAIL FRANCHISE_FTV_MNTHLY_LIS """.format(task_group.group_id),
-        #         conn_timeout = 60,
-        #         get_pty = False,
-        #         retries = 0,
-        #         cmd_timeout = None,
-        #         environment = {
-        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
-        #   'instance_name': Variable.get('INSTANCE_NAME'),
-        #   'job_id': "{{ dag.dag_id }}",
-        #   'task_id': 'cmd_200_bbb_check_fact_load_franchise_ftv_mnthly_lis',
-        #   'task_type': 'bq_to_bq_load'
-        # },
-        #         doc_md = "",
-        #         trigger_rule = 'all_success',
-        # )
-
-        @task.branch(task_id = 'branch_logic_2', trigger_rule = 'none_skipped')
-        def fn_branch_logic_2(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if (get_Status(context["dag_run"], current_group_id + '.' + "Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS")) == "succeeded":
-                targets.append(current_group_id + '.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD_param_init_logic')
-            return targets
-
-        branch_logic_2_task = fn_branch_logic_2()
-
-        @task(task_id = 's_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD_param_init_logic')
-        @provide_session
-        def fn_s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD_param_init_logic(session=None, **context):
-            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
-            del task_qualifiers[-1]
-            group_id = ".".join(task_qualifiers)
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            session_param_json = None
-            variables = {}
-            try:
-                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
-            finally:
-                session.close()
-        
-            #session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-            session_param_json = parse_prm_file('ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-            set_mapping_params(id + '.' + group_id, "m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD", "s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis", session_param_json, "", variables)
-
-        s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD__init = fn_s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD_param_init_logic()
-
-        s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD = prepare_s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD_TG(parent_group = task_group, groupId = 's_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD', trigger = 'none_skipped')
-
-        @task.branch(task_id = 'branch_logic_3', trigger_rule = 'none_skipped')
-        def fn_branch_logic_3(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.s_m_FRANCHISE_220_T_FTV_TAX_CDS_UPDT')
-            return targets
-
-        branch_logic_3_task = fn_branch_logic_3()
-
-        s_m_FRANCHISE_220_T_FTV_TAX_CDS_UPDT = prepare_s_m_FRANCHISE_220_T_FTV_TAX_CDS_UPDT_TG(parent_group = task_group, groupId = 's_m_FRANCHISE_220_T_FTV_TAX_CDS_UPDT')
-
-        @task.branch(task_id = 'branch_logic_4', trigger_rule = 'none_skipped')
-        def fn_branch_logic_4(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_FRANCHISE_220_T_FTV_TAX_CDS_UPDT.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.s_m_FRANCHISE_240_T_FTV_RIBS_RATE_ST_CD_UPDT')
-            return targets
-
-        branch_logic_4_task = fn_branch_logic_4()
-
-        s_m_FRANCHISE_240_T_FTV_RIBS_RATE_ST_CD_UPDT = prepare_s_m_FRANCHISE_240_T_FTV_RIBS_RATE_ST_CD_UPDT_TG(parent_group = task_group, groupId = 's_m_FRANCHISE_240_T_FTV_RIBS_RATE_ST_CD_UPDT')
-
-        @task.branch(task_id = 'branch_logic_5', trigger_rule = 'none_skipped')
-        def fn_branch_logic_5(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_FRANCHISE_240_T_FTV_RIBS_RATE_ST_CD_UPDT.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.s_m_FRANCHISE_260_T_FTV_VISION_RATE_ST_CD_UPDT')
-            return targets
-
-        branch_logic_5_task = fn_branch_logic_5()
-
-        s_m_FRANCHISE_260_T_FTV_VISION_RATE_ST_CD_UPDT = prepare_s_m_FRANCHISE_260_T_FTV_VISION_RATE_ST_CD_UPDT_TG(parent_group = task_group, groupId = 's_m_FRANCHISE_260_T_FTV_VISION_RATE_ST_CD_UPDT')
-
-        @task.branch(task_id = 'branch_logic_6', trigger_rule = 'none_skipped')
-        def fn_branch_logic_6(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_FRANCHISE_260_T_FTV_VISION_RATE_ST_CD_UPDT.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.s_m_FRANCHISE_280_T_FTV_LIS_SMRY_INS')
-            return targets
-
-        branch_logic_6_task = fn_branch_logic_6()
-
-        s_m_FRANCHISE_280_T_FTV_LIS_SMRY_INS = prepare_s_m_FRANCHISE_280_T_FTV_LIS_SMRY_INS_TG(parent_group = task_group, groupId = 's_m_FRANCHISE_280_T_FTV_LIS_SMRY_INS')
-
-        @task.branch(task_id = 'branch_logic_7', trigger_rule = 'none_skipped')
-        def fn_branch_logic_7(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_FRANCHISE_280_T_FTV_LIS_SMRY_INS.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS_param_init_logic')
-            return targets
-
-        branch_logic_7_task = fn_branch_logic_7()
-
-        @task(task_id = 's_m_FRANCHISE_300_O_FTV_MNTHLY_LIS_param_init_logic')
-        @provide_session
-        def fn_s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS_param_init_logic(session=None, **context):
-            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
-            del task_qualifiers[-1]
-            group_id = ".".join(task_qualifiers)
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            session_param_json = None
-            variables = {}
-            try:
-                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
-            finally:
-                session.close()
-        
-            #session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-            session_param_json = parse_prm_file('ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-            set_mapping_params(id + '.' + group_id, "m_FRANCHISE_300_O_FTV_MNTHLY_LIS", "s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis", session_param_json, "", variables)
-
-        s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS__init = fn_s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS_param_init_logic()
-
-        s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS = prepare_s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS_TG(parent_group = task_group, groupId = 's_m_FRANCHISE_300_O_FTV_MNTHLY_LIS', trigger = 'none_skipped')
-
-        @task.branch(task_id = 'branch_logic_8', trigger_rule = 'none_skipped')
-        def fn_branch_logic_8(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS')
-            return targets
-
-        branch_logic_8_task = fn_branch_logic_8()
-        #new
-        RUN_DATE_TIME = "{{ dag_run.execution_date.strftime('%Y%m%d%H%M%S') }}"
-        GCS_BUCKET = Variable.get('GCS_OUTBOUND')
-        
-        # Using empty object path so it appends directly to data_path
-        gcs_object_path = "" 
-
-        cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS = gcs_file_processor.override(
-            task_id='cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS',
-            trigger_rule='all_success'
-        )(
-            gcs_bucket_name=GCS_BUCKET,
-            gcs_object_path=gcs_object_path,
-            data_path='MDR_FEEDS/FRANCHISE/Data',
-            archive_path='MDR_FEEDS/FRANCHISE/Archive',
-            init_file_name='ftv_rpt_franchise_fee_report_file.out',
-            header_file_name='ftv_rpt_franchise_fee_repor_header',
-            trailer_file_name=None,
-            output_file_prefix='ftv_rpt_franchise_fee_report_file',
-            output_file_suffix='.dat',
-            date_time_str=RUN_DATE_TIME,
-            mail_recipient=None,
-        )
-        #new
-#         cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS = SSHOperator(
-#                 task_id = 'cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS',
-#                 ssh_hook = ssh_hook,
-#                 command = """/usr/bin/ksh $PMRootDir/ETL_SCRIPTS/FRANCHISE/Bin/sftp_franchise_ftv_mnthly_lis.ksh
-
-
-#  """.format(task_group.group_id),
-#                 conn_timeout = 60,
-#                 get_pty = False,
-#                 retries = 0,
-#                 cmd_timeout = None,
-#                 environment = {
-#           'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
-#           'instance_name': Variable.get('INSTANCE_NAME'),
-#           'job_id': "{{ dag.dag_id }}",
-#           'task_id': 'cmd_400_sftp_franchise_ftv_mnthly_lis',
-#           'task_type': 'bq_to_bq_load'
-#         },
-#                 doc_md = "",
-#                 trigger_rule = 'all_success',
+# def prepare_s_m_NORM_300_T_FIN_DAILY_DISC_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None, bq_project_id = None, bq_project_pr_id = None) -> TaskGroup:
+#     with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+#         m_NORM_300_T_FIN_DAILY_DISC = BigQueryInsertJobOperator(
+#                 task_id = 'm_NORM_300_T_FIN_DAILY_DISC',
+#                 project_id = bq_project_id,
+#                 configuration = {
+#                         'query': {
+#                                 'query': open(os.path.join(abs_path,"dataMapping/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/wklt_NORM_100_500_O_FIN_DAILY_DISC/s_m_NORM_300_T_FIN_DAILY_DISC/m_NORM_300_T_FIN_DAILY_DISC","m_NORM_300_T_FIN_DAILY_DISC.sql"), "r").read().format(task_group.group_id),
+#                                 'useLegacySql': False,
+#                                 'params': {
+#                                     'BQ_ProjectID': bq_project_id,
+#                                     'BQ_ProjectID_PR': bq_project_pr_id
+#                                 }
+#                         } ,
+#                         'labels': {
+#                                 'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+#                                 'instance_name': "{{ var.value.INSTANCE_NAME }}",
+#                                 'job_id' : 'wkfl_norm_100_500_o_fin_daily_disc',
+#                                 'task_id': 'm_norm_300_t_fin_daily_disc',
+#                                 'task_type': 'bq_to_bq_load'
+#                         }
+#                 },
+#                 gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+#                 job_id = 'wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC',
+#                 on_success_callback = get_row_stats,
+#                 trigger_rule = trigger,
 #         )
 
-        @task.branch(task_id = 'branch_logic_9', trigger_rule = 'none_skipped')
-        def fn_branch_logic_9(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if (get_Status(context["dag_run"], current_group_id + '.' + "cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS")) == "succeeded":
-                targets.append(current_group_id + '.s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic')
-            return targets
+#         status = DMStatusOperator(
+#                 task_id = 'status',
+#                 group_id = task_group.group_id,
+#                 jobName = 'm_NORM_300_T_FIN_DAILY_DISC',
+#                 userStatus = userStatus,
+#                 trigger_rule = 'all_done',
+#         )
+#         m_NORM_300_T_FIN_DAILY_DISC >> status
+#     return task_group
+import sys
+sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
+from airflow.models import Variable
+import airflow
+from airflow import DAG
+from airflow.utils.task_group import TaskGroup
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+import os
+from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
+from google.cloud import bigquery
+from operators.dm_status import DMStatusOperator
+abs_path ='/home/airflow/gcs/data/sql/'
 
-        branch_logic_9_task = fn_branch_logic_9()
+def get_row_stats(context):
+    task_id = context["task"].task_id
+    # default conn_id = google_cloud_default
+    hook = GoogleBaseHook(gcp_conn_id=Variable.get('GCP_CONNECTION_ID'))
+    credentials = hook.get_credentials()
+    client = bigquery.Client(credentials=credentials)
+    job_id = context["ti"].xcom_pull(task_ids=task_id, key='return_value')
+    job = client.get_job(job_id, location="us", project=Variable.get('BQ_ProjectID'))
+    child_jobs = list(client.list_jobs(parent_job=job.job_id, project=job.project))
 
-        @task(task_id = 's_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic')
-        @provide_session
-        def fn_s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic(session=None, **context):
-            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
-            del task_qualifiers[-1]
-            group_id = ".".join(task_qualifiers)
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            session_param_json = None
-            variables = {}
+    if child_jobs:
+        for child in child_jobs:
+            set_job_stats(child, context, client)
+    else:
+        set_job_stats(job, context, client)
+
+def set_job_stats(job, context, client):
+    # fetch tgt row count
+    if job.destination and "__tmp__" not in job.destination.table_id:
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        tgt_row_count = Variable.get(id + '.' + context["task"].task_group.group_id + '.TgtSuccessRows', default_var=0)
+        current_tgt_row_count = job.dml_stats.inserted_row_count if job.dml_stats else 0
+        tgt_row_count = int(tgt_row_count) + current_tgt_row_count
+        Variable.set(id + '.' + context["task"].task_group.group_id + '.TgtSuccessRows', tgt_row_count)
+    
+    # fetch src row count
+    if job.destination or job.referenced_tables:
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        src_row_count = Variable.get(id + '.' + context["task"].task_group.group_id + '.SrcSuccessRows', default_var=0)
+        src_tables = [
+            table
+            for table in job.referenced_tables
+            if job.destination and table.table_id != job.destination.table_id and "__tmp__" not in table.table_id
+        ]
+        if src_tables == []:
+            src_tables.append(job.destination)
+        for table in src_tables:
+            table_name = table.table_id
+            project = table.project
+            dataset = table.dataset_id
+            
             try:
-                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
-            finally:
-                session.close()
+                table_ref = client.get_table(f"{project}.{dataset}.{table_name}")
+                current_src_row_count = table_ref.num_rows
+                src_row_count = int(src_row_count) + current_src_row_count
+                Variable.set(id + '.' + context["task"].task_group.group_id + '.SrcSuccessRows', src_row_count)
+            except Exception as e:
+                print(f"Failed to fetch row count for {table_name}: {e}")
+
+# def prepare_s_m_NORM_300_T_FIN_DAILY_DISC_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None, bq_project_id = None, bq_project_pr_id = None) -> TaskGroup:
+#     with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+#         m_NORM_300_T_FIN_DAILY_DISC = BigQueryInsertJobOperator(
+#                 task_id = 'm_NORM_300_T_FIN_DAILY_DISC',
+#                 project_id = bq_project_id,
+#                 configuration = {
+#                         'query': {
+#                                 'query': open(os.path.join(abs_path,"dataMapping/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/wklt_NORM_100_500_O_FIN_DAILY_DISC/s_m_NORM_300_T_FIN_DAILY_DISC/m_NORM_300_T_FIN_DAILY_DISC","m_NORM_300_T_FIN_DAILY_DISC.sql"), "r").read().format(task_group.group_id),
+#                                 'useLegacySql': False,
+#                                 'params': {
+#                                     'BQ_ProjectID': bq_project_id,
+#                                     'BQ_ProjectID_PR': bq_project_pr_id
+#                                 }
+#                         } ,
+#                         'labels': {
+#                                 'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+#                                 'instance_name': "{{ var.value.INSTANCE_NAME }}",
+#                                 'job_id' : 'wkfl_norm_100_500_o_fin_daily_disc',
+#                                 'task_id': 'm_norm_300_t_fin_daily_disc',
+#                                 'task_type': 'bq_to_bq_load'
+#                         }
+#                 },
+#                 gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+#                 job_id = 'wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC',
+#                 on_success_callback = get_row_stats,
+#                 trigger_rule = trigger,
+#         )
+
+#         status = DMStatusOperator(
+#                 task_id = 'status',
+#                 group_id = task_group.group_id,
+#                 jobName = 'm_NORM_300_T_FIN_DAILY_DISC',
+#                 userStatus = userStatus,
+#                 trigger_rule = 'all_done',
+#         )
+#         m_NORM_300_T_FIN_DAILY_DISC >> status
+#     return task_group
+def prepare_s_m_NORM_300_T_FIN_DAILY_DISC_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None, bq_project_id = None, bq_project_pr_id = None) -> TaskGroup:
+    # 1. FIXED: Clean TaskGroup context
+    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
         
-           # session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-            session_param_json = parse_prm_file('ETL_SCRIPTS/FRANCHISE/Params/aEDW_FRANCHISE_FTV_FEED.par')
-            set_mapping_params(id + '.' + group_id, "m_500_CTL_ETL_FEED_PROCESS_END", "s_m_500_CTL_ETL_FEED_PROCESS_END", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis", session_param_json, "", variables)
-
-        s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS__init = fn_s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS_param_init_logic()
-
-        s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS = prepare_s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS_TG(parent_group = task_group, groupId = 's_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS', trigger = 'none_skipped')
-
-        status = DMStatusOperator(
-                task_id = 'status',
-                group_id = task_group.group_id,
-                jobName = 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS',
-                userStatus = userStatus,
-                trigger_rule = 'all_done',
+        # 2. FIXED: Correct Operator initialization
+        m_NORM_300_T_FIN_DAILY_DISC = BigQueryInsertJobOperator(
+            task_id = 'm_NORM_300_T_FIN_DAILY_DISC',
+            project_id = bq_project_id,
+            configuration = {
+                'query': {
+                    'query': open(os.path.join(abs_path,"dataMapping/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/wklt_NORM_100_500_O_FIN_DAILY_DISC/s_m_NORM_300_T_FIN_DAILY_DISC/m_NORM_300_T_FIN_DAILY_DISC","m_NORM_300_T_FIN_DAILY_DISC.sql"), "r").read().format(task_group.group_id),
+                    'useLegacySql': False,
+                    'params': {
+                        'BQ_ProjectID': bq_project_id,
+                        'BQ_ProjectID_PR': bq_project_pr_id,
+                        # 3. FIXED: Removed 'street' typo and corrected the Jinja brackets
+                        'FEED_NAME': "{{ var.value.get(dag.dag_id ~ '_' ~ dag_run.id ~ '." + groupId + ".$$FEED_NAME') }}"
+                    }
+                },
+                'labels': {
+                    'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+                    'instance_name': "{{ var.value.INSTANCE_NAME }}",
+                    'job_id' : 'wkfl_norm_100_500_o_fin_daily_disc',
+                    'task_id': 'm_norm_300_t_fin_daily_disc',
+                    'task_type': 'bq_to_bq_load'
+                }
+            },
+            gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+            job_id = 'wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC',
+            on_success_callback = get_row_stats,
+            trigger_rule = trigger,
         )
 
+        status = DMStatusOperator(
+            task_id = 'status',
+            group_id = task_group.group_id,
+            jobName = 'm_NORM_300_T_FIN_DAILY_DISC',
+            userStatus = userStatus,
+            trigger_rule = 'all_done',
+        )
 
-        Start >> s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS__init >> s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS >> branch_logic_1_task >> Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS >> branch_logic_2_task >> s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD__init >> s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD >> branch_logic_3_task >> s_m_FRANCHISE_220_T_FTV_TAX_CDS_UPDT >> branch_logic_4_task >> s_m_FRANCHISE_240_T_FTV_RIBS_RATE_ST_CD_UPDT >> branch_logic_5_task >> s_m_FRANCHISE_260_T_FTV_VISION_RATE_ST_CD_UPDT >> branch_logic_6_task >> s_m_FRANCHISE_280_T_FTV_LIS_SMRY_INS >> branch_logic_7_task >> s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS__init >> s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS >> branch_logic_8_task >> cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS >> branch_logic_9_task >> s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS__init >> s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS >> status
+        m_NORM_300_T_FIN_DAILY_DISC >> status
+
     return task_group
