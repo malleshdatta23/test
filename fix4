@@ -1,234 +1,145 @@
-# import sys
-# sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
-# import airflow
-# from airflow import DAG
-# from datetime import datetime, timedelta
-# from airflow.models import Variable
-# from airflow.utils.db import provide_session
-# from airflow.operators.dummy import DummyOperator
-# from airflow.utils.task_group import TaskGroup
-# from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS import *
-# from operators.dm_status import DMStatusOperator
-# from airflow.decorators import task
-
-# def get_var(dag_id, id, var, tg = None):
-#     key = dag_id + '_' + str(id)
-#     if tg != None:
-#         qualifier = ".".join([key, tg, var])
-#         return Variable.get(qualifier)
-#     else:
-#         qualifier = ".".join([key, var])
-#         return Variable.get(qualifier)
-
-# def get_Status(dag_run, id):
-#     try:
-#         status = dag_run.get_task_instance(id).state
-#         if status == "success":
-#             return "succeeded"
-#         if status == "failed":
-#             return "failed"
-#         return None
-#     except Exception:
-#         return "disabled"
-
-# def get_PrevTaskStatus(dag_run, id):
-#     id = list(dag_run.dag.get_task(id).upstream_task_ids)[0]
-#     return get_Status(dag_run, id)
-
-# # Following are defaults which can be overridden later on
-# default_args = {
-#     'owner': 'dm',
-#     'depends_on_past': False,
-#     'start_date': datetime(2016, 4, 15),
-#     'email': ['sample@mail.com'],
-#     'email_on_failure': False,
-#     'email_on_retry': False,
-#     'retries': 0,
-#     'retry_delay': timedelta(minutes=1),
-# }
-
-# with DAG('dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis', schedule_interval=None, catchup=False, render_template_as_native_obj=False, default_args=default_args, user_defined_macros={'get_var': get_var, 'get_Status': get_Status, 'get_PrevTaskStatus': get_PrevTaskStatus}, tags=['VSAD:gk1v', 'Sub_Lob:wireline', 'Job_Type:Curation', 'Legacy_Application_Name:wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_Submit', 'Product_Type:legacy', 'LOB:wireline  ', 'Program_Name:EDW Modernisation']) as dag:
-
-#     Start = DummyOperator(
-#         task_id = 'Start',
-#         do_xcom_push = False,
-#     )
-
-#     wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS = prepare_wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_TG(dag = dag, groupId = 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
-
-#     dag_status = DMStatusOperator(
-#         task_id = 'dag_status',
-#         group_id = None,
-#         trigger_rule = 'all_done',
-#     )
-
-#     @task(task_id = 'variable_cleanup', trigger_rule = 'all_success')
-#     @provide_session
-#     def fn_variable_cleanup(session=None,**context):
-#         id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id) + '.'
-#         session.query(Variable).filter(Variable.key.contains(id)).delete(synchronize_session = False)
-
-#     variable_cleanup = fn_variable_cleanup()
-
-
-# Start >> wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS >> dag_status >> variable_cleanup
-
-
 import sys
 sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
+from airflow.models import Variable
 import airflow
 from airflow import DAG
-from datetime import datetime, timedelta
-from airflow.models import Variable
-from airflow.utils.db import provide_session
-from airflow.operators.dummy import DummyOperator
-from airflow.decorators import task
 from airflow.utils.task_group import TaskGroup
-from MDR_Billing.wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS import *
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+import os
+from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
+from google.cloud import bigquery
 from operators.dm_status import DMStatusOperator
+abs_path ='/home/airflow/gcs/data/sql/'
 
-def get_var(dag_id, id, var, tg = None):
-    key = dag_id + '_' + str(id)
-    if tg != None:
-        qualifier = ".".join([key, tg, var])
-        return Variable.get(qualifier)
+def get_row_stats(context):
+    task_id = context["task"].task_id
+    # default conn_id = google_cloud_default
+    hook = GoogleBaseHook(gcp_conn_id=Variable.get('GCP_CONNECTION_ID'))
+    credentials = hook.get_credentials()
+    client = bigquery.Client(credentials=credentials)
+    job_id = context["ti"].xcom_pull(task_ids=task_id, key='return_value')
+    job = client.get_job(job_id, location="us", project=Variable.get('BQ_ProjectID'))
+    child_jobs = list(client.list_jobs(parent_job=job.job_id, project=job.project))
+
+    if child_jobs:
+        for child in child_jobs:
+            set_job_stats(child, context, client)
     else:
-        qualifier = ".".join([key, var])
-        return Variable.get(qualifier)
+        set_job_stats(job, context, client)
 
-def get_Status(dag_run, id):
-    try:
-        status = dag_run.get_task_instance(id).state
-        if status == "success":
-            return "succeeded"
-        if status == "failed":
-            return "failed"
-        return None
-    except Exception:
-        return "disabled"
-
-def get_PrevTaskStatus(dag_run, id):
-    id = list(dag_run.dag.get_task(id).upstream_task_ids)[0]
-    return get_Status(dag_run, id)
-
-# Following are defaults which can be overridden later on
-default_args = {
-    'owner': 'dm',
-    'depends_on_past': False,
-    'start_date': datetime(2016, 4, 15),
-    'email': ['sample@mail.com'],
-    'email_on_failure': False,
-    'email_on_retry': False,
-    'retries': 0,
-    'retry_delay': timedelta(minutes=1),
-}
-
-with DAG('dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis', schedule_interval=None, catchup=False, render_template_as_native_obj=True, default_args=default_args, user_defined_macros={'get_var': get_var, 'get_Status': get_Status, 'get_PrevTaskStatus': get_PrevTaskStatus}, tags=['VSAD:gk1v', 'Sub_Lob:wireline', 'Job_Type:Curation', 'Legacy_Application_Name:wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_Submit', 'Product_Type:legacy', 'LOB:wireline', 'Program_Name:EDW Modernisation']) as dag:
-
-    Start = DummyOperator(
-        task_id = 'Start',
-        do_xcom_push = False,
-    )
-
-    # ==========================================================
-    # ADDED: Param Init Logic (Matches Finance Pattern)
-    # ==========================================================
-    @task(task_id = 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_param_init_logic')
-    @provide_session
-    def fn_wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_param_init_logic(session=None, **context):
-        task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
-        del task_qualifiers[-1]
-        group_id = ".".join(task_qualifiers)
+def set_job_stats(job, context, client):
+    # fetch tgt row count
+    if job.destination and "__tmp__" not in job.destination.table_id:
         id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-        session_param_json = None
-        variables = {}
-        try:
-            results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-            variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
-        finally:
-            session.close()
+        tgt_row_count = Variable.get(id + '.' + context["task"].task_group.group_id + '.TgtSuccessRows', default_var=0)
+        current_tgt_row_count = job.dml_stats.inserted_row_count if job.dml_stats else 0
+        tgt_row_count = int(tgt_row_count) + current_tgt_row_count
+        Variable.set(id + '.' + context["task"].task_group.group_id + '.TgtSuccessRows', tgt_row_count)
     
-        var = {
-            "$Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS.StartTime" : None,
-            "$Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS.EndTime" : None,
-            "$Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS.Status" : None,
-            "$Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$Cmd_200_bbb_check_fact_load_FRANCHISE_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS.StartTime" : None,
-            "$cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS.EndTime" : None,
-            "$cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS.Status" : None,
-            "$cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$cmd_400_sftp_FRANCHISE_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.StartTime" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.EndTime" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.Status" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.SrcSuccessRows" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.SrcFailedRows" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.TgtSuccessRows" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.TgtFailedRows" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.TotalTransErrors" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.FirstErrorCode" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FRANCHISE_FTV_MNTHLY_LIS.FirstErrorMsg" : "",
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.StartTime" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.EndTime" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.Status" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.SrcSuccessRows" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.SrcFailedRows" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.TgtSuccessRows" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.TgtFailedRows" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.TotalTransErrors" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.FirstErrorCode" : None,
-            "$s_m_FRANCHISE_300_O_FTV_MNTHLY_LIS.FirstErrorMsg" : "",
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.StartTime" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.EndTime" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.Status" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.SrcSuccessRows" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.SrcFailedRows" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.TgtSuccessRows" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.TgtFailedRows" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.TotalTransErrors" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.FirstErrorCode" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FRANCHISE_FTV_MNTHLY_LIS.FirstErrorMsg" : "",
-            "$Start.StartTime" : None,
-            "$Start.EndTime" : None,
-            "$Start.Status" : None,
-            "$Start.PrevTaskStatus" : None,
-            "$Start.ErrorCode" : None,
-            "$Start.ErrorMsg" : "",
-            }
-        for i in var.keys():
-            Variable.set(id + '.' + group_id + '.' + i, var[i])
+    # fetch src row count
+    if job.destination or job.referenced_tables:
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        src_row_count = Variable.get(id + '.' + context["task"].task_group.group_id + '.SrcSuccessRows', default_var=0)
+        src_tables = [
+            table
+            for table in job.referenced_tables
+            if job.destination and table.table_id != job.destination.table_id and "__tmp__" not in table.table_id
+        ]
+        if src_tables == []:
+            src_tables.append(job.destination)
+        for table in src_tables:
+            table_name = table.table_id
+            project = table.project
+            dataset = table.dataset_id
+            
+            try:
+                table_ref = client.get_table(f"{project}.{dataset}.{table_name}")
+                current_src_row_count = table_ref.num_rows
+                src_row_count = int(src_row_count) + current_src_row_count
+                Variable.set(id + '.' + context["task"].task_group.group_id + '.SrcSuccessRows', src_row_count)
+            except Exception as e:
+                print(f"Failed to fetch row count for {table_name}: {e}")
 
-    wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS__init = fn_wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_param_init_logic()
 
-    # REMOVED EXTRA ARGUMENTS HERE
-    wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS = prepare_wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_TG(dag = dag, groupId = 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS', trigger = 'none_skipped')
+# def prepare_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None, bq_project_id = None, bq_project_pr_id = None) -> TaskGroup:
+#     with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+#         m_500_CTL_ETL_FEED_PROCESS_END = BigQueryInsertJobOperator(
+#                 task_id = 'm_500_CTL_ETL_FEED_PROCESS_END',
+#                 project_id = bq_project_id,
+#                 configuration = {
+#                         'query': {
+#                                 'query': open(os.path.join(abs_path,"dataMapping/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/wklt_NORM_100_500_O_FIN_DAILY_DISC/s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC/m_500_CTL_ETL_FEED_PROCESS_END","m_500_CTL_ETL_FEED_PROCESS_END.sql"), "r").read().format(task_group.group_id),
+#                                 'useLegacySql': False,
+#                                 'params': {
+#                                     'BQ_ProjectID': bq_project_id,
+#                                     'BQ_ProjectID_PR': bq_project_pr_id
+#                                 }
+#                         } ,
+#                         'labels': {
+#                                 'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+#                                 'instance_name': "{{ var.value.INSTANCE_NAME }}",
+#                                 'job_id' : 'wkfl_norm_100_500_o_fin_daily_disc',
+#                                 'task_id': 'm_500_ctl_etl_feed_process_end',
+#                                 'task_type': 'bq_to_bq_load'
+#                         }
+#                 },
+#                 gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+#                 job_id = 'wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_500_CTL_ETL_FEED_PROCESS_END',
+#                 on_success_callback = get_row_stats,
+#                 trigger_rule = trigger,
+#         )
 
-    dag_status = DMStatusOperator(
-        task_id = 'dag_status',
-        group_id = None,
-        trigger_rule = 'all_done',
-    )
+#         status = DMStatusOperator(
+#                 task_id = 'status',
+#                 group_id = task_group.group_id,
+#                 jobName = 'm_500_CTL_ETL_FEED_PROCESS_END',
+#                 userStatus = userStatus,
+#                 trigger_rule = 'all_done',
+#         )
+#         m_500_CTL_ETL_FEED_PROCESS_END >> status
+#     return task_group
+def prepare_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None, bq_project_id = None, bq_project_pr_id = None) -> TaskGroup:
+    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+        
+        m_500_CTL_ETL_FEED_PROCESS_END = BigQueryInsertJobOperator(
+            task_id = 'm_500_CTL_ETL_FEED_PROCESS_END',
+            project_id = bq_project_id,
+            on_execute_callback = forensic_audit_log, # ATTACHED: Forensic Audit
+            configuration = {
+                'query': {
+                    'query': open(os.path.join(abs_path,"dataMapping/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/wklt_NORM_100_500_O_FIN_DAILY_DISC/s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC/m_500_CTL_ETL_FEED_PROCESS_END","m_500_CTL_ETL_FEED_PROCESS_END.sql"), "r").read().format(task_group.group_id),
+                    'useLegacySql': False,
+                    'params': {
+                        'BQ_ProjectID': bq_project_id,
+                        'BQ_ProjectID_PR': bq_project_pr_id,
+                        # FIXED: Removed 'street' and corrected Jinja braces
+                        'FEED_NAME': "{{ var.value.get(dag.dag_id ~ '_' ~ dag_run.id ~ '." + groupId + ".$$FEED_NAME') }}",
+                        'TGT_FACT_TABLE': "{{ var.value.get(dag.dag_id ~ '_' ~ dag_run.id ~ '." + groupId + ".$$TGT_FACT_TABLE') }}",
+                        'TGT_FACT_SCHEMA': "{{ var.value.get(dag.dag_id ~ '_' ~ dag_run.id ~ '." + groupId + ".$$TGT_FACT_SCHEMA') }}"
+                    }
+                },
+                'labels': {
+                    'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+                    'instance_name': "{{ var.value.INSTANCE_NAME }}",
+                    'job_id' : 'wkfl_norm_100_500_o_fin_daily_disc',
+                    'task_id': 'm_500_ctl_etl_feed_process_end',
+                    'task_type': 'bq_to_bq_load'
+                }
+            },
+            gcp_conn_id = Variable.get('GCP_CONNECTION_ID'),
+            job_id = 'wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_500_CTL_ETL_FEED_PROCESS_END',
+            on_success_callback = get_row_stats,
+            trigger_rule = trigger,
+        )
 
-    @task(task_id = 'variable_cleanup', trigger_rule = 'all_success')
-    @provide_session
-    def fn_variable_cleanup(session=None,**context):
-        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id) + '.'
-        session.query(Variable).filter(Variable.key.contains(id)).delete(synchronize_session = False)
+        status = DMStatusOperator(
+            task_id = 'status',
+            group_id = task_group.group_id,
+            jobName = 'm_500_CTL_ETL_FEED_PROCESS_END',
+            userStatus = userStatus,
+            trigger_rule = 'all_done',
+        )
 
-    variable_cleanup = fn_variable_cleanup()
+        m_500_CTL_ETL_FEED_PROCESS_END >> status
 
-    # UPDATED DEPENDENCIES TO MATCH FINANCE
-    wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS__init >> wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS >> dag_status >> variable_cleanup
-    Start >> wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS
+    return task_group
