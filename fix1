@@ -8,7 +8,7 @@ from airflow.utils.db import provide_session
 from airflow.operators.dummy import DummyOperator
 from airflow.decorators import task
 from airflow.utils.task_group import TaskGroup
-from MDR_Billing.wkfl_FINANCE_100_500_O_FTV_MNTHLY_LIS.taskGroups.wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS.wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS import *
+from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.wklt_NORM_100_500_O_FIN_DAILY_DISC import *
 from operators.dm_status import DMStatusOperator
 
 def get_var(dag_id, id, var, tg = None):
@@ -47,16 +47,16 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
 }
 
-with DAG('dg_gk1v_edwdo_wln_mdr_billing_wkfl_finance_100_500_o_ftv_mnthly_lis', schedule_interval=None, catchup=False, render_template_as_native_obj=True, default_args=default_args, user_defined_macros={'get_var': get_var, 'get_Status': get_Status, 'get_PrevTaskStatus': get_PrevTaskStatus}, tags=['Job_Type:Curation', 'Product_Type:legacy', 'Legacy_Application_Name:wkfl_FINANCE_100_500_O_FTV_MNTHLY_LIS_Submit', 'LOB:wireline  ', 'Program_Name:EDW Modernisation', 'Sub_Lob:wireline', 'VSAD:gk1v']) as dag:
+with DAG('dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', schedule_interval=None, catchup=False, render_template_as_native_obj=False, default_args=default_args, user_defined_macros={'get_var': get_var, 'get_Status': get_Status, 'get_PrevTaskStatus': get_PrevTaskStatus}, tags=['Program_Name:EDW Modernisation', 'Sub_Lob:wireline', 'LOB:wireline  ', 'Job_Type:Curation', 'Legacy_Application_Name:wkfl_NORM_100_500_O_FIN_DAILY_DISC_Submit', 'Product_Type:legacy', 'VSAD:gk1v']) as dag:
 
     Start = DummyOperator(
         task_id = 'Start',
         do_xcom_push = False,
     )
 
-    @task(task_id = 'wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS_param_init_logic')
+    @task(task_id = 'wklt_NORM_100_500_O_FIN_DAILY_DISC_param_init_logic')
     @provide_session
-    def fn_wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS_param_init_logic(session=None, **context):
+    def fn_wklt_NORM_100_500_O_FIN_DAILY_DISC_param_init_logic(session=None, **context):
         task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
         del task_qualifiers[-1]
         group_id = ".".join(task_qualifiers)
@@ -64,76 +64,89 @@ with DAG('dg_gk1v_edwdo_wln_mdr_billing_wkfl_finance_100_500_o_ftv_mnthly_lis', 
         session_param_json = None
         variables = {}
         try:
-            results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-            variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
+            results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+            variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
         finally:
             session.close()
     
         var = {
-            "$Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS.StartTime" : None,
-            "$Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS.EndTime" : None,
-            "$Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS.Status" : None,
-            "$Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$Cmd_200_bbb_check_fact_load_FINANCE_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS.StartTime" : None,
-            "$cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS.EndTime" : None,
-            "$cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS.Status" : None,
-            "$cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$cmd_400_sftp_FINANCE_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.StartTime" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.EndTime" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.Status" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.SrcSuccessRows" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.SrcFailedRows" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.TgtSuccessRows" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.TgtFailedRows" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.TotalTransErrors" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.FirstErrorCode" : None,
-            "$s_m_500_CTL_ETL_FEED_PROCESS_END_FINANCE_FTV_MNTHLY_LIS.FirstErrorMsg" : "",
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.StartTime" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.EndTime" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.Status" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.SrcSuccessRows" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.SrcFailedRows" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.TgtSuccessRows" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.TgtFailedRows" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.TotalTransErrors" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.FirstErrorCode" : None,
-            "$s_m_FINANCE_300_O_FTV_MNTHLY_LIS.FirstErrorMsg" : "",
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.StartTime" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.EndTime" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.Status" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.PrevTaskStatus" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.ErrorCode" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.ErrorMsg" : "",
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.SrcSuccessRows" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.SrcFailedRows" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.TgtSuccessRows" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.TgtFailedRows" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.TotalTransErrors" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.FirstErrorCode" : None,
-            "$s_m_100_CTL_ETL_FEED_PROCESS_START_FINANCE_FTV_MNTHLY_LIS.FirstErrorMsg" : "",
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.StartTime" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.EndTime" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.Status" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.PrevTaskStatus" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.ErrorCode" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.ErrorMsg" : "",
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.SrcSuccessRows" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.SrcFailedRows" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.TgtSuccessRows" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.TgtFailedRows" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.TotalTransErrors" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.FirstErrorCode" : None,
+            "$s_m_NORM_300_T_FIN_DAILY_DISC.FirstErrorMsg" : "",
+            "$Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC.StartTime" : None,
+            "$Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC.EndTime" : None,
+            "$Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC.Status" : None,
+            "$Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC.PrevTaskStatus" : None,
+            "$Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC.ErrorCode" : None,
+            "$Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC.ErrorMsg" : "",
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.StartTime" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.EndTime" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.Status" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.PrevTaskStatus" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.ErrorCode" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.ErrorMsg" : "",
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.SrcSuccessRows" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.SrcFailedRows" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.TgtSuccessRows" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.TgtFailedRows" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.TotalTransErrors" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.FirstErrorCode" : None,
+            "$s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.FirstErrorMsg" : "",
             "$Start.StartTime" : None,
             "$Start.EndTime" : None,
             "$Start.Status" : None,
             "$Start.PrevTaskStatus" : None,
             "$Start.ErrorCode" : None,
             "$Start.ErrorMsg" : "",
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.StartTime" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.EndTime" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.Status" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.PrevTaskStatus" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.ErrorCode" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.ErrorMsg" : "",
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.SrcSuccessRows" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.SrcFailedRows" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.TgtSuccessRows" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.TgtFailedRows" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.TotalTransErrors" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.FirstErrorCode" : None,
+            "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.FirstErrorMsg" : "",
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.StartTime" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.EndTime" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.Status" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.PrevTaskStatus" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.ErrorCode" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.ErrorMsg" : "",
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.SrcSuccessRows" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.SrcFailedRows" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.TgtSuccessRows" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.TgtFailedRows" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.TotalTransErrors" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.FirstErrorCode" : None,
+            "$s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.FirstErrorMsg" : "",
+            "$cmd_400_sftp_NORM_FIN_DAILY_DISC.StartTime" : None,
+            "$cmd_400_sftp_NORM_FIN_DAILY_DISC.EndTime" : None,
+            "$cmd_400_sftp_NORM_FIN_DAILY_DISC.Status" : None,
+            "$cmd_400_sftp_NORM_FIN_DAILY_DISC.PrevTaskStatus" : None,
+            "$cmd_400_sftp_NORM_FIN_DAILY_DISC.ErrorCode" : None,
+            "$cmd_400_sftp_NORM_FIN_DAILY_DISC.ErrorMsg" : "",
             }
         for i in var.keys():
             Variable.set(id + '.' + group_id + '.' + i, var[i])
 
-    wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS__init = fn_wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS_param_init_logic()
+    wklt_NORM_100_500_O_FIN_DAILY_DISC__init = fn_wklt_NORM_100_500_O_FIN_DAILY_DISC_param_init_logic()
 
-    wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS = prepare_wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS_TG(dag = dag, groupId = 'wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS', trigger = 'none_skipped')
+    wklt_NORM_100_500_O_FIN_DAILY_DISC = prepare_wklt_NORM_100_500_O_FIN_DAILY_DISC_TG(dag = dag, groupId = 'wklt_NORM_100_500_O_FIN_DAILY_DISC', trigger = 'none_skipped')
 
     dag_status = DMStatusOperator(
         task_id = 'dag_status',
@@ -150,5 +163,5 @@ with DAG('dg_gk1v_edwdo_wln_mdr_billing_wkfl_finance_100_500_o_ftv_mnthly_lis', 
     variable_cleanup = fn_variable_cleanup()
 
 
-wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS__init >> wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS >> dag_status >> variable_cleanup
-Start >> wklt_FINANCE_100_500_O_FTV_MNTHLY_LIS
+wklt_NORM_100_500_O_FIN_DAILY_DISC__init >> wklt_NORM_100_500_O_FIN_DAILY_DISC >> dag_status >> variable_cleanup
+Start >> wklt_NORM_100_500_O_FIN_DAILY_DISC
