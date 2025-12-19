@@ -1,15 +1,15 @@
 default-hostname
 *** Reading remote logs from Cloud Logging.
-[2025-12-18, 04:44:29 UTC] {local_task_job_runner.py:123} ▼ Pre task execution logs
-[2025-12-18, 04:44:29 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD manual__2025-12-18T04:38:40.829905+00:00 [queued]>
-[2025-12-18, 04:44:29 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD manual__2025-12-18T04:38:40.829905+00:00 [queued]>
-[2025-12-18, 04:44:29 UTC] {taskinstance.py:2869} INFO - Starting attempt 1 of 1
-[2025-12-18, 04:44:29 UTC] {taskinstance.py:2892} INFO - Executing <Task(BigQueryInsertJobOperator): wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD> on 2025-12-18 04:38:40.829905+00:00
-[2025-12-18, 04:44:29 UTC] {standard_task_runner.py:72} INFO - Started process 121412 to run task
-[2025-12-18, 04:44:29 UTC] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis', 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD', 'manual__2025-12-18T04:38:40.829905+00:00', '--job-id', '20255604', '--raw', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.py', '--cfg-path', '/tmp/tmp5ak2ipig']
-[2025-12-18, 04:44:29 UTC] {standard_task_runner.py:105} INFO - Job 20255604: Subtask wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD
-[2025-12-18, 04:44:29 UTC] {task_command.py:473} INFO - Running <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD manual__2025-12-18T04:38:40.829905+00:00 [running]> on host airflow-worker-m75kw
-[2025-12-18, 04:44:30 UTC] {abstractoperator.py:783} ERROR - Exception rendering Jinja template for task 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD', field 'configuration'. Template: {'query': {'query': '\n-- view(s) name replaced:\n-- dw_fin_tblsv.shr_dim_tax_geo_cd=dw_fin.shr_dim_tax_geo_cd\n-- mdr_dw_tblsv.time_dim=mdr_dw.time_dim\n-- dw_fin_tblsv.shr_dim_tax_district_cd=dw_fin.shr_dim_tax_district_cd\n-- dw_fin_tblsv.shr_dim_vip_code=dw_fin.shr_dim_vip_code\n-- dw_ssp_tblsv.ssp_market_segment_dim=dw_ssp.ssp_market_segment_dim\n-- dw_fin_tblsv.ctl_etl_feed_process=dw_fin.ctl_etl_feed_process\n-- dw_ftv_tblsv.ftv_fact_bl_detail=dw_ftv.ftv_fact_bl_detail\n-- dw_ssp_tblsv.ssp_state_dim=dw_ssp.ssp_state_dim\n-- dw_ssp_tblsv.ssp_lfa_tarcode_dim=dw_ssp.ssp_lfa_tarcode_dim\n\n-- Edited\n\n-- Declaration of params:\n-- FEED_NAME=FRANCHISE_FTV_MNTHLY_LIS\n\n\n\nBEGIN\nDECLARE FEED_NAME STRING DEFAULT \'{{ get_var(dag_run.dag_id, dag_run.id, \'$$FEED_NAME\', \'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD\') }}\';\nBEGIN TRANSACTION;\n\nTRUNCATE TABLE {{ var.value.BQ_ProjectID }}.os_vision.vision_trn_franchise_feed;\n\n/** \nThe stages covered in this file are :\n\n|VISION_TRN_FRANCHISE_FEED (Target Definition)\n|--EXP_ADD_DT (Expression)\n|----SQ_FTV_FACT_BL_DETAIL (Source Qualifier)\n|------FTV_FACT_BL_DETAIL (Source Definition)\n|------SHR_DIM_TAX_DISTRICT_CD (Source Definition)\n|------SHR_DIM_TAX_GEO_CD (Source Definition)\n|------SHR_DIM_VIP_CODE (Source Definition)\n|------SSP_LFA_TARCODE_DIM (Source Definition)\n|------SSP_MARKET_SEGMENT_DIM (Source Definition)\n|------SSP_STATE_DIM (Source Definition)\n|------TIME_DIM (Source Definition)\n **/--;\n\n -- MAIN SQL --\nINSERT INTO {{ var.value.BQ_ProjectID }}.os_vision.vision_trn_franchise_feed (CAN, CUST_SUB_ACCT_NUM, CUST_ID_NO, ACCT_NO, LN_OF_SVC_ID_NO_P2, LN_OF_SVC_ID_NO_P1,\n  BILL_DATE, COMPANY_CODE, ST_CD, LFA, TAX_DISTRICT_CD, SERVICE_ZIP_CD, VIP_CODE, RUN_RATE, RIBS_ST_CD, MRKT_SGMNT_DESC, TAXING_GEO_CD, ADDR_ID_NO,\n  SRC_SYS_SK, IPTV_IND, PRE_PAID_FIOS_IND)\n(WITH \n--SQ_FTV_FACT_BL_DETAIL [Source Qualifier]\n`__Query_1671758446__SQ_FTV_FACT_BL_DETAIL` AS (SELECT COALESCE(a.can, \'u\') AS CAN,\n           COALESCE(a.cust_sub_acct_num, \'u\') AS CUST_SUB_ACCT_NUM,\n           COALESCE(a.cust_id_no, -99999) AS CUST_ID_NO,\n           COALESCE(a.acct_no, -99999) AS ACCT_NO,\n           COALESCE(a.ln_of_svc_id_no_p2, -99999) AS LN_OF_SVC_ID_NO_P2,\n           COALESCE(a.ln_of_svc_id_no_p1, -99999) AS LN_OF_SVC_ID_NO_P1,\n           --CAST(cast(parse_date(\'%m/%d/%Y\', CAST(t1.day_dt AS STRING))as date) AS STRING) AS BILL_DATE,\n\t\t   FORMAT_DATE(\'%m/%d/%Y\', t1.day_dt) AS BILL_DATE,\n           a.cmpy_cd AS COMPANY_CODE,\n           st.st_cd,\n           e.lfa_id AS LFA,\n           CASE WHEN c.tax_district_cd =\'unk\' THEN \'u\'           \n                ELSE c.tax_district_cd \n                END AS TAX_DISTRICT_CD,\n           a.svc_zip_plus4_cd AS SERVICE_ZIP_CD,\n           CASE WHEN CAST (a.test_acct_sk AS STRING ) =\'1\' THEN \'T\'\n                ELSE CAST (d.vip_code_cd AS STRING )\n                END AS VIP_CODE,\n           a.run_rate_sk AS RUN_RATE,\n           st.st_cd AS RIBS_ST_CD,\n           b.mrkt_sgmnt_desc AS MRKT_SGMNT_DESC,\n           CASE WHEN g.taxing_geo_cd =\'UNKNOWN\' THEN \'u\'\n                ELSE g.taxing_geo_cd\n                END AS TAXING_GEO_CD,\n           a.addr_id_no,\n           a.src_sys_sk,\n            a.iptv_ind_sk,\n             a.pre_paid_fios_ind_sk,ORD_CREATE_DT_SK,ORGNL_ORD_CREATE_DT_SK\n      FROM {{ var.value.BQ_ProjectID }}.dw_ftv.ftv_fact_bl_detail a\n      LEFT OUTER JOIN {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_market_segment_dim b \n        ON b.mrkt_sgmnt_sk = a.mrkt_sgmnt_sk\n      LEFT OUTER JOIN {{ var.value.BQ_ProjectID }}.dw_fin.shr_dim_tax_district_cd c \n        ON c.tax_district_cd_sk = a.tax_district_cd_sk\n      LEFT OUTER JOIN {{ var.value.BQ_ProjectID }}.dw_fin.shr_dim_vip_code d \n        ON d.vip_code_sk = a.vip_code_sk\n    
+[2025-12-19, 16:34:45 UTC] {local_task_job_runner.py:123} ▼ Pre task execution logs
+[2025-12-19, 16:34:45 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START manual__2025-12-19T04:17:28.569484+00:00 [queued]>
+[2025-12-19, 16:34:45 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START manual__2025-12-19T04:17:28.569484+00:00 [queued]>
+[2025-12-19, 16:34:45 UTC] {taskinstance.py:2869} INFO - Starting attempt 1 of 1
+[2025-12-19, 16:34:45 UTC] {taskinstance.py:2892} INFO - Executing <Task(BigQueryInsertJobOperator): wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START> on 2025-12-19 04:17:28.569484+00:00
+[2025-12-19, 16:34:45 UTC] {standard_task_runner.py:72} INFO - Started process 2756 to run task
+[2025-12-19, 16:34:45 UTC] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START', 'manual__2025-12-19T04:17:28.569484+00:00', '--job-id', '20319656', '--raw', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py', '--cfg-path', '/tmp/tmpt63phn32']
+[2025-12-19, 16:34:45 UTC] {standard_task_runner.py:105} INFO - Job 20319656: Subtask wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START
+[2025-12-19, 16:34:45 UTC] {task_command.py:473} INFO - Running <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START manual__2025-12-19T04:17:28.569484+00:00 [running]> on host airflow-worker-x9vrg
+[2025-12-19, 16:34:45 UTC] {abstractoperator.py:783} ERROR - Exception rendering Jinja template for task 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START', field 'configuration'. Template: {'query': {'query': '\n-- view(s) name replaced:\n-- dw_fin_tblsv.ctl_etl_feed_process=dw_fin.ctl_etl_feed_process\n-- mdr_dw_tblsv.time_dim=mdr_dw.time_dim\n\n-- Edited\n\n-- Declaration of params:\n-- FEED_NAME=MDR_DATA_CHURN_NORM\n\n\n\nCREATE TABLE if NOT EXISTS {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc (TM_SK NUMERIC(12,0), DAY_DT DATETIME);\n\nBEGIN\nDECLARE FEED_NAME STRING DEFAULT \'{{ get_var(dag_run.dag_id, dag_run.id, \'$$FEED_NAME\', \'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC\') }}\';\nBEGIN TRANSACTION;\n\n -- MAIN SQL --\nINSERT INTO {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc (TM_SK, DAY_DT)\n(SELECT TM_SK,\n    DAY_DT\n  FROM {{ var.value.BQ_ProjectID }}.mdr_dw.time_dim\n  QUALIFY (ROW_NUMBER() OVER (PARTITION BY DAY_DT)) = 1);\n\n/** \nThe stages covered in this file are :\n\n|CTL_ETL_FEED_PROCESS (Target Definition)\n|--EXP_ADD_DATE (Expression)\n|----SQ_CTL_ETL_FEED_PROCESS (Source Qualifier)\n|------CTL_ETL_FEED_PROCESS (Source Definition)\n|--SEQ_ETL_PROC (Sequence)\n **/--;\n\n -- MAIN SQL --\nINSERT INTO {{ var.value.BQ_ProjectID }}.dw_fin.ctl_etl_feed_process (ETL_PROC_SK, FEED_NM, SVC_NM, FEED_FREQUENCY, FEED_REPORT_DT_SK, FEED_REPORT_DT, STATUS_CD,\n  STATUS_MSG, SYS_START_DT, ADD_DT, LAST_UPDT_DT)\n(WITH \n--SQ_CTL_ETL_FEED_PROCESS [Source Qualifier]\nSQ_CTL_ETL_FEED_PROCESS AS (SELECT ETL_PROC_SK,\n        FEED_NM,\n        SVC_NM,\n        FEED_FREQUENCY,\n        FEED_REPORT_DT_SK,\n        FEED_REPORT_DT,\n        STATUS_CD,\n        STATUS_MSG,\n        SYS_START_DT,\n        SYS_END_DT,\n        ADD_DT,\n        LAST_UPDT_DT\n      FROM {{ var.value.BQ_ProjectID }}.dw_fin.ctl_etl_feed_process\n      WHERE \n          ctl_etl_feed_process.etl_proc_sk= ( SELECT MAX(ETL_PROC_SK) from  {{ var.value.BQ_ProjectID }}.dw_fin.ctl_etl_feed_process where FEED_NM = FEED_NAME and status_cd = \'C\')\n          ) \n(SELECT DISTINCT CAST(IFNULL(CAST((SELECT MAX(ETL_PROC_SK) AS max_key\n                    FROM {{ var.value.BQ_ProjectID }}.dw_fin.ctl_etl_feed_process /*DM_SURROGATE*/ ) AS INT64), 0) + (ROW_NUMBER() OVER ()) AS NUMERIC) AS\n          ETL_PROC_SK,\n          t0.feed_nm,\n          t0.svc_nm,\n          t0.feed_frequency,\n            CASE\n            WHEN t0.feed_frequency = \'M\'\n            THEN `__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc0`.tm_sk\n            WHEN t0.feed_frequency = \'D\'\n            THEN `__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc`.tm_sk\n            WHEN t0.feed_frequency = \'W\'\n            THEN `__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc1`.tm_sk\n            ELSE NULL\n            END AS FEED_REPORT_DT_SK,\n          CAST(CASE\n              WHEN t0.feed_frequency = \'M\'\n              THEN CAST(LAST_DAY(DATETIME_ADD(CAST(t0.feed_report_dt AS DATETIME), INTERVAL 1 DAY)) AS DATETIME)\n              WHEN t0.feed_frequency = \'D\'\n              THEN DATETIME_ADD(CAST(t0.feed_report_dt AS DATETIME), INTERVAL 1 DAY)\n              WHEN t0.feed_frequency = \'W\'\n              THEN DATETIME_ADD(CAST(t0.feed_report_dt AS DATETIME), INTERVAL 7 DAY)\n              ELSE NULL\n              END AS DATE) AS FEED_REPORT_DT,\n          \'R\' AS STATUS_CD,\n          \'Feed Load Started\' AS STATUS_MSG,\n          CURRENT_DATETIME() AS SYS_START_DT,\n          CURRENT_DATETIME() AS ADD_DT,\n          CURRENT_DATETIME() AS LAST_UPDT_DT\n        FROM sq_ctl_etl_feed_process AS t0\n          LEFT JOIN {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc ON `__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_da
 Traceback (most recent call last):
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
     rendered_content = self.render_template(
@@ -32,29 +32,29 @@ Traceback (most recent call last):
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 730, in _render
     return super()._render(template, context, dag=dag)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 126, in _render
-    return render_template_as_native(template, context)
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 127, in _render
+    return render_template_to_string(template, context)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 306, in render_template_as_native
-    return render_template(template, cast(MutableMapping[str, Any], context), native=True)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 295, in render_template
-    return jinja2.nativetypes.native_concat(nodes)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/nativetypes.py", line 25, in native_concat
-    head = list(islice(values, 2))
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "<template>", line 15, in root
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 301, in render_template_to_string
+    return render_template(template, cast(MutableMapping[str, Any], context), native=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 296, in render_template
+    return "".join(nodes)
+           ^^^^^^^^^^^^^^
+  File "<template>", line 17, in root
+  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/sandbox.py", line 401, in call
+    return __context.call(__obj, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/python3.11/lib/python3.11/site-packages/jinja2/runtime.py", line 303, in call
     return __obj(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.py", line 94, in get_var
+  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py", line 18, in get_var
     return Variable.get(qualifier)
            ^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/variable.py", line 145, in get
     raise KeyError(f"Variable {key} does not exist")
-KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis_742601.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.$$FEED_NAME does not exist'
-[2025-12-18, 04:44:30 UTC] {abstractoperator.py:783} ERROR -   LEFT OUTER JOIN {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_lfa_tarcode_dim e \n        ON e.lfa_sk = a.lfa_sk\n      LEFT OUTER JOIN {{ var.value.BQ_ProjectID }}.dw_fin.shr_dim_tax_geo_cd g \n        ON g.taxing_geo_cd_sk = a.taxing_geo_cd_sk\n      LEFT OUTER JOIN {{ var.value.BQ_ProjectID }}.mdr_dw.time_dim t1\n        ON t1.tm_sk = a.rpt_dt_sk\n      LEFT OUTER JOIN {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_state_dim st\n        ON st.st_sk = a.st_sk\n     WHERE a.hoa_level_sk <> 7\n       AND a.st_sk NOT IN (79, 89, 90, 91, 98, 103, 109, 111,113, 116, 123, 124)  /*  exclude spinco records */ \n       AND a.wrcntr_sk NOT IN (21170, 21407, 22370, 23127, 26393, 26942, 30284, 30284, 32497, 34311) /* exclude spinco records */ \n       AND a.rpt_dt_sk =(select max (feed_report_dt_sk)\n                           from {{ var.value.BQ_ProjectID }}.dw_fin.ctl_etl_feed_process\n                          where feed_nm = \'FRANCHISE_FTV_MNTHLY_LIS\' and status_cd = \'R\'))\n    \n(SELECT DISTINCT CAN,\n        CUST_SUB_ACCT_NUM,\n        CUST_ID_NO,\n        ACCT_NO,\n        LN_OF_SVC_ID_NO_P2,\n        LN_OF_SVC_ID_NO_P1,\n        BILL_DATE,\n        COMPANY_CODE,\n        ST_CD,\n        LFA,\n        TAX_DISTRICT_CD,\n        SERVICE_ZIP_CD,\n        VIP_CODE,\n         RUN_RATE,\n         RIBS_ST_CD,\n        MRKT_SGMNT_DESC,\n        TAXING_GEO_CD,\n        ADDR_ID_NO,\n        SRC_SYS_SK,\n          CASE\n          WHEN ORD_CREATE_DT_SK = 1\n          THEN \'1\'\n          ELSE \'0\'\n          END AS IPTV_IND,\n          CASE\n          WHEN ORGNL_ORD_CREATE_DT_SK = 1\n          THEN \'FiOS Pre-Paid Billable Line\'\n          ELSE \'Regular Billable Line\'\n          END AS PRE_PAID_FIOS_IND\n      FROM `__query_1671758446__sq_ftv_fact_bl_detail`));\n\nCOMMIT TRANSACTION;\nEXCEPTION WHEN ERROR\n  THEN\n  RAISE USING message=concat("Exception while running query : ", FORMAT(@@error.message), @@error.formatted_stack_trace);\n  ROLLBACK TRANSACTION;\nEND;\n\n', 'useLegacySql': False, 'params': {'BQ_ProjectID': None, 'BQ_ProjectID_PR': None}}, 'labels': {'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}", 'instance_name': '{{ var.value.INSTANCE_NAME }}', 'job_id': 'wkfl_franchise_100_500_o_ftv_mnthly_lis', 'task_id': 'm_franchise_200_t_ftv_mnthly_lis_init_load', 'task_type': 'bq_to_bq_load'}}
+KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_744191.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.$$FEED_NAME does not exist'
+[2025-12-19, 16:34:45 UTC] {abstractoperator.py:783} ERROR - ily_disc`.day_dt =\n            DATETIME_ADD(CAST(t0.feed_report_dt AS DATETIME), INTERVAL 1 DAY)\n          LEFT JOIN {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc AS `__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc0` ON\n            `__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc0`.day_dt = CAST(LAST_DAY(DATETIME_ADD(CAST(t0.feed_report_dt AS DATETIME), INTERVAL 1 DAY)) AS\n              DATETIME)\n          LEFT JOIN {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc AS `__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc1` ON\n            `__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc1`.day_dt = DATETIME_ADD(CAST(t0.feed_report_dt AS DATETIME), INTERVAL 7 DAY)\n        EXCEPT DISTINCT\n        SELECT ETL_PROC_SK,\n          FEED_NM,\n          SVC_NM,\n          FEED_FREQUENCY,\n          FEED_REPORT_DT_SK,\n          FEED_REPORT_DT,\n          STATUS_CD,\n          STATUS_MSG,\n          SYS_START_DT,\n          ADD_DT,\n          LAST_UPDT_DT\n        FROM {{ var.value.BQ_ProjectID }}.dw_fin.ctl_etl_feed_process));\n\nCOMMIT TRANSACTION;\nEXCEPTION WHEN ERROR\n  THEN\n  RAISE USING message=concat("Exception while running query : ", FORMAT(@@error.message), @@error.formatted_stack_trace);\n  ROLLBACK TRANSACTION;\nEND;\n\nDROP TABLE {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_100_ctl_etl_feed_process_start0_wkfl_norm_100_500_o_fin_daily_disc;\n\n', 'useLegacySql': False, 'params': {'BQ_ProjectID': '{{ var.value.BQ_ProjectID }}', 'BQ_ProjectID_PR': '{{ var.value.BQ_ProjectID_PR }}'}}, 'labels': {'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}", 'instance_name': '{{ var.value.INSTANCE_NAME }}', 'job_id': 'wkfl_norm_100_500_o_fin_daily_disc', 'task_id': 'm_100_ctl_etl_feed_process_start', 'task_type': 'bq_to_bq_load'}}
 Traceback (most recent call last):
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
     rendered_content = self.render_template(
@@ -77,29 +77,29 @@ Traceback (most recent call last):
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 730, in _render
     return super()._render(template, context, dag=dag)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 126, in _render
-    return render_template_as_native(template, context)
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 127, in _render
+    return render_template_to_string(template, context)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 306, in render_template_as_native
-    return render_template(template, cast(MutableMapping[str, Any], context), native=True)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 295, in render_template
-    return jinja2.nativetypes.native_concat(nodes)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/nativetypes.py", line 25, in native_concat
-    head = list(islice(values, 2))
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "<template>", line 15, in root
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 301, in render_template_to_string
+    return render_template(template, cast(MutableMapping[str, Any], context), native=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 296, in render_template
+    return "".join(nodes)
+           ^^^^^^^^^^^^^^
+  File "<template>", line 17, in root
+  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/sandbox.py", line 401, in call
+    return __context.call(__obj, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/python3.11/lib/python3.11/site-packages/jinja2/runtime.py", line 303, in call
     return __obj(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.py", line 94, in get_var
+  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py", line 18, in get_var
     return Variable.get(qualifier)
            ^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/variable.py", line 145, in get
     raise KeyError(f"Variable {key} does not exist")
-KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis_742601.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.$$FEED_NAME does not exist'
-[2025-12-18, 04:44:30 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
+KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_744191.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.$$FEED_NAME does not exist'
+[2025-12-19, 16:34:45 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
 Traceback (most recent call last):
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 274, in _run_raw_task
     TaskInstance._execute_task_with_callbacks(
@@ -131,31 +131,31 @@ Traceback (most recent call last):
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 730, in _render
     return super()._render(template, context, dag=dag)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 126, in _render
-    return render_template_as_native(template, context)
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 127, in _render
+    return render_template_to_string(template, context)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 306, in render_template_as_native
-    return render_template(template, cast(MutableMapping[str, Any], context), native=True)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 295, in render_template
-    return jinja2.nativetypes.native_concat(nodes)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/nativetypes.py", line 25, in native_concat
-    head = list(islice(values, 2))
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "<template>", line 15, in root
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 301, in render_template_to_string
+    return render_template(template, cast(MutableMapping[str, Any], context), native=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 296, in render_template
+    return "".join(nodes)
+           ^^^^^^^^^^^^^^
+  File "<template>", line 17, in root
+  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/sandbox.py", line 401, in call
+    return __context.call(__obj, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/python3.11/lib/python3.11/site-packages/jinja2/runtime.py", line 303, in call
     return __obj(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.py", line 94, in get_var
+  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py", line 18, in get_var
     return Variable.get(qualifier)
            ^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/variable.py", line 145, in get
     raise KeyError(f"Variable {key} does not exist")
-KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis_742601.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.$$FEED_NAME does not exist'
-[2025-12-18, 04:44:30 UTC] {base.py:84} INFO - Retrieving connection 'sa-vz-it-gk1v-edwdo-0-app'
-[2025-12-18, 04:44:30 UTC] {credentials_provider.py:410} INFO - Getting connection using `google.auth.default()` since no explicit credentials are provided.
-[2025-12-18, 04:44:30 UTC] {mixins.py:122} WARNING - Cannot retrieve job details from BigQuery.Client. 404 GET https://bigquery.googleapis.com/bigquery/v2/projects/vz-it-pr-gk1v-pleedwdo-0/jobs/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD?projection=full&prettyPrint=false: Not found: Job vz-it-pr-gk1v-pleedwdo-0:wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD
+KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_744191.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.$$FEED_NAME does not exist'
+[2025-12-19, 16:34:46 UTC] {base.py:84} INFO - Retrieving connection 'sa-vz-it-gk1v-edwdo-0-app'
+[2025-12-19, 16:34:46 UTC] {credentials_provider.py:410} INFO - Getting connection using `google.auth.default()` since no explicit credentials are provided.
+[2025-12-19, 16:34:46 UTC] {mixins.py:122} WARNING - Cannot retrieve job details from BigQuery.Client. 404 GET https://bigquery.googleapis.com/bigquery/v2/projects/vz-it-pr-gk1v-pleedwdo-0/jobs/wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_100_CTL_ETL_FEED_PROCESS_START?projection=full&prettyPrint=false: Not found: Job vz-it-pr-gk1v-pleedwdo-0:wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_100_CTL_ETL_FEED_PROCESS_START
 Traceback (most recent call last):
   File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/google/cloud/openlineage/mixins.py", line 102, in get_openlineage_facets_on_complete
     job_properties = self._client.get_job(job_id=self.job_id)._properties
@@ -179,75 +179,11 @@ Traceback (most recent call last):
              ^^^^^^^^
   File "/opt/python3.11/lib/python3.11/site-packages/google/cloud/_http/__init__.py", line 494, in api_request
     raise exceptions.from_http_response(response)
-google.api_core.exceptions.NotFound: 404 GET https://bigquery.googleapis.com/bigquery/v2/projects/vz-it-pr-gk1v-pleedwdo-0/jobs/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD?projection=full&prettyPrint=false: Not found: Job vz-it-pr-gk1v-pleedwdo-0:wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD
-[2025-12-18, 04:44:31 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
-[2025-12-18, 04:44:31 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
-[2025-12-18, 04:44:31 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-18T04:44:30.029986+00:00', 'eventType': 'FAIL', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': 'BigQueryInsertJobOperator', 'taskId': 'wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-18T04:38:40.829905+00:00'}}}}
-[2025-12-18, 04:44:31 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/b8e1ec688549f51bd5d931f08d9e8ff5, run=projects/1032455509101/locations/us-east4/processes/b8e1ec688549f51bd5d931f08d9e8ff5/runs/3183640d607bfff7c46d5424af02e040
-[2025-12-18, 04:44:31 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `FAIL` event of id `019b2fc0-c3bd-7ebe-b21c-c33bbef2f03a`
-[2025-12-18, 04:44:31 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis, task_id=wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD, run_id=manual__2025-12-18T04:38:40.829905+00:00, execution_date=20251218T043840, start_date=20251218T044429, end_date=20251218T044430
-[2025-12-18, 04:44:31 UTC] {validators.py:137} ERROR - Invalid stat name: task.count.dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis@-@wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD@-@BigQueryInsertJobOperator@-@failed@-@default.
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 274, in _run_raw_task
-    TaskInstance._execute_task_with_callbacks(
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3119, in _execute_task_with_callbacks
-    task_orig = self.render_templates(context=context, jinja_env=jinja_env)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3543, in render_templates
-    original_task.render_template_fields(context, jinja_env)
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 1453, in render_template_fields
-    self._do_render_template_fields(self, self.template_fields, context, jinja_env, set())
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
-    rendered_content = self.render_template(
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 171, in render_template
-    return self._render(template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 730, in _render
-    return super()._render(template, context, dag=dag)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 126, in _render
-    return render_template_as_native(template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 306, in render_template_as_native
-    return render_template(template, cast(MutableMapping[str, Any], context), native=True)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 295, in render_template
-    return jinja2.nativetypes.native_concat(nodes)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/nativetypes.py", line 25, in native_concat
-    head = list(islice(values, 2))
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "<template>", line 15, in root
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/runtime.py", line 303, in call
-    return __obj(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_FRANCHISE_100_500_O_FTV_MNTHLY_LIS/dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis.py", line 94, in get_var
-    return Variable.get(qualifier)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/variable.py", line 145, in get
-    raise KeyError(f"Variable {key} does not exist")
-KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis_742601.wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.$$FEED_NAME does not exist'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/metrics/validators.py", line 134, in wrapper
-    stat = handler_stat_name_func(stat)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/metrics/validators.py", line 218, in stat_name_default_handler
-    raise InvalidStatsNameException(
-airflow.exceptions.InvalidStatsNameException: The stat_name (task.count.dg_gk1v_edwdo_wln_mdr_billing_wkfl_franchise_100_500_o_ftv_mnthly_lis@-@wklt_FRANCHISE_100_500_O_FTV_MNTHLY_LIS.s_m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD.m_FRANCHISE_200_T_FTV_MNTHLY_LIS_INIT_LOAD@-@BigQueryInsertJobOperator@-@failed@-@default) has to be less than 250 characters.
-[2025-12-18, 04:44:31 UTC] {taskinstance.py:341} ▶ Post task execution logs
+google.api_core.exceptions.NotFound: 404 GET https://bigquery.googleapis.com/bigquery/v2/projects/vz-it-pr-gk1v-pleedwdo-0/jobs/wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_100_CTL_ETL_FEED_PROCESS_START?projection=full&prettyPrint=false: Not found: Job vz-it-pr-gk1v-pleedwdo-0:wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_100_CTL_ETL_FEED_PROCESS_START
+[2025-12-19, 16:34:47 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
+[2025-12-19, 16:34:47 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
+[2025-12-19, 16:34:47 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-19T16:34:46.030362+00:00', 'eventType': 'FAIL', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': 'BigQueryInsertJobOperator', 'taskId': 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_D', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-19T04:17:28.569484+00:00'}}}}
+[2025-12-19, 16:34:47 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/5736361e1cec7ac49302298e312673f1, run=projects/1032455509101/locations/us-east4/processes/5736361e1cec7ac49302298e312673f1/runs/4e716c6c7c4b9820e82258d8bc84a6ee
+[2025-12-19, 16:34:47 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `FAIL` event of id `019b34d3-b5f9-7f21-b980-db8a81434319`
+[2025-12-19, 16:34:47 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START, run_id=manual__2025-12-19T04:17:28.569484+00:00, execution_date=20251219T041728, start_date=20251219T163445, end_date=20251219T163446
+[2025-12-19, 16:34:47 UTC] {taskinstance.py:341} ▶ Post task execution logs
