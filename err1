@@ -1,16 +1,40 @@
 default-hostname
 *** Reading remote logs from Cloud Logging.
-*** Logs not found for Cloud Logging filter:
-logName=("projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker" OR "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-k8s-worker")
-resource.type="cloud_composer_environment"
-resource.labels.project_id="vz-it-pr-wdwg-pleaidcom-0"
-resource.labels.environment_name="vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-resource.labels.location="us-east4"
-timestamp>="2025-12-19T04:17:28.569484+00:00"
-timestamp<="2025-12-19T20:07:02.266228+00:00"
-labels.task-id="wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC"
-labels.workflow="dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc"
-labels.execution-date="2025-12-19T04:17:28.569484+00:00"
-labels.try-number="5"
-*** The task wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC from DAG dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc might not have been executed, logs were deleted as part of logs retention (default of 30 days), or worker executing it might have finished abnormally (e.g. was evicted).
-*** Please, refer to https://cloud.google.com/composer/docs/how-to/using/troubleshooting-dags#common_issues for hints to learn what might be possible reasons for a missing log.
+[2025-12-19, 20:13:33 UTC] {local_task_job_runner.py:123} ▶ Pre task execution logs
+[2025-12-19, 20:13:35 UTC] {ssh.py:286} WARNING - No Host Key Verification. This won't protect against Man-In-The-Middle attacks
+[2025-12-19, 20:13:35 UTC] {transport.py:1944} INFO - Connected (version 2.0, client OpenSSH_8.0)
+[2025-12-19, 20:13:35 UTC] {transport.py:1944} INFO - Auth banner: b'\n ************ WARNING: UNAUTHORIZED PERSONS, DO NOT PROCEED ************\n\nThis system is intended to be used solely by authorized users in the course of legitimate corporate business.  Users are monitored to the extent necessary to properly administer the system, to identify unauthorized users or users operating beyond their proper authority, and to investigate improper access or use. By accessing the system, you are consenting to this monitoring.  Additionally, users accessing this system agree that they understand and will comply with all Verizon Information Security and Privacy policies, including policy statements, instructions, standards and guidelines.\n\n ************ WARNING: UNAUTHORIZED PERSONS, DO NOT PROCEED ************\n\n'
+[2025-12-19, 20:13:35 UTC] {transport.py:1944} INFO - Authentication (password) successful!
+[2025-12-19, 20:13:35 UTC] {ssh.py:432} INFO - Running command: /usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FIN FIN_FACT_CUST_DISC MDR_DATA_CHURN_NORM 
+[2025-12-19, 20:13:35 UTC] {ssh.py:478} INFO - FIN_FACT_CUST_DISC DW_FIN
+[2025-12-19, 20:13:45 UTC] {ssh.py:483} WARNING - /sysmnt/etl/etlcfs02scripts/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh[66]: echo: write to 1 failed [No space left on device]
+[2025-12-19, 20:13:45 UTC] {ssh.py:483} WARNING - /sysmnt/etl/etlcfs02scripts/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh[66]: echo: write to 1 failed [No space left on device]
+[2025-12-19, 20:13:45 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 769, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 735, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/ssh/operators/ssh.py", line 173, in execute
+    result = self.run_ssh_client_command(ssh_client, self.command, context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/ssh/operators/ssh.py", line 161, in run_ssh_client_command
+    self.raise_for_status(exit_status, agg_stderr, context=context)
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/ssh/operators/ssh.py", line 155, in raise_for_status
+    raise AirflowException(f"SSH operator error: exit status = {exit_status}")
+airflow.exceptions.AirflowException: SSH operator error: exit status = 1
+[2025-12-19, 20:13:46 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
+[2025-12-19, 20:13:46 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
+[2025-12-19, 20:13:46 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-19T20:13:45.817868+00:00', 'eventType': 'FAIL', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': 'SSHOperator', 'taskId': 'wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DI', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-19T20:09:33.197233+00:00'}}}}
+[2025-12-19, 20:13:46 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/cf4515efba295b1e32a392db4048541e, run=projects/1032455509101/locations/us-east4/processes/cf4515efba295b1e32a392db4048541e/runs/41d53bf34022c6cb7f470f41da6b832e
+[2025-12-19, 20:13:46 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `FAIL` event of id `019b383b-5d0d-7356-bd60-db44a2386252`
+[2025-12-19, 20:13:46 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC, run_id=manual__2025-12-19T20:09:33.197233+00:00, execution_date=20251219T200933, start_date=20251219T201333, end_date=20251219T201345
+[2025-12-19, 20:13:46 UTC] {taskinstance.py:341} ▶ Post task execution logs
