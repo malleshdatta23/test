@@ -1,2 +1,865 @@
-this is the first file
-this is second line
+"timestamp": "2025-12-19T16:37:10.582173594Z",
+    "severity": "ERROR",
+    "labels": {
+      "task-id": "wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START",
+      "try-number": "1",
+      "workflow": "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc",
+      "map-index": "-1",
+      "worker_id": "airflow-worker-vwcff",
+      "process": "standard_task_runner.py:124",
+      "execution-date": "2025-12-19T04:17:25.223149+00:00"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker",
+    "receiveTimestamp": "2025-12-19T16:39:22.636020628Z"
+  },
+  {
+    "textPayload": "Task exited with return code 1",
+    "insertId": "1pn12j8fnm2tlx",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:10.676541633Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "local_task_job_runner.py:266",
+      "execution-date": "2025-12-19T04:17:25.223149+00:00",
+      "worker_id": "airflow-worker-vwcff",
+      "workflow": "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc",
+      "try-number": "1",
+      "map-index": "-1",
+      "task-id": "wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker",
+    "receiveTimestamp": "2025-12-19T16:39:22.636020628Z"
+  },
+  {
+    "textPayload": "1 downstream tasks scheduled from follow-on schedule check",
+    "insertId": "1pn12j8fnm2tmm",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:10.804775861Z",
+    "severity": "INFO",
+    "labels": {
+      "try-number": "1",
+      "map-index": "-1",
+      "workflow": "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc",
+      "task-id": "wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START",
+      "execution-date": "2025-12-19T04:17:25.223149+00:00",
+      "worker_id": "airflow-worker-vwcff",
+      "process": "taskinstance.py:3904"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker",
+    "receiveTimestamp": "2025-12-19T16:39:22.636020628Z"
+  },
+  {
+    "textPayload": "::endgroup::",
+    "insertId": "1pn12j8fnm2tmn",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:10.808659521Z",
+    "severity": "INFO",
+    "labels": {
+      "task-id": "wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START",
+      "map-index": "-1",
+      "process": "local_task_job_runner.py:245",
+      "execution-date": "2025-12-19T04:17:25.223149+00:00",
+      "workflow": "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc",
+      "try-number": "1",
+      "worker_id": "airflow-worker-vwcff"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker",
+    "receiveTimestamp": "2025-12-19T16:39:22.636020628Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  2.10s           2025-12-19T16:34:38                      60",
+    "insertId": "8x5wywfrrme6n",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:12.343000006Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "dag-processor-manager"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:37:15.583156148Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                1           0  0.33s           2025-12-19T16:34:47                      18",
+    "insertId": "ibrrq0fq9lgj8",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:12.355763021Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:37:19.699211173Z"
+  },
+  {
+    "textPayload": "\t<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>",
+    "insertId": "o631uofnlhetq",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.235756938Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "DAG dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc has 1/50 running and queued tasks",
+    "insertId": "o631uofnlhets",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.235780182Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:507",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "\t<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>",
+    "insertId": "o631uofnlhetx",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.236885395Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "Trying to enqueue tasks: [<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>, <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_nar_o_mthly_eqp_feed.s_m_NAR_500_CTL_ETL_FEED_PROCESS_END.status manual__2025-12-19T15:41:35.835105+00:00 [scheduled]>] for executor: CeleryExecutor(parallelism=0)",
+    "insertId": "o631uofnlheu1",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.242041664Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:748",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "Sending TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1) to CeleryExecutor with priority 23 and queue default",
+    "insertId": "o631uofnlheu2",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.242482492Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:692",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "Adding to queue: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status', 'manual__2025-12-19T04:17:25.223149+00:00', '--local', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py']",
+    "insertId": "o631uofnlheu3",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.242655866Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "base_executor.py:169",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "Received executor event with state queued for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
+    "insertId": "o631uofnlheu6",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.383901168Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:776",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "Received executor event with state success for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
+    "insertId": "o631uofnlheu9",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.384458308Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:776",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "TaskInstance Finished: dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START, run_id=manual__2025-12-19T04:17:25.223149+00:00, map_index=-1, run_start_date=2025-12-19 16:37:06.888871+00:00, run_end_date=2025-12-19 16:37:07.595003+00:00, run_duration=0.706132, state=failed, executor=CeleryExecutor(parallelism=0), executor_state=success, try_number=1, max_tries=0, job_id=20319675, pool=default_pool, queue=default, priority_weight=24, operator=BigQueryInsertJobOperator, queued_dttm=2025-12-19 16:37:00.089830+00:00, queued_by_job_id=20319029, pid=490540",
+    "insertId": "o631uofnlheuc",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.402321720Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:813",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "Setting external_id for <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status manual__2025-12-19T04:17:25.223149+00:00 [queued]> to 1dce0dee-ce99-49aa-8c93-1fb0e43ae92b",
+    "insertId": "o631uofnlheuf",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:16.403349241Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:803",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    0           1  0.30s           2025-12-19T16:29:53                       7",
+    "insertId": "1pxdr16fpefi4m",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:17.765457765Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:37:27.931780928Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                0           1  0.20s           2025-12-19T16:34:29                       7",
+    "insertId": "19iz8ctfqnml1o",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:17.779695Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:37:33.986717694Z"
+  },
+  {
+    "textPayload": "\t<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1 manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>",
+    "insertId": "1ulcinyf7e14m1",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.510615628Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "DAG dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc has 1/50 running and queued tasks",
+    "insertId": "1ulcinyf7e14m2",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.510812536Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:507",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "\t<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1 manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>",
+    "insertId": "1ulcinyf7e14m5",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.511574454Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "Trying to enqueue tasks: [<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1 manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>] for executor: CeleryExecutor(parallelism=0)",
+    "insertId": "1ulcinyf7e14m7",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.515458756Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:748",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "Sending TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1) to CeleryExecutor with priority 22 and queue default",
+    "insertId": "1ulcinyf7e14m8",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.515614265Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "scheduler_job_runner.py:692"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "Adding to queue: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', 'wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1', 'manual__2025-12-19T04:17:25.223149+00:00', '--local', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py']",
+    "insertId": "1ulcinyf7e14m9",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.515741476Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "base_executor.py:169"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "Received executor event with state queued for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
+    "insertId": "1ulcinyf7e14ma",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.528336396Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "scheduler_job_runner.py:776",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "Received executor event with state success for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
+    "insertId": "1ulcinyf7e14mb",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.528483428Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "scheduler_job_runner.py:776"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "TaskInstance Finished: dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status, run_id=manual__2025-12-19T04:17:25.223149+00:00, map_index=-1, run_start_date=2025-12-19 16:37:22.242290+00:00, run_end_date=2025-12-19 16:37:24.970134+00:00, run_duration=2.727844, state=failed, executor=CeleryExecutor(parallelism=0), executor_state=success, try_number=1, max_tries=0, job_id=20319677, pool=default_pool, queue=default, priority_weight=23, operator=DMStatusOperator, queued_dttm=2025-12-19 16:37:16.237548+00:00, queued_by_job_id=20319029, pid=490616",
+    "insertId": "1ulcinyf7e14mc",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.540573034Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "scheduler_job_runner.py:813"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "Setting external_id for <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1 manual__2025-12-19T04:17:25.223149+00:00 [queued]> to 40156833-9a17-4f07-8b32-466e1d3332b8",
+    "insertId": "1ulcinyf7e14md",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:27.541211096Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "scheduler_job_runner.py:803"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
+  },
+  {
+    "textPayload": "Received executor event with state success for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
+    "insertId": "crvpb1fkm0zx3",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:43.285435926Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "scheduler_job_runner.py:776"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:48.781263815Z"
+  },
+  {
+    "textPayload": "TaskInstance Finished: dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1, run_id=manual__2025-12-19T04:17:25.223149+00:00, map_index=-1, run_start_date=2025-12-19 16:37:34.386030+00:00, run_end_date=2025-12-19 16:37:37.083153+00:00, run_duration=2.697123, state=success, executor=CeleryExecutor(parallelism=0), executor_state=success, try_number=1, max_tries=0, job_id=20319679, pool=default_pool, queue=default, priority_weight=22, operator=_BranchPythonDecoratedOperator, queued_dttm=2025-12-19 16:37:27.511757+00:00, queued_by_job_id=20319029, pid=490665",
+    "insertId": "crvpb1fkm0zx5",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:43.301460186Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "scheduler_job_runner.py:813"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
+    "receiveTimestamp": "2025-12-19T16:37:48.781263815Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  2.10s           2025-12-19T16:34:38                      60",
+    "insertId": "crvpb1fkm1044",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:45.827906329Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "dag-processor-manager"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:37:48.781263815Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                1           0  0.33s           2025-12-19T16:34:47                      18",
+    "insertId": "e68mhwfql6dz1",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:45.843401229Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:37:52.763154782Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    0           1  0.30s           2025-12-19T16:29:53                       7",
+    "insertId": "ogds4gfmx5s2f",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:58.547785908Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:38:09.578882370Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                0           1  0.20s           2025-12-19T16:34:29                       7",
+    "insertId": "1r9ywewfqae1p9",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:37:58.562661751Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:38:15.958961068Z"
+  },
+  {
+    "textPayload": "Removing file:///home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/__pycache__/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.cpython-311.pyc...",
+    "insertId": "1et0a7ufl4vsi8",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:38:03.832230541Z",
+    "severity": "INFO",
+    "labels": {
+      "pod_id": "airflow-scheduler-547bdf7dcc-9njnj",
+      "sub_service": "gcs-syncd"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/gcs-syncd",
+    "receiveTimestamp": "2025-12-19T16:38:22.849612106Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  2.10s           2025-12-19T16:34:38                      60",
+    "insertId": "1k3trmxfr9vuwt",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:38:19.610511656Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "dag-processor-manager"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:38:22.817694743Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                1           0  0.33s           2025-12-19T16:34:47                      18",
+    "insertId": "1aw4a8wfor19q8",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:38:19.622976283Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:38:28.407907746Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    0           1  0.30s           2025-12-19T16:29:53                       7",
+    "insertId": "jzpm16fq2nowe",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:38:32.763108594Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj",
+      "process": "dag-processor-manager"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:38:40.268717685Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                0           1  0.20s           2025-12-19T16:34:29                       7",
+    "insertId": "1nnonzdfo1fvwv",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:38:32.779253764Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:38:45.389537425Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  2.10s           2025-12-19T16:34:38                      60",
+    "insertId": "bdpkkmfpkrq6t",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:38:53.727456236Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "dag-processor-manager"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:38:56.988652711Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                1           0  0.33s           2025-12-19T16:34:47                      18",
+    "insertId": "1et0a7ufl4y0gp",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4"
+      }
+    },
+    "timestamp": "2025-12-19T16:38:53.740252817Z",
+    "severity": "INFO",
+    "labels": {
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
+      "process": "dag-processor-manager"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:39:01.257366957Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  0.94s           2025-12-19T16:38:37                      19",
+    "insertId": "1pmsovhfodo36q",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
+        "location": "us-east4",
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
+      }
+    },
+    "timestamp": "2025-12-19T16:39:07.033631288Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:39:12.764109519Z"
+  },
+  {
+    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                0           1  0.20s           2025-12-19T16:34:29                       7",
+    "insertId": "ofprigfq92hc8",
+    "resource": {
+      "type": "cloud_composer_environment",
+      "labels": {
+        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
+        "location": "us-east4",
+        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
+      }
+    },
+    "timestamp": "2025-12-19T16:39:07.057834084Z",
+    "severity": "INFO",
+    "labels": {
+      "process": "dag-processor-manager",
+      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
+    },
+    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
+    "receiveTimestamp": "2025-12-19T16:39:21.667947203Z"
+  }
