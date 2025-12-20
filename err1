@@ -1,40 +1,156 @@
 default-hostname
 *** Reading remote logs from Cloud Logging.
-[2025-12-19, 20:13:33 UTC] {local_task_job_runner.py:123} ▶ Pre task execution logs
-[2025-12-19, 20:13:35 UTC] {ssh.py:286} WARNING - No Host Key Verification. This won't protect against Man-In-The-Middle attacks
-[2025-12-19, 20:13:35 UTC] {transport.py:1944} INFO - Connected (version 2.0, client OpenSSH_8.0)
-[2025-12-19, 20:13:35 UTC] {transport.py:1944} INFO - Auth banner: b'\n ************ WARNING: UNAUTHORIZED PERSONS, DO NOT PROCEED ************\n\nThis system is intended to be used solely by authorized users in the course of legitimate corporate business.  Users are monitored to the extent necessary to properly administer the system, to identify unauthorized users or users operating beyond their proper authority, and to investigate improper access or use. By accessing the system, you are consenting to this monitoring.  Additionally, users accessing this system agree that they understand and will comply with all Verizon Information Security and Privacy policies, including policy statements, instructions, standards and guidelines.\n\n ************ WARNING: UNAUTHORIZED PERSONS, DO NOT PROCEED ************\n\n'
-[2025-12-19, 20:13:35 UTC] {transport.py:1944} INFO - Authentication (password) successful!
-[2025-12-19, 20:13:35 UTC] {ssh.py:432} INFO - Running command: /usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FIN FIN_FACT_CUST_DISC MDR_DATA_CHURN_NORM 
-[2025-12-19, 20:13:35 UTC] {ssh.py:478} INFO - FIN_FACT_CUST_DISC DW_FIN
-[2025-12-19, 20:13:45 UTC] {ssh.py:483} WARNING - /sysmnt/etl/etlcfs02scripts/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh[66]: echo: write to 1 failed [No space left on device]
-[2025-12-19, 20:13:45 UTC] {ssh.py:483} WARNING - /sysmnt/etl/etlcfs02scripts/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh[66]: echo: write to 1 failed [No space left on device]
-[2025-12-19, 20:13:45 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
+[2025-12-20, 16:43:03 UTC] {local_task_job_runner.py:123} ▼ Pre task execution logs
+[2025-12-20, 16:43:03 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC manual__2025-12-20T16:38:17.055889+00:00 [queued]>
+[2025-12-20, 16:43:03 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC manual__2025-12-20T16:38:17.055889+00:00 [queued]>
+[2025-12-20, 16:43:03 UTC] {taskinstance.py:2869} INFO - Starting attempt 1 of 1
+[2025-12-20, 16:43:03 UTC] {taskinstance.py:2892} INFO - Executing <Task(BigQueryInsertJobOperator): wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC> on 2025-12-20 16:38:17.055889+00:00
+[2025-12-20, 16:43:03 UTC] {standard_task_runner.py:72} INFO - Started process 332514 to run task
+[2025-12-20, 16:43:03 UTC] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1', 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC', 'manual__2025-12-20T16:38:17.055889+00:00', '--job-id', '20347552', '--raw', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py', '--cfg-path', '/tmp/tmp3odz6l4_']
+[2025-12-20, 16:43:03 UTC] {standard_task_runner.py:105} INFO - Job 20347552: Subtask wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC
+[2025-12-20, 16:43:03 UTC] {task_command.py:473} INFO - Running <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC manual__2025-12-20T16:38:17.055889+00:00 [running]> on host airflow-worker-m75kw
+[2025-12-20, 16:43:04 UTC] {abstractoperator.py:783} ERROR - Exception rendering Jinja template for task 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC', field 'configuration'. Template: {'query': {'query': '\n-- view(s) name replaced:\n-- dw_fin_tblsv.fin_fact_cust_disc=dw_fin.fin_fact_cust_disc\n-- mdr_dw_tblsv.time_dim=mdr_dw.time_dim\n-- dw_ssp_tblsv.ssp_state_dim=dw_ssp.ssp_state_dim\n-- dw_ssp_tblsv.ssp_disconnect_reason_dim=dw_ssp.ssp_disconnect_reason_dim\n-- dw_fin_userv.v_bbb_ctl_target_fact=os_bbb_userv.v_bbb_ctl_target_fact\n\n-- Edited\n\n\nBEGIN\nBEGIN TRANSACTION;\n\nTRUNCATE TABLE {{ var.value.BQ_ProjectID }}.dw_fin_admin.fin_trn_daily_disc;\n\n/** \nThe stages covered in this file are :\n\n|FIN_TRN_DAILY_DISC (Target Definition)\n|--EXP_ADD_START_TIME (Expression)\n|----SQ_FIN_FACT_CUST_DISC (Source Qualifier)\n|------FIN_FACT_CUST_DISC (Source Definition)\n|------SSP_DISCONNECT_REASON_DIM (Source Definition)\n|------SSP_STATE_DIM (Source Definition)\n|------TIME_DIM (Source Definition)\n **/--;\n\n -- MAIN SQL --\nINSERT INTO {{ var.value.BQ_ProjectID }}.dw_fin_admin.fin_trn_daily_disc (ADRS_ID, ST_CD, CKT_ID, DSCNNT_RSN_CD, DSCNNT_RSN_DESC, DISC_ORGNL_ORD_ID, DISCO_GRP,\n  SUB_ACCT_EST_DT, MDR_DISC_DT, SUB_ACCT_TERM_DT, ADD_DT)\n(WITH \n--SQ_FIN_FACT_CUST_DISC [Source Qualifier]\n`__Query_375151661__SQ_FIN_FACT_CUST_DISC` AS (SELECT a.adrs_id, c.st_cd, a.ckt_id, d.dscnnt_rsn_cd, d.dscnnt_rsn_desc, a.disc_orgnl_ord_id, InitCap(d.disco_grp) as disco_grp,  \n           e.day_dt AS sub_acct_est_dt, b.day_dt AS mdr_disc_dt, f.day_dt AS sub_acct_term_dt \n      FROM {{ var.value.BQ_ProjectID }}.dw_fin.fin_fact_cust_disc a, \n      {{ var.value.BQ_ProjectID }}.mdr_dw.time_dim b, \n      {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_state_dim c, \n      {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_disconnect_reason_dim d, \n      {{ var.value.BQ_ProjectID }}.mdr_dw.time_dim e, \n      {{ var.value.BQ_ProjectID }}.mdr_dw.time_dim f\n     WHERE a.mdr_disc_dt_sk = b.tm_sk\n       AND a.st_sk = c.st_sk\n       AND a.dscnct_rsn_sk = d.dscnct_rsn_sk\n       AND a.sub_acct_estabd_dt_sk = e.tm_sk\n       AND a.sub_acct_term_dt_sk = f.tm_sk\n       AND a.test_acct_sk = 0\n       AND a.hoa_level_sk <> 7\n       AND b.day_dt = ( SELECT MAX(b.report_dt) \n                          FROM {{ var.value.BQ_ProjectID }}.os_bbb_userv.v_bbb_ctl_target_fact b\n                         WHERE b.tgt_fact_table = \'FIN_FACT_CUST_DISC\'\n                           AND b.stat_cd = \'C\' ))\n    \n(SELECT DISTINCT ADRS_ID,\n        ST_CD,\n        CKT_ID,\n        CAST(CAST(DSCNNT_RSN_CD AS NUMERIC) AS INT64) AS DSCNNT_RSN_CD,\n        DSCNNT_RSN_DESC,\n        DISC_ORGNL_ORD_ID,\n        DISCO_GRP,\n        SUB_ACCT_EST_DT,\n        MDR_DISC_DT,\n        SUB_ACCT_TERM_DT,\n        CURRENT_DATETIME() AS ADD_DT\n      FROM `__query_375151661__sq_fin_fact_cust_disc`));\n\nCOMMIT TRANSACTION;\nEXCEPTION WHEN ERROR\n  THEN\n  RAISE USING message=concat("Exception while running query : ", FORMAT(@@error.message), @@error.formatted_stack_trace);\n  ROLLBACK TRANSACTION;\nEND;\n\n', 'useLegacySql': False, 'params': {'BQ_ProjectID': '{{ var.value.BQ_ProjectID }}', 'BQ_ProjectID_PR': '{{ var.value.BQ_ProjectID_PR }}', 'FEED_NAME': "{{ var.value.get(dag.dag_id ~ '_' ~ dag_run.id ~ '.s_m_NORM_300_T_FIN_DAILY_DISC.$$FEED_NAME') }}"}}, 'labels': {'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}", 'instance_name': '{{ var.value.INSTANCE_NAME }}', 'job_id': 'wkfl_norm_100_500_o_fin_daily_disc', 'task_id': 'm_norm_300_t_fin_daily_disc', 'task_type': 'bq_to_bq_load'}}
 Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 769, in _execute_task
-    result = _execute_callable(context=context, **execute_callable_kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 735, in _execute_callable
-    return ExecutionCallableRunner(
-           ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/operator_helpers.py", line 252, in run
-    return self.func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
-    return func(self, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/ssh/operators/ssh.py", line 173, in execute
-    result = self.run_ssh_client_command(ssh_client, self.command, context=context)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/ssh/operators/ssh.py", line 161, in run_ssh_client_command
-    self.raise_for_status(exit_status, agg_stderr, context=context)
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/ssh/operators/ssh.py", line 155, in raise_for_status
-    raise AirflowException(f"SSH operator error: exit status = {exit_status}")
-airflow.exceptions.AirflowException: SSH operator error: exit status = 1
-[2025-12-19, 20:13:46 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
-[2025-12-19, 20:13:46 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
-[2025-12-19, 20:13:46 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-19T20:13:45.817868+00:00', 'eventType': 'FAIL', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': 'SSHOperator', 'taskId': 'wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DI', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-19T20:09:33.197233+00:00'}}}}
-[2025-12-19, 20:13:46 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/cf4515efba295b1e32a392db4048541e, run=projects/1032455509101/locations/us-east4/processes/cf4515efba295b1e32a392db4048541e/runs/41d53bf34022c6cb7f470f41da6b832e
-[2025-12-19, 20:13:46 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `FAIL` event of id `019b383b-5d0d-7356-bd60-db44a2386252`
-[2025-12-19, 20:13:46 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC, run_id=manual__2025-12-19T20:09:33.197233+00:00, execution_date=20251219T200933, start_date=20251219T201333, end_date=20251219T201345
-[2025-12-19, 20:13:46 UTC] {taskinstance.py:341} ▶ Post task execution logs
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
+    rendered_content = self.render_template(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 171, in render_template
+    return self._render(template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 730, in _render
+    return super()._render(template, context, dag=dag)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 127, in _render
+    return render_template_to_string(template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 301, in render_template_to_string
+    return render_template(template, cast(MutableMapping[str, Any], context), native=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 296, in render_template
+    return "".join(nodes)
+           ^^^^^^^^^^^^^^
+  File "<template>", line 14, in root
+  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/sandbox.py", line 401, in call
+    return __context.call(__obj, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/runtime.py", line 303, in call
+    return __obj(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/context.py", line 136, in get
+    return Variable.get(key, deserialize_json=self._deserialize_json)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/variable.py", line 145, in get
+    raise KeyError(f"Variable {key} does not exist")
+KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1_746416.s_m_NORM_300_T_FIN_DAILY_DISC.$$FEED_NAME does not exist'
+[2025-12-20, 16:43:04 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 274, in _run_raw_task
+    TaskInstance._execute_task_with_callbacks(
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3119, in _execute_task_with_callbacks
+    task_orig = self.render_templates(context=context, jinja_env=jinja_env)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3543, in render_templates
+    original_task.render_template_fields(context, jinja_env)
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 1453, in render_template_fields
+    self._do_render_template_fields(self, self.template_fields, context, jinja_env, set())
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
+    rendered_content = self.render_template(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
+    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 171, in render_template
+    return self._render(template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 730, in _render
+    return super()._render(template, context, dag=dag)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 127, in _render
+    return render_template_to_string(template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 301, in render_template_to_string
+    return render_template(template, cast(MutableMapping[str, Any], context), native=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 296, in render_template
+    return "".join(nodes)
+           ^^^^^^^^^^^^^^
+  File "<template>", line 14, in root
+  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/sandbox.py", line 401, in call
+    return __context.call(__obj, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/runtime.py", line 303, in call
+    return __obj(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/context.py", line 136, in get
+    return Variable.get(key, deserialize_json=self._deserialize_json)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/variable.py", line 145, in get
+    raise KeyError(f"Variable {key} does not exist")
+KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1_746416.s_m_NORM_300_T_FIN_DAILY_DISC.$$FEED_NAME does not exist'
+[2025-12-20, 16:43:04 UTC] {base.py:84} INFO - Retrieving connection 'sa-vz-it-gk1v-edwdo-0-app'
+[2025-12-20, 16:43:04 UTC] {credentials_provider.py:410} INFO - Getting connection using `google.auth.default()` since no explicit credentials are provided.
+[2025-12-20, 16:43:05 UTC] {mixins.py:122} WARNING - Cannot retrieve job details from BigQuery.Client. 404 GET https://bigquery.googleapis.com/bigquery/v2/projects/vz-it-pr-gk1v-pleedwdo-0/jobs/wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC?projection=full&prettyPrint=false: Not found: Job vz-it-pr-gk1v-pleedwdo-0:wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC
+Traceback (most recent call last):
+  File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/google/cloud/openlineage/mixins.py", line 102, in get_openlineage_facets_on_complete
+    job_properties = self._client.get_job(job_id=self.job_id)._properties
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/google/cloud/bigquery/client.py", line 2211, in get_job
+    resource = self._call_api(
+               ^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/google/cloud/bigquery/client.py", line 843, in _call_api
+    return call()
+           ^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/google/api_core/retry/retry_unary.py", line 294, in retry_wrapped_func
+    return retry_target(
+           ^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/google/api_core/retry/retry_unary.py", line 156, in retry_target
+    next_sleep = _retry_error_helper(
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/google/api_core/retry/retry_base.py", line 214, in _retry_error_helper
+    raise final_exc from source_exc
+  File "/opt/python3.11/lib/python3.11/site-packages/google/api_core/retry/retry_unary.py", line 147, in retry_target
+    result = target()
+             ^^^^^^^^
+  File "/opt/python3.11/lib/python3.11/site-packages/google/cloud/_http/__init__.py", line 494, in api_request
+    raise exceptions.from_http_response(response)
+google.api_core.exceptions.NotFound: 404 GET https://bigquery.googleapis.com/bigquery/v2/projects/vz-it-pr-gk1v-pleedwdo-0/jobs/wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC?projection=full&prettyPrint=false: Not found: Job vz-it-pr-gk1v-pleedwdo-0:wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC
+[2025-12-20, 16:43:05 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
+[2025-12-20, 16:43:05 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
+[2025-12-20, 16:43:05 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-20T16:43:04.552102+00:00', 'eventType': 'FAIL', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': 'BigQueryInsertJobOperator', 'taskId': 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-20T16:38:17.055889+00:00'}}}}
+[2025-12-20, 16:43:05 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/9b17372a2c4713d7c002bf02ae97e5b5, run=projects/1032455509101/locations/us-east4/processes/9b17372a2c4713d7c002bf02ae97e5b5/runs/a58dfeaf2ac0882ed10fb686c45639d6
+[2025-12-20, 16:43:05 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `FAIL` event of id `019b3ca0-4cdf-73fd-9065-b553e3486ee5`
+[2025-12-20, 16:43:05 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC, run_id=manual__2025-12-20T16:38:17.055889+00:00, execution_date=20251220T163817, start_date=20251220T164303, end_date=20251220T164304
+[2025-12-20, 16:43:05 UTC] {taskinstance.py:341} ▶ Post task execution logs
