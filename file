@@ -1,865 +1,771 @@
-"timestamp": "2025-12-19T16:37:10.582173594Z",
-    "severity": "ERROR",
-    "labels": {
-      "task-id": "wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START",
-      "try-number": "1",
-      "workflow": "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc",
-      "map-index": "-1",
-      "worker_id": "airflow-worker-vwcff",
-      "process": "standard_task_runner.py:124",
-      "execution-date": "2025-12-19T04:17:25.223149+00:00"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker",
-    "receiveTimestamp": "2025-12-19T16:39:22.636020628Z"
-  },
-  {
-    "textPayload": "Task exited with return code 1",
-    "insertId": "1pn12j8fnm2tlx",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:10.676541633Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "local_task_job_runner.py:266",
-      "execution-date": "2025-12-19T04:17:25.223149+00:00",
-      "worker_id": "airflow-worker-vwcff",
-      "workflow": "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc",
-      "try-number": "1",
-      "map-index": "-1",
-      "task-id": "wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker",
-    "receiveTimestamp": "2025-12-19T16:39:22.636020628Z"
-  },
-  {
-    "textPayload": "1 downstream tasks scheduled from follow-on schedule check",
-    "insertId": "1pn12j8fnm2tmm",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:10.804775861Z",
-    "severity": "INFO",
-    "labels": {
-      "try-number": "1",
-      "map-index": "-1",
-      "workflow": "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc",
-      "task-id": "wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START",
-      "execution-date": "2025-12-19T04:17:25.223149+00:00",
-      "worker_id": "airflow-worker-vwcff",
-      "process": "taskinstance.py:3904"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker",
-    "receiveTimestamp": "2025-12-19T16:39:22.636020628Z"
-  },
-  {
-    "textPayload": "::endgroup::",
-    "insertId": "1pn12j8fnm2tmn",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:10.808659521Z",
-    "severity": "INFO",
-    "labels": {
-      "task-id": "wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START",
-      "map-index": "-1",
-      "process": "local_task_job_runner.py:245",
-      "execution-date": "2025-12-19T04:17:25.223149+00:00",
-      "workflow": "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc",
-      "try-number": "1",
-      "worker_id": "airflow-worker-vwcff"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-worker",
-    "receiveTimestamp": "2025-12-19T16:39:22.636020628Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  2.10s           2025-12-19T16:34:38                      60",
-    "insertId": "8x5wywfrrme6n",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:12.343000006Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "dag-processor-manager"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:37:15.583156148Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                1           0  0.33s           2025-12-19T16:34:47                      18",
-    "insertId": "ibrrq0fq9lgj8",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:12.355763021Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:37:19.699211173Z"
-  },
-  {
-    "textPayload": "\t<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>",
-    "insertId": "o631uofnlhetq",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.235756938Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "DAG dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc has 1/50 running and queued tasks",
-    "insertId": "o631uofnlhets",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.235780182Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:507",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "\t<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>",
-    "insertId": "o631uofnlhetx",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.236885395Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "Trying to enqueue tasks: [<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>, <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_nar_o_mthly_eqp_feed.s_m_NAR_500_CTL_ETL_FEED_PROCESS_END.status manual__2025-12-19T15:41:35.835105+00:00 [scheduled]>] for executor: CeleryExecutor(parallelism=0)",
-    "insertId": "o631uofnlheu1",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.242041664Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:748",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "Sending TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1) to CeleryExecutor with priority 23 and queue default",
-    "insertId": "o631uofnlheu2",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.242482492Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:692",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "Adding to queue: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status', 'manual__2025-12-19T04:17:25.223149+00:00', '--local', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py']",
-    "insertId": "o631uofnlheu3",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.242655866Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "base_executor.py:169",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "Received executor event with state queued for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
-    "insertId": "o631uofnlheu6",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.383901168Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:776",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "Received executor event with state success for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
-    "insertId": "o631uofnlheu9",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.384458308Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:776",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "TaskInstance Finished: dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START, run_id=manual__2025-12-19T04:17:25.223149+00:00, map_index=-1, run_start_date=2025-12-19 16:37:06.888871+00:00, run_end_date=2025-12-19 16:37:07.595003+00:00, run_duration=0.706132, state=failed, executor=CeleryExecutor(parallelism=0), executor_state=success, try_number=1, max_tries=0, job_id=20319675, pool=default_pool, queue=default, priority_weight=24, operator=BigQueryInsertJobOperator, queued_dttm=2025-12-19 16:37:00.089830+00:00, queued_by_job_id=20319029, pid=490540",
-    "insertId": "o631uofnlheuc",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.402321720Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:813",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "Setting external_id for <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status manual__2025-12-19T04:17:25.223149+00:00 [queued]> to 1dce0dee-ce99-49aa-8c93-1fb0e43ae92b",
-    "insertId": "o631uofnlheuf",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:16.403349241Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:803",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:27.621294011Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    0           1  0.30s           2025-12-19T16:29:53                       7",
-    "insertId": "1pxdr16fpefi4m",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:17.765457765Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:37:27.931780928Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                0           1  0.20s           2025-12-19T16:34:29                       7",
-    "insertId": "19iz8ctfqnml1o",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:17.779695Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:37:33.986717694Z"
-  },
-  {
-    "textPayload": "\t<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1 manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>",
-    "insertId": "1ulcinyf7e14m1",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.510615628Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "DAG dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc has 1/50 running and queued tasks",
-    "insertId": "1ulcinyf7e14m2",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.510812536Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:507",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "\t<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1 manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>",
-    "insertId": "1ulcinyf7e14m5",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.511574454Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "Trying to enqueue tasks: [<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1 manual__2025-12-19T04:17:25.223149+00:00 [scheduled]>] for executor: CeleryExecutor(parallelism=0)",
-    "insertId": "1ulcinyf7e14m7",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.515458756Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:748",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "Sending TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1) to CeleryExecutor with priority 22 and queue default",
-    "insertId": "1ulcinyf7e14m8",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.515614265Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "scheduler_job_runner.py:692"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "Adding to queue: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', 'wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1', 'manual__2025-12-19T04:17:25.223149+00:00', '--local', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py']",
-    "insertId": "1ulcinyf7e14m9",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.515741476Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "base_executor.py:169"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "Received executor event with state queued for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
-    "insertId": "1ulcinyf7e14ma",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.528336396Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "scheduler_job_runner.py:776",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "Received executor event with state success for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
-    "insertId": "1ulcinyf7e14mb",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.528483428Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "scheduler_job_runner.py:776"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "TaskInstance Finished: dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.status, run_id=manual__2025-12-19T04:17:25.223149+00:00, map_index=-1, run_start_date=2025-12-19 16:37:22.242290+00:00, run_end_date=2025-12-19 16:37:24.970134+00:00, run_duration=2.727844, state=failed, executor=CeleryExecutor(parallelism=0), executor_state=success, try_number=1, max_tries=0, job_id=20319677, pool=default_pool, queue=default, priority_weight=23, operator=DMStatusOperator, queued_dttm=2025-12-19 16:37:16.237548+00:00, queued_by_job_id=20319029, pid=490616",
-    "insertId": "1ulcinyf7e14mc",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.540573034Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "scheduler_job_runner.py:813"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "Setting external_id for <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1 manual__2025-12-19T04:17:25.223149+00:00 [queued]> to 40156833-9a17-4f07-8b32-466e1d3332b8",
-    "insertId": "1ulcinyf7e14md",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:27.541211096Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "scheduler_job_runner.py:803"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:32.676231459Z"
-  },
-  {
-    "textPayload": "Received executor event with state success for task instance TaskInstanceKey(dag_id='dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc', task_id='wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1', run_id='manual__2025-12-19T04:17:25.223149+00:00', try_number=1, map_index=-1)",
-    "insertId": "crvpb1fkm0zx3",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:43.285435926Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "scheduler_job_runner.py:776"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:48.781263815Z"
-  },
-  {
-    "textPayload": "TaskInstance Finished: dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.branch_logic_1, run_id=manual__2025-12-19T04:17:25.223149+00:00, map_index=-1, run_start_date=2025-12-19 16:37:34.386030+00:00, run_end_date=2025-12-19 16:37:37.083153+00:00, run_duration=2.697123, state=success, executor=CeleryExecutor(parallelism=0), executor_state=success, try_number=1, max_tries=0, job_id=20319679, pool=default_pool, queue=default, priority_weight=22, operator=_BranchPythonDecoratedOperator, queued_dttm=2025-12-19 16:37:27.511757+00:00, queued_by_job_id=20319029, pid=490665",
-    "insertId": "crvpb1fkm0zx5",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:43.301460186Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "scheduler_job_runner.py:813"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/airflow-scheduler",
-    "receiveTimestamp": "2025-12-19T16:37:48.781263815Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  2.10s           2025-12-19T16:34:38                      60",
-    "insertId": "crvpb1fkm1044",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:45.827906329Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "dag-processor-manager"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:37:48.781263815Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                1           0  0.33s           2025-12-19T16:34:47                      18",
-    "insertId": "e68mhwfql6dz1",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:45.843401229Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:37:52.763154782Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    0           1  0.30s           2025-12-19T16:29:53                       7",
-    "insertId": "ogds4gfmx5s2f",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:58.547785908Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:38:09.578882370Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                0           1  0.20s           2025-12-19T16:34:29                       7",
-    "insertId": "1r9ywewfqae1p9",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:37:58.562661751Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:38:15.958961068Z"
-  },
-  {
-    "textPayload": "Removing file:///home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/__pycache__/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.cpython-311.pyc...",
-    "insertId": "1et0a7ufl4vsi8",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:38:03.832230541Z",
-    "severity": "INFO",
-    "labels": {
-      "pod_id": "airflow-scheduler-547bdf7dcc-9njnj",
-      "sub_service": "gcs-syncd"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/gcs-syncd",
-    "receiveTimestamp": "2025-12-19T16:38:22.849612106Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  2.10s           2025-12-19T16:34:38                      60",
-    "insertId": "1k3trmxfr9vuwt",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:38:19.610511656Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "dag-processor-manager"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:38:22.817694743Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                1           0  0.33s           2025-12-19T16:34:47                      18",
-    "insertId": "1aw4a8wfor19q8",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:38:19.622976283Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:38:28.407907746Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    0           1  0.30s           2025-12-19T16:29:53                       7",
-    "insertId": "jzpm16fq2nowe",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:38:32.763108594Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj",
-      "process": "dag-processor-manager"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:38:40.268717685Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                0           1  0.20s           2025-12-19T16:34:29                       7",
-    "insertId": "1nnonzdfo1fvwv",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:38:32.779253764Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:38:45.389537425Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  2.10s           2025-12-19T16:34:38                      60",
-    "insertId": "bdpkkmfpkrq6t",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:38:53.727456236Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "dag-processor-manager"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:38:56.988652711Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                1           0  0.33s           2025-12-19T16:34:47                      18",
-    "insertId": "1et0a7ufl4y0gp",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4"
-      }
-    },
-    "timestamp": "2025-12-19T16:38:53.740252817Z",
-    "severity": "INFO",
-    "labels": {
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-dzwgh",
-      "process": "dag-processor-manager"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:39:01.257366957Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                    1           0  0.94s           2025-12-19T16:38:37                      19",
-    "insertId": "1pmsovhfodo36q",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0",
-        "location": "us-east4",
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1"
-      }
-    },
-    "timestamp": "2025-12-19T16:39:07.033631288Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:39:12.764109519Z"
-  },
-  {
-    "textPayload": "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py                                                                                                                                                                                                0           1  0.20s           2025-12-19T16:34:29                       7",
-    "insertId": "ofprigfq92hc8",
-    "resource": {
-      "type": "cloud_composer_environment",
-      "labels": {
-        "environment_name": "vz-it-ple-wdwg-aidcom-0-cc-edw-1",
-        "location": "us-east4",
-        "project_id": "vz-it-pr-wdwg-pleaidcom-0"
-      }
-    },
-    "timestamp": "2025-12-19T16:39:07.057834084Z",
-    "severity": "INFO",
-    "labels": {
-      "process": "dag-processor-manager",
-      "scheduler_id": "airflow-scheduler-547bdf7dcc-9njnj"
-    },
-    "logName": "projects/vz-it-pr-wdwg-pleaidcom-0/logs/dag-processor-manager",
-    "receiveTimestamp": "2025-12-19T16:39:21.667947203Z"
-  }
+from airflow.models import Variable
+import airflow
+from airflow import DAG
+from airflow.utils.task_group import TaskGroup
+import sys
+sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
+from datetime import datetime, timedelta
+from airflow.utils.db import provide_session
+from airflow.operators.dummy import DummyOperator
+from airflow.providers.ssh.hooks.ssh import SSHHook
+import os
+from pathlib import Path
+import json
+import re
+from collections import defaultdict
+from airflow.settings import Session
+from airflow.decorators import task
+from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START import *
+from airflow.providers.ssh.operators.ssh import SSHOperator
+from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC import *
+from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.m_NORM_320_O_FIN_DAILY_DISC_OUTPUT import *
+from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.m_500_CTL_ETL_FEED_PROCESS_END import *
+from operators.dm_status import DMStatusOperator
+
+#new
+# --- LEAD STANDARD IMPORTS (ADD THESE) ---
+from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
+from airflow.exceptions import AirflowFailException
+import logging
+import time
+#2
+from google.cloud import storage
+from airflow.operators.python import PythonOperator
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from google.api_core import exceptions
+#3
+from collections import defaultdict
+import re
+# ----------------------------------------
+
+
+def get_Status(dag_run, id):
+    try:
+        status = dag_run.get_task_instance(id).state
+        if status == "success":
+            return "succeeded"
+        if status == "failed":
+            return "failed"
+        return None
+    except Exception:
+        return "disabled"
+
+def get_PrevTaskStatus(dag_run, id):
+    id = list(dag_run.dag.get_task(id).upstream_task_ids)[0]
+    return get_Status(dag_run, id)
+
+def get_resolved_path(filePath):
+    ssh_id = Variable.get('SSH_CONN_ID')
+    ssh_hook = SSHHook(ssh_conn_id=ssh_id)
+    ssh_client = ssh_hook.get_conn()
+    
+    stdin, stdout, stderr = ssh_client.exec_command(f'echo {filePath}')
+    resolved_path = stdout.read().decode().strip()
+    error_output = stderr.read().decode().strip()
+    if not resolved_path or error_output:
+        raise Exception(f"Failed to resolve remote path: {filePath}\nError: {error_output}")
+    ssh_client.close()
+    return resolved_path
+            
+
+# def parse_prm_file(paramFilePath):
+
+#     abs_path = Variable.get('PARAMFILE_ABS_PATH')
+#     ssh_id = Variable.get('SSH_CONN_ID')
+#     ssh_hook = SSHHook(ssh_conn_id=ssh_id)
+#     ssh_client = ssh_hook.get_conn()
+#     sftp_client = ssh_client.open_sftp()
+    
+#     remote_expr_path = abs_path + paramFilePath
+#     stdin, stdout, stderr = ssh_client.exec_command(f'echo {remote_expr_path}')
+#     resolved_path = stdout.read().decode().strip()
+#     error_output = stderr.read().decode().strip()
+#     if not resolved_path or error_output:
+#         raise Exception(f"Failed to resolve remote path: {remote_expr_path}\nError: {error_output}")
+
+#     with sftp_client.open(resolved_path, mode='r') as remote_file:
+#         output = remote_file.read().decode('utf-8')
+#     sftp_client.close()
+#     ssh_client.close()
+    
+#     data = defaultdict(dict)
+#     current_section = None
+#     if output:
+#         for line in output.splitlines():
+#             line = line.strip()
+#             if not line or line.startswith(('#', '//', ';')):
+#                 continue  # skip comments and blank lines
+#             if line.startswith('[') and line.endswith(']'):
+#                 current_section = line[1:-1]
+#                 continue
+#             match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
+#             if match and current_section:
+#                 key = match.group(1)
+#                 value = match.group(2).strip()
+#                 if value.lower() in ('true', 'false'):
+#                     value = value.lower() == 'true'
+#                 else:
+#                     try:
+#                         if '.' in value:
+#                             value = float(value)
+#                         else:
+#                             value = int(value)
+#                     except ValueError:
+#                         value = value.strip('"').strip("'")  # treat as string
+#                 data[current_section][key] = value
+#     else:
+#         return None
+#     return dict(data)
+            
+
+def is_existing_file(paramFile):
+
+    if Path(paramFile).exists() and Path(paramFile).is_file():
+        return paramFile
+    else:
+        return None
+
+def parse_prm_file(paramFilePath):
+    gcs_base_uri = '/home/airflow/gcs/data/'
+    logging.info(f"Using GCS local mount base path: {gcs_base_uri}")
+    full_file_path = os.path.join(gcs_base_uri, paramFilePath.lstrip('/'))
+    logging.info(f"Attempting to read parameter file from local path: {full_file_path}")
+    output = None
+    try:
+        output = open(full_file_path, "r").read()
+
+        logging.info("Successfully read parameter file using local file I/O.")
+        logging.info(f"output: {output}")
+            
+    except Exception as e:
+        raise Exception(f"Failed to read parameter file from local mount point at {full_file_path}. Error: {e}")
+      
+    data = defaultdict(dict)
+    current_section = None
+    
+    if output:
+        for line in output.splitlines():
+            line = line.strip()
+            if not line or line.startswith(('#', '//', ';')):
+                continue  
+            
+            if line.startswith('[') and line.endswith(']'):
+                current_section = line[1:-1]
+                continue
+            
+            match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
+            if match and current_section:
+                key = match.group(1)
+                value = match.group(2).strip()
+                
+                if value.lower() in ('true', 'false'):
+                    value = value.lower() == 'true'
+                else:
+                    try:
+                        if '.' in value:
+                            value = float(value)
+                        else:
+                            value = int(value)
+                    except ValueError:
+                        value = value.strip('"').strip("'") 
+                        
+                data[current_section][key] = value
+        
+    else:
+        return None
+
+    parsed_data = dict(data)
+    logging.info(f"data: {parsed_data}")
+    return parsed_data                 
+
+# def get_updated_session_parameters(session_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables):
+ 
+#      if wkfl_default_param and session_param_json and not workflowParamFile and not mapping_default_param:
+#          variables.update(session_param_json)   
+#          return variables
+#      if wkfl_default_param and mapping_default_param and session_param_json and not workflowParamFile:  
+#          mapping_default_param.update(variables)
+#          mapping_default_param.update(session_param_json)
+#          return mapping_default_param
+#      if mapping_default_param and wkfl_default_param and not workflowParamFile and not session_param_json:
+#          variables.update(mapping_default_param)
+#          return variables
+#      if mapping_default_param and session_param_json and not wkfl_default_param and not workflowParamFile:
+#          mapping_default_param.update(session_param_json)
+#          return mapping_default_param
+#      if workflowParamFile and session_param_json and mapping_default_param:
+#          mapping_default_param.update(session_param_json)  
+#          mapping_default_param.update(variables or {})
+#          return mapping_default_param
+#      if workflowParamFile and session_param_json:
+#          session_param_json.update(workflowParamFile) 
+#          return session_param_json
+#      if wkfl_default_param and mapping_default_param and workflowParamFile and not session_param_json:
+#          mapping_default_param.update(variables)
+#          return mapping_default_param
+#      else:
+#          return mapping_default_param if mapping_default_param else variables if wkfl_default_param else {}
+def get_updated_session_parameters(
+    session_param_json,
+    mapping_default_param,
+    wkfl_default_param,
+    workflowParamFile,
+    variables
+):
+    # --- FIX: Ensure .par data is used even if defaults are missing ---
+    if session_param_json and not wkfl_default_param and not mapping_default_param and not workflowParamFile:
+        return session_param_json
+    # -----------------------------------------------------------------
+
+    if wkfl_default_param and session_param_json and not workflowParamFile and not mapping_default_param:
+        variables.update(session_param_json)
+        return variables
+
+    if wkfl_default_param and mapping_default_param and session_param_json and not workflowParamFile:
+        mapping_default_param.update(variables)
+        mapping_default_param.update(session_param_json)
+        return mapping_default_param
+
+    if mapping_default_param and wkfl_default_param and not workflowParamFile and not session_param_json:
+        variables.update(mapping_default_param)
+        return variables
+
+    if mapping_default_param and session_param_json and not wkfl_default_param and not workflowParamFile:
+        mapping_default_param.update(session_param_json)
+        return mapping_default_param
+
+    if workflowParamFile and session_param_json and mapping_default_param:
+        mapping_default_param.update(session_param_json)
+        mapping_default_param.update(variables or {})
+        return mapping_default_param
+
+    if workflowParamFile and session_param_json:
+        session_param_json.update(workflowParamFile)
+        return session_param_json
+
+    if wkfl_default_param and mapping_default_param and workflowParamFile and not session_param_json:
+        mapping_default_param.update(variables)
+        return mapping_default_param
+
+    return mapping_default_param if mapping_default_param else variables if wkfl_default_param else {}
+                  
+
+def set_mapping_params(id, mapping_name, session_name, wkfl_name, session_param_json, workflowParamFile, variables):
+    abs_path = '/home/airflow/gcs/data'
+    mapping_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties"))
+    mapping_default_param = eval(open(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties")).read()) if mapping_file_path else None
+    workflow_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + wkfl_name + ".properties"))
+    wkfl_default_param = workflow_file_path if workflow_file_path else None
+    if session_param_json:
+        if session_param_json.get(session_name):
+            session_level_param_json = session_param_json.get(session_name)
+        elif session_param_json.get(wkfl_name):
+            session_level_param_json = session_param_json.get(wkfl_name).get(session_name)
+        elif session_param_json.get('GLOBAL'):
+            session_level_param_json = session_param_json.get('GLOBAL')
+        else:
+            session_level_param_json = {}
+    else:
+        session_level_param_json = {}
+    var_dict = get_updated_session_parameters(session_level_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables)
+    keys = list(var_dict.keys())
+    for k in range(len(var_dict)):
+        key = keys[k]
+        Variable.set(id + "." + key, var_dict[key])
+
+
+# class KeepAliveSSHHook(SSHHook):
+#     def get_conn(self):
+#         client = super().get_conn()
+#         client.get_transport().set_keepalive(int(Variable.get('KEEP_TIME_ALIVE')))
+#         return client
+
+# SSH_CONNECTION_ID = Variable.get('SSH_CONN_ID')
+# ssh_hook = KeepAliveSSHHook(ssh_conn_id=SSH_CONNECTION_ID)
+
+#new
+@task
+def check_fact_load_status(target_data_mart: str, target_fact_table: str):
+    # --- SAFETY IMPORTS (Required to prevent "Logs not found" crash) ---
+    import time
+    import logging
+    from airflow.models import Variable
+    from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
+    from airflow.exceptions import AirflowFailException
+
+    # 1. Log immediately to prove the task started
+    print(f"--- STARTING FACT LOAD CHECK: {target_data_mart}.{target_fact_table} ---")
+
+    MAX_LOOP_COUNT = 480
+    SLEEP_TIME_IN_SECONDS = 180
+    
+    try:
+        BQ_CONN_ID = Variable.get('GCP_CONNECTION_ID', default_var='google_cloud_default')
+    except Exception:
+        BQ_CONN_ID = 'google_cloud_default' 
+    
+    # 2. Variable Check (Prevents silent crash)
+    try:
+        PROJECT_ID = Variable.get("BQ_ProjectID")
+    except KeyError:
+        print("CRITICAL ERROR: Airflow Variable 'BQ_ProjectID' is missing.")
+        raise
+
+    hook = BigQueryHook(gcp_conn_id=BQ_CONN_ID, use_legacy_sql=False)
+
+    # --- EXACT REFERENCE QUERY LOGIC ---
+    query = f"""
+        SELECT DATE_DIFF(
+            (SELECT DATE_ADD(report_date, INTERVAL 1 DAY) 
+             FROM {PROJECT_ID}.dw_ssp.business_process_date), 
+            MAX(t.snapshot_dt), 
+            DAY
+        )
+        FROM {PROJECT_ID}.os_bbb_userv.v_bbb_ctl_target_fact AS t
+        WHERE LOWER(t.tgt_fact_table) = LOWER('{target_fact_table}')
+          AND LOWER(t.tgt_fact_schema) = LOWER('{target_data_mart}')
+          AND LOWER(t.stat_cd) = 'c'
+    """
+
+    for loop_count in range(1, MAX_LOOP_COUNT + 1):
+        print(f"Checking load status for {target_data_mart}.{target_fact_table} (Loop {loop_count}/{MAX_LOOP_COUNT}).")
+        
+        try:
+            result = hook.get_first(sql=query, parameters=None)
+            
+            # Handle result tuple safely
+            stat_cd_value = result[0] if result and result[0] is not None else 1
+
+            if stat_cd_value <= 0:
+                print(f"Confirmed that {target_data_mart}.{target_fact_table} has completed successfully (Status: {stat_cd_value}).")
+                return 
+            
+            print(f"The load is still running (Status: {stat_cd_value}). Sleeping for {SLEEP_TIME_IN_SECONDS} seconds.")
+            time.sleep(SLEEP_TIME_IN_SECONDS)
+
+        except Exception as e:
+            print(f"An error occurred during BigQuery execution: {e}")
+            time.sleep(SLEEP_TIME_IN_SECONDS)
+            
+    raise AirflowFailException(
+        f"ERROR: After checking for {round(MAX_LOOP_COUNT * SLEEP_TIME_IN_SECONDS / 3600)} hours, "
+        f"{target_data_mart}.{target_fact_table} has not yet completed loading. Aborting."
+    )
+    #########
+
+def get_storage_client():
+    GCP_CONN_ID = Variable.get('GCP_CONNECTION_ID')
+    hook = GCSHook(gcp_conn_id=GCP_CONN_ID)
+    return hook.get_conn()
+
+@task
+def gcs_file_processor(
+    gcs_bucket_name,
+    gcs_object_path,
+    data_path,
+    archive_path,
+    init_file_name,
+    output_file_prefix,
+    output_file_suffix,    
+    date_time_str,
+    mail_recipient=None,
+    header_file_name=None,
+    trailer_file_name=None,    
+    **kwargs
+):
+    # --- FIX 1: Handle None path safely ---
+    if gcs_object_path is None:
+        gcs_object_path = ""
+    # --------------------------------------
+
+    logging.info(f"gcs_bucket_name: {gcs_bucket_name}")
+    logging.info(f"gcs_object_path: {gcs_object_path}")
+    
+    project = Variable.get("BQ_ProjectID")
+    storage_client = get_storage_client()
+    
+    data_gcs = gcs_bucket_name.replace('gs://', '')
+    bucket = storage_client.bucket(data_gcs)
+
+    archive_gcs = data_gcs.replace('outbound', 'archive')
+    archive_bucket = storage_client.bucket(archive_gcs)
+
+    full_data_path = f"{gcs_object_path}{data_path}"
+    full_archive_path = f"{gcs_object_path}{archive_path}"
+
+    INIT_FILE_BLOB = bucket.blob(os.path.join(full_data_path, init_file_name))
+    
+    source_blobs_to_compose = []
+    compose_needed = False
+    
+    if header_file_name:
+        HEADER_BLOB = bucket.blob(os.path.join(full_data_path, header_file_name))
+        source_blobs_to_compose.append(HEADER_BLOB)
+        compose_needed = True
+    
+    source_blobs_to_compose.append(INIT_FILE_BLOB)
+    
+    if trailer_file_name:
+        TRAILER_BLOB = bucket.blob(os.path.join(full_data_path, trailer_file_name))
+        source_blobs_to_compose.append(TRAILER_BLOB)
+        compose_needed = True
+
+    run_date_part = date_time_str[:8]
+    SRC_FILE_NAME = f"{output_file_prefix}_{run_date_part}_{date_time_str}{output_file_suffix}"
+    
+    GCS_PROCESSING_BLOB_NAME = os.path.join(full_data_path, SRC_FILE_NAME)
+    GCS_PROCESSING_BLOB = bucket.blob(GCS_PROCESSING_BLOB_NAME)
+    
+    ARCHIVE_BLOB_NAME = os.path.join(full_archive_path, SRC_FILE_NAME)
+    
+    ti = kwargs['ti']
+
+    try:
+        logging.info("Starting file availability and size validation...")
+
+        try:
+            INIT_FILE_BLOB.reload(client=storage_client) 
+        except exceptions.NotFound as e:
+            raise FileNotFoundError(f"Data file not available: {init_file_name}. GCS Error: {e}")
+
+        if INIT_FILE_BLOB.size is None:
+            raise FileNotFoundError(f"Data file not available: {init_file_name}")
+        elif INIT_FILE_BLOB.size == 0:
+            raise ValueError(f"Data file ({init_file_name}) has zero bytes. Process aborted.")
+        
+        logging.info(f"Data file size check passed. Size: {INIT_FILE_BLOB.size} bytes.")
+
+        if compose_needed:
+            GCS_PROCESSING_BLOB.compose(source_blobs_to_compose)
+            logging.info(f"Composition successful. Uncompressed file created at {GCS_PROCESSING_BLOB.name}")
+        else:
+            bucket.copy_blob(INIT_FILE_BLOB, bucket, new_name=GCS_PROCESSING_BLOB.name)
+            logging.info(f"Single file copied/renamed to {GCS_PROCESSING_BLOB.name}")
+        
+        logging.info(f"Moving file to archive: {ARCHIVE_BLOB_NAME}")
+
+        bucket.copy_blob(GCS_PROCESSING_BLOB, archive_bucket, new_name=ARCHIVE_BLOB_NAME)
+        
+        GCS_PROCESSING_BLOB.delete()
+        logging.info(f"Deleted processing file: {GCS_PROCESSING_BLOB.name}")
+            
+        logging.info("GCS file processing completed successfully.")
+
+    except Exception as e:
+        error_message = f"GCS processing FAILED: {type(e).__name__}: {e}"
+        logging.error(error_message, exc_info=True)
+        raise
+#new-end
+
+def prepare_wklt_NORM_100_500_O_FIN_DAILY_DISC_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None, bq_project_id = None, bq_project_pr_id = None) -> TaskGroup:
+    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+        Start = DummyOperator(
+                task_id = 'Start',
+                do_xcom_push = False,
+        )
+
+        @task(task_id = 's_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC_param_init_logic')
+        @provide_session
+        def fn_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+                variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+           # session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
+            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
+            #set_mapping_params(id + '.' + group_id, "m_100_CTL_ETL_FEED_PROCESS_START", "s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc", session_param_json, "", variables)
+            set_mapping_params(
+                id + '.' + group_id, 
+                "m_100_CTL_ETL_FEED_PROCESS_START", 
+                "s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC", # <--- UPDATE THIS
+                "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_ftv_daily_disc", 
+                session_param_json, 
+                "", 
+                variables
+            )
+        s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC__init = fn_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC_param_init_logic()
+
+        s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC = prepare_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC_TG(parent_group = task_group, groupId = 's_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC', trigger = 'none_skipped', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+
+        @task.branch(task_id = 'branch_logic_1', trigger_rule = 'none_skipped')
+        def fn_branch_logic_1(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if Variable.get(id + '.' + current_group_id + '.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.$JobStatus') == "succeeded":
+                targets.append(current_group_id + '.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC')
+            return targets
+
+        branch_logic_1_task = fn_branch_logic_1()
+
+        # Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC = SSHOperator(
+        #         task_id = 'Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC',
+        #         ssh_hook = ssh_hook,
+        #         command = """/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FIN FIN_FACT_CUST_DISC MDR_DATA_CHURN_NORM """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 'cmd_200_bbb_check_fact_load_norm_fin_daily_disc',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+        Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC = check_fact_load_status.override(
+            task_id='Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC', 
+            trigger_rule='all_success'
+        )(
+            target_data_mart='DW_FIN',
+            target_fact_table='FIN_FACT_CUST_DISC'
+        )
+
+        @task.branch(task_id = 'branch_logic_2', trigger_rule = 'none_skipped')
+        def fn_branch_logic_2(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if (get_Status(context["dag_run"], current_group_id + '.' + "Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC")) == "succeeded":
+                targets.append(current_group_id + '.s_m_NORM_300_T_FIN_DAILY_DISC_param_init_logic')
+            return targets
+
+        branch_logic_2_task = fn_branch_logic_2()
+
+        # s_m_NORM_300_T_FIN_DAILY_DISC_Pre_session_command = SSHOperator(
+        #         task_id = 's_m_NORM_300_T_FIN_DAILY_DISC_Pre_session_command',
+        #         ssh_hook = ssh_hook,
+        #         command = """$PMRootDir/ETL_SCRIPTS/SHARED_SCRIPTS/td_pre_cleanup.ksh DW_FIN_ADMIN FIN_TRN_DAILY_DISC INF_UTL_TBLS NORM_300_T_FIN_DAILY01_01 MLOAD $Param_LGConnectionLoad1 """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 's_m_norm_300_t_fin_daily_disc_pre_session_command',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+
+        @task(task_id = 's_m_NORM_300_T_FIN_DAILY_DISC_param_init_logic')
+        @provide_session
+        def fn_s_m_NORM_300_T_FIN_DAILY_DISC_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+                variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+          #  session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
+            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
+            set_mapping_params(id + '.' + group_id, "m_NORM_300_T_FIN_DAILY_DISC", "s_m_NORM_300_T_FIN_DAILY_DISC", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc", session_param_json, "", variables)
+
+        s_m_NORM_300_T_FIN_DAILY_DISC__init = fn_s_m_NORM_300_T_FIN_DAILY_DISC_param_init_logic()
+
+        s_m_NORM_300_T_FIN_DAILY_DISC = prepare_s_m_NORM_300_T_FIN_DAILY_DISC_TG(parent_group = task_group, groupId = 's_m_NORM_300_T_FIN_DAILY_DISC', trigger = 'none_skipped', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+
+        @task.branch(task_id = 'branch_logic_3', trigger_rule = 'none_skipped')
+        def fn_branch_logic_3(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if Variable.get(id + '.' + current_group_id + '.s_m_NORM_300_T_FIN_DAILY_DISC.$JobStatus') == "succeeded":
+                targets.append(next(filter(lambda task_id: task_id.startswith(current_group_id + '.' + 's_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.'), context['task'].downstream_task_ids), None))
+            return targets
+
+        branch_logic_3_task = fn_branch_logic_3()
+
+        s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT = prepare_s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT_TG(parent_group = task_group, groupId = 's_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+
+        @task.branch(task_id = 'branch_logic_4', trigger_rule = 'none_skipped')
+        def fn_branch_logic_4(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if Variable.get(id + '.' + current_group_id + '.s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.$JobStatus') == "succeeded":
+                targets.append(current_group_id + '.cmd_400_sftp_NORM_FIN_DAILY_DISC')
+            return targets
+
+        branch_logic_4_task = fn_branch_logic_4()
+
+        # cmd_400_sftp_NORM_FIN_DAILY_DISC = SSHOperator(
+        #         task_id = 'cmd_400_sftp_NORM_FIN_DAILY_DISC',
+        #         ssh_hook = ssh_hook,
+        #         command = """/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/NORM_LISCOUNT/Bin/sftp_norm_fin_daily_disc.ksh  """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 'cmd_400_sftp_norm_fin_daily_disc',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+
+        RUN_DATE_TIME = "{{ dag_run.execution_date.strftime('%Y%m%d%H%M%S') }}"
+        GCS_BUCKET = Variable.get('GCS_OUTBOUND')
+        
+        # NOTE: Verify this path matches the 'FIN' workflow. Derived from your snippet.
+        gcs_object_path = "non_dpf/mapping_output_as_file/sysmnt/etl/etlcfs02scripts/"
+
+        # cmd_400_sftp_NORM_FIN_DAILY_DISC = gcs_file_processor.override(
+        #     task_id='cmd_400_sftp_NORM_FIN_DAILY_DISC',
+        #     trigger_rule='all_success'
+        # )(
+        #     gcs_bucket_name=GCS_BUCKET,
+        #     gcs_object_path=gcs_object_path,
+        #     data_path='MDR_FEEDS/NORM_LISCOUNT/Data',
+        #     archive_path='MDR_FEEDS/NORM_LISCOUNT/Archive',
+        #     # CHECK THESE FILENAMES: Using values from snippet, ensure they apply to FIN workflow
+        #     init_file_name='ftv_daily_disc.txt',         # <-- Verify if this should be fin_daily_disc.txt
+        #     header_file_name='ftv_daily_disc_header.txt',# <-- Verify if this should be fin_daily_disc_header.txt
+        #     trailer_file_name=None,
+        #     output_file_prefix='MDR_VIDEO_CHURN',        # <-- Verify prefix
+        #     output_file_suffix='.dat',
+        #     date_time_str=RUN_DATE_TIME,
+        #     mail_recipient=None,
+        # )
+#new-end
+        # REPAIRED: Corrected for FINANCE workflow paths and prefixes
+        cmd_400_sftp_NORM_FIN_DAILY_DISC = gcs_file_processor.override(
+            task_id='cmd_400_sftp_NORM_FIN_DAILY_DISC',
+            trigger_rule='all_success'
+        )(
+            gcs_bucket_name=GCS_BUCKET,
+            gcs_object_path=gcs_object_path,
+            data_path='MDR_FEEDS/NORM_LISCOUNT/Data',
+            archive_path='MDR_FEEDS/NORM_LISCOUNT/Archive',
+            # FIXED: Points to FINANCE files created in m_320
+            init_file_name='fin_daily_disc.txt', 
+            header_file_name='fin_daily_disc_header.txt',
+            trailer_file_name=None,
+            output_file_prefix='MDR_DATA_CHURN', 
+            output_file_suffix='.dat',
+            date_time_str=RUN_DATE_TIME,
+            mail_recipient=None,
+        )
+        @task.branch(task_id = 'branch_logic_5', trigger_rule = 'none_skipped')
+        def fn_branch_logic_5(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if (get_Status(context["dag_run"], current_group_id + '.' + "cmd_400_sftp_NORM_FIN_DAILY_DISC")) == "succeeded":
+                targets.append(current_group_id + '.s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_param_init_logic')
+            return targets
+
+        branch_logic_5_task = fn_branch_logic_5()
+
+        @task(task_id = 's_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_param_init_logic')
+        @provide_session
+        def fn_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+                variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+            #session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
+            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
+
+            #set_mapping_params(id + '.' + group_id, "m_500_CTL_ETL_FEED_PROCESS_END", "s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc", session_param_json, "", variables)
+            set_mapping_params(
+                id + '.' + group_id, 
+                "m_500_CTL_ETL_FEED_PROCESS_END", 
+                "s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC",
+                "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc", 
+                session_param_json, 
+                "", 
+                variables
+            )
+        s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC__init = fn_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_param_init_logic()
+
+        s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC = prepare_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_TG(parent_group = task_group, groupId = 's_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC', trigger = 'none_skipped', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+
+        # s_m_NORM_300_T_FIN_DAILY_DISC_Post_session_success_command = SSHOperator(
+        #         task_id = 's_m_NORM_300_T_FIN_DAILY_DISC_Post_session_success_command',
+        #         ssh_hook = ssh_hook,
+        #         command = """$PMRootDir/ETL_SCRIPTS/SHARED_SCRIPTS/td_post_check.ksh DW_FIN_ADMIN FIN_TRN_DAILY_DISC INF_UTL_TBLS NORM_300_T_FIN_DAILY01_01 MLOAD $Param_LGConnectionLoad1 """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 's_m_norm_300_t_fin_daily_disc_post_session_success_command',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+
+        status = DMStatusOperator(
+                task_id = 'status',
+                group_id = task_group.group_id,
+                jobName = 'wklt_NORM_100_500_O_FIN_DAILY_DISC',
+                userStatus = userStatus,
+                trigger_rule = 'all_done',
+        )
+# To ensure this runs, update your operator call to include:
+# on_execute_callback = forensic_audit_log
+        # Start >> s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC__init >> s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC >> branch_logic_1_task >> Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC >> s_m_NORM_300_T_FIN_DAILY_DISC_Pre_session_command >> branch_logic_2_task >> s_m_NORM_300_T_FIN_DAILY_DISC__init >> s_m_NORM_300_T_FIN_DAILY_DISC
+        # s_m_NORM_300_T_FIN_DAILY_DISC >> branch_logic_3_task >> s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT >> branch_logic_4_task >> cmd_400_sftp_NORM_FIN_DAILY_DISC >> branch_logic_5_task >> s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC__init >> s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC >> status
+        # s_m_NORM_300_T_FIN_DAILY_DISC >> s_m_NORM_300_T_FIN_DAILY_DISC_Post_session_success_command >> status
+
+        Start >> s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC__init >> s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC >> branch_logic_1_task >> Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC >> branch_logic_2_task >> s_m_NORM_300_T_FIN_DAILY_DISC__init >> s_m_NORM_300_T_FIN_DAILY_DISC
+        
+        s_m_NORM_300_T_FIN_DAILY_DISC >> branch_logic_3_task >> s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT >> branch_logic_4_task >> cmd_400_sftp_NORM_FIN_DAILY_DISC >> branch_logic_5_task >> s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC__init >> s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC >> status
+
+    return task_group
