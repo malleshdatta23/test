@@ -1,156 +1,748 @@
-default-hostname
-*** Reading remote logs from Cloud Logging.
-[2025-12-20, 16:43:03 UTC] {local_task_job_runner.py:123} ▼ Pre task execution logs
-[2025-12-20, 16:43:03 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC manual__2025-12-20T16:38:17.055889+00:00 [queued]>
-[2025-12-20, 16:43:03 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC manual__2025-12-20T16:38:17.055889+00:00 [queued]>
-[2025-12-20, 16:43:03 UTC] {taskinstance.py:2869} INFO - Starting attempt 1 of 1
-[2025-12-20, 16:43:03 UTC] {taskinstance.py:2892} INFO - Executing <Task(BigQueryInsertJobOperator): wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC> on 2025-12-20 16:38:17.055889+00:00
-[2025-12-20, 16:43:03 UTC] {standard_task_runner.py:72} INFO - Started process 332514 to run task
-[2025-12-20, 16:43:03 UTC] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1', 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC', 'manual__2025-12-20T16:38:17.055889+00:00', '--job-id', '20347552', '--raw', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NORM_100_500_O_FIN_DAILY_DISC/dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc.py', '--cfg-path', '/tmp/tmp3odz6l4_']
-[2025-12-20, 16:43:03 UTC] {standard_task_runner.py:105} INFO - Job 20347552: Subtask wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC
-[2025-12-20, 16:43:03 UTC] {task_command.py:473} INFO - Running <TaskInstance: dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC manual__2025-12-20T16:38:17.055889+00:00 [running]> on host airflow-worker-m75kw
-[2025-12-20, 16:43:04 UTC] {abstractoperator.py:783} ERROR - Exception rendering Jinja template for task 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC', field 'configuration'. Template: {'query': {'query': '\n-- view(s) name replaced:\n-- dw_fin_tblsv.fin_fact_cust_disc=dw_fin.fin_fact_cust_disc\n-- mdr_dw_tblsv.time_dim=mdr_dw.time_dim\n-- dw_ssp_tblsv.ssp_state_dim=dw_ssp.ssp_state_dim\n-- dw_ssp_tblsv.ssp_disconnect_reason_dim=dw_ssp.ssp_disconnect_reason_dim\n-- dw_fin_userv.v_bbb_ctl_target_fact=os_bbb_userv.v_bbb_ctl_target_fact\n\n-- Edited\n\n\nBEGIN\nBEGIN TRANSACTION;\n\nTRUNCATE TABLE {{ var.value.BQ_ProjectID }}.dw_fin_admin.fin_trn_daily_disc;\n\n/** \nThe stages covered in this file are :\n\n|FIN_TRN_DAILY_DISC (Target Definition)\n|--EXP_ADD_START_TIME (Expression)\n|----SQ_FIN_FACT_CUST_DISC (Source Qualifier)\n|------FIN_FACT_CUST_DISC (Source Definition)\n|------SSP_DISCONNECT_REASON_DIM (Source Definition)\n|------SSP_STATE_DIM (Source Definition)\n|------TIME_DIM (Source Definition)\n **/--;\n\n -- MAIN SQL --\nINSERT INTO {{ var.value.BQ_ProjectID }}.dw_fin_admin.fin_trn_daily_disc (ADRS_ID, ST_CD, CKT_ID, DSCNNT_RSN_CD, DSCNNT_RSN_DESC, DISC_ORGNL_ORD_ID, DISCO_GRP,\n  SUB_ACCT_EST_DT, MDR_DISC_DT, SUB_ACCT_TERM_DT, ADD_DT)\n(WITH \n--SQ_FIN_FACT_CUST_DISC [Source Qualifier]\n`__Query_375151661__SQ_FIN_FACT_CUST_DISC` AS (SELECT a.adrs_id, c.st_cd, a.ckt_id, d.dscnnt_rsn_cd, d.dscnnt_rsn_desc, a.disc_orgnl_ord_id, InitCap(d.disco_grp) as disco_grp,  \n           e.day_dt AS sub_acct_est_dt, b.day_dt AS mdr_disc_dt, f.day_dt AS sub_acct_term_dt \n      FROM {{ var.value.BQ_ProjectID }}.dw_fin.fin_fact_cust_disc a, \n      {{ var.value.BQ_ProjectID }}.mdr_dw.time_dim b, \n      {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_state_dim c, \n      {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_disconnect_reason_dim d, \n      {{ var.value.BQ_ProjectID }}.mdr_dw.time_dim e, \n      {{ var.value.BQ_ProjectID }}.mdr_dw.time_dim f\n     WHERE a.mdr_disc_dt_sk = b.tm_sk\n       AND a.st_sk = c.st_sk\n       AND a.dscnct_rsn_sk = d.dscnct_rsn_sk\n       AND a.sub_acct_estabd_dt_sk = e.tm_sk\n       AND a.sub_acct_term_dt_sk = f.tm_sk\n       AND a.test_acct_sk = 0\n       AND a.hoa_level_sk <> 7\n       AND b.day_dt = ( SELECT MAX(b.report_dt) \n                          FROM {{ var.value.BQ_ProjectID }}.os_bbb_userv.v_bbb_ctl_target_fact b\n                         WHERE b.tgt_fact_table = \'FIN_FACT_CUST_DISC\'\n                           AND b.stat_cd = \'C\' ))\n    \n(SELECT DISTINCT ADRS_ID,\n        ST_CD,\n        CKT_ID,\n        CAST(CAST(DSCNNT_RSN_CD AS NUMERIC) AS INT64) AS DSCNNT_RSN_CD,\n        DSCNNT_RSN_DESC,\n        DISC_ORGNL_ORD_ID,\n        DISCO_GRP,\n        SUB_ACCT_EST_DT,\n        MDR_DISC_DT,\n        SUB_ACCT_TERM_DT,\n        CURRENT_DATETIME() AS ADD_DT\n      FROM `__query_375151661__sq_fin_fact_cust_disc`));\n\nCOMMIT TRANSACTION;\nEXCEPTION WHEN ERROR\n  THEN\n  RAISE USING message=concat("Exception while running query : ", FORMAT(@@error.message), @@error.formatted_stack_trace);\n  ROLLBACK TRANSACTION;\nEND;\n\n', 'useLegacySql': False, 'params': {'BQ_ProjectID': '{{ var.value.BQ_ProjectID }}', 'BQ_ProjectID_PR': '{{ var.value.BQ_ProjectID_PR }}', 'FEED_NAME': "{{ var.value.get(dag.dag_id ~ '_' ~ dag_run.id ~ '.s_m_NORM_300_T_FIN_DAILY_DISC.$$FEED_NAME') }}"}}, 'labels': {'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}", 'instance_name': '{{ var.value.INSTANCE_NAME }}', 'job_id': 'wkfl_norm_100_500_o_fin_daily_disc', 'task_id': 'm_norm_300_t_fin_daily_disc', 'task_type': 'bq_to_bq_load'}}
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
-    rendered_content = self.render_template(
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 171, in render_template
-    return self._render(template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 730, in _render
-    return super()._render(template, context, dag=dag)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 127, in _render
-    return render_template_to_string(template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 301, in render_template_to_string
-    return render_template(template, cast(MutableMapping[str, Any], context), native=False)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 296, in render_template
-    return "".join(nodes)
-           ^^^^^^^^^^^^^^
-  File "<template>", line 14, in root
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/sandbox.py", line 401, in call
-    return __context.call(__obj, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/runtime.py", line 303, in call
-    return __obj(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/context.py", line 136, in get
-    return Variable.get(key, deserialize_json=self._deserialize_json)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/variable.py", line 145, in get
-    raise KeyError(f"Variable {key} does not exist")
-KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1_746416.s_m_NORM_300_T_FIN_DAILY_DISC.$$FEED_NAME does not exist'
-[2025-12-20, 16:43:04 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 274, in _run_raw_task
-    TaskInstance._execute_task_with_callbacks(
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3119, in _execute_task_with_callbacks
-    task_orig = self.render_templates(context=context, jinja_env=jinja_env)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3543, in render_templates
-    original_task.render_template_fields(context, jinja_env)
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 1453, in render_template_fields
-    self._do_render_template_fields(self, self.template_fields, context, jinja_env, set())
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
-    rendered_content = self.render_template(
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 171, in render_template
-    return self._render(template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 730, in _render
-    return super()._render(template, context, dag=dag)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 127, in _render
-    return render_template_to_string(template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 301, in render_template_to_string
-    return render_template(template, cast(MutableMapping[str, Any], context), native=False)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/helpers.py", line 296, in render_template
-    return "".join(nodes)
-           ^^^^^^^^^^^^^^
-  File "<template>", line 14, in root
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/sandbox.py", line 401, in call
-    return __context.call(__obj, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/runtime.py", line 303, in call
-    return __obj(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/utils/context.py", line 136, in get
-    return Variable.get(key, deserialize_json=self._deserialize_json)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/variable.py", line 145, in get
-    raise KeyError(f"Variable {key} does not exist")
-KeyError: 'Variable dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1_746416.s_m_NORM_300_T_FIN_DAILY_DISC.$$FEED_NAME does not exist'
-[2025-12-20, 16:43:04 UTC] {base.py:84} INFO - Retrieving connection 'sa-vz-it-gk1v-edwdo-0-app'
-[2025-12-20, 16:43:04 UTC] {credentials_provider.py:410} INFO - Getting connection using `google.auth.default()` since no explicit credentials are provided.
-[2025-12-20, 16:43:05 UTC] {mixins.py:122} WARNING - Cannot retrieve job details from BigQuery.Client. 404 GET https://bigquery.googleapis.com/bigquery/v2/projects/vz-it-pr-gk1v-pleedwdo-0/jobs/wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC?projection=full&prettyPrint=false: Not found: Job vz-it-pr-gk1v-pleedwdo-0:wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/providers/google/cloud/openlineage/mixins.py", line 102, in get_openlineage_facets_on_complete
-    job_properties = self._client.get_job(job_id=self.job_id)._properties
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/google/cloud/bigquery/client.py", line 2211, in get_job
-    resource = self._call_api(
-               ^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/google/cloud/bigquery/client.py", line 843, in _call_api
-    return call()
-           ^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/google/api_core/retry/retry_unary.py", line 294, in retry_wrapped_func
-    return retry_target(
-           ^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/google/api_core/retry/retry_unary.py", line 156, in retry_target
-    next_sleep = _retry_error_helper(
-                 ^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/google/api_core/retry/retry_base.py", line 214, in _retry_error_helper
-    raise final_exc from source_exc
-  File "/opt/python3.11/lib/python3.11/site-packages/google/api_core/retry/retry_unary.py", line 147, in retry_target
-    result = target()
-             ^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/google/cloud/_http/__init__.py", line 494, in api_request
-    raise exceptions.from_http_response(response)
-google.api_core.exceptions.NotFound: 404 GET https://bigquery.googleapis.com/bigquery/v2/projects/vz-it-pr-gk1v-pleedwdo-0/jobs/wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC?projection=full&prettyPrint=false: Not found: Job vz-it-pr-gk1v-pleedwdo-0:wkfl_NORM_100_500_O_FIN_DAILY_DISC_m_NORM_300_T_FIN_DAILY_DISC
-[2025-12-20, 16:43:05 UTC] {client.py:118} INFO - OpenLineageClient will use `ComposerTransport` transport
-[2025-12-20, 16:43:05 UTC] {composer_transport.py:90} INFO - Sending the event to the Data Lineage OpenLineage API.
-[2025-12-20, 16:43:05 UTC] {composer_transport.py:93} INFO - {'eventTime': '2025-12-20T16:43:04.552102+00:00', 'eventType': 'FAIL', 'inputs': [], 'outputs': [], 'job': {'facets': {'gcp_composer_job': {'airflowVersion': '2.10.5+composer', 'composerVersion': '2.14.2', 'dagId': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1', 'environmentName': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'operator': 'BigQueryInsertJobOperator', 'taskId': 'wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC'}, 'gcp_lineage': {'displayName': 'Composer Airflow Task vz-it-ple-wdwg-aidcom-0-cc-edw-1.dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T', 'origin': {'name': 'projects/vz-it-pr-wdwg-pleaidcom-0/locations/us-east4/environments/vz-it-ple-wdwg-aidcom-0-cc-edw-1', 'sourceType': 'COMPOSER'}}, 'jobType': {'jobType': 'TASK'}}, 'name': 'dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC', 'namespace': 'vz-it-ple-wdwg-aidcom-0-cc-edw-1'}, 'run': {'facets': {'gcp_composer_run': {'dagRunId': 'manual__2025-12-20T16:38:17.055889+00:00'}}}}
-[2025-12-20, 16:43:05 UTC] {composer_transport.py:109} INFO - response: process=projects/1032455509101/locations/us-east4/processes/9b17372a2c4713d7c002bf02ae97e5b5, run=projects/1032455509101/locations/us-east4/processes/9b17372a2c4713d7c002bf02ae97e5b5/runs/a58dfeaf2ac0882ed10fb686c45639d6
-[2025-12-20, 16:43:05 UTC] {adapter.py:164} INFO - Successfully emitted OpenLineage `FAIL` event of id `019b3ca0-4cdf-73fd-9065-b553e3486ee5`
-[2025-12-20, 16:43:05 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc_v1, task_id=wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC, run_id=manual__2025-12-20T16:38:17.055889+00:00, execution_date=20251220T163817, start_date=20251220T164303, end_date=20251220T164304
-[2025-12-20, 16:43:05 UTC] {taskinstance.py:341} ▶ Post task execution logs
+from airflow.models import Variable
+import airflow
+from airflow import DAG
+from airflow.utils.task_group import TaskGroup
+import sys
+sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
+from datetime import datetime, timedelta
+from airflow.utils.db import provide_session
+from airflow.operators.dummy import DummyOperator
+from airflow.providers.ssh.hooks.ssh import SSHHook
+import os
+from pathlib import Path
+import json
+import re
+from collections import defaultdict
+from airflow.settings import Session
+from airflow.decorators import task
+from MDR_Billing.wkfl_NORM_100_500_O_FTV_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FTV_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN.m_100_CTL_ETL_FEED_PROCESS_START import *
+from airflow.providers.ssh.operators.ssh import SSHOperator
+from MDR_Billing.wkfl_NORM_100_500_O_FTV_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FTV_DAILY_DISC.s_m_NORM_300_T_FTV_DAILY_DISC.m_NORM_300_T_FTV_DAILY_DISC import *
+from MDR_Billing.wkfl_NORM_100_500_O_FTV_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FTV_DAILY_DISC.s_m_NORM_320_O_FTV_DAILY_DISC_OUTPUT.m_NORM_320_O_FTV_DAILY_DISC_OUTPUT import *
+from MDR_Billing.wkfl_NORM_100_500_O_FTV_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FTV_DAILY_DISC.s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN.m_500_CTL_ETL_FEED_PROCESS_END import *
+from operators.dm_status import DMStatusOperator
+import logging
+from airflow.utils.email import send_email
+import logging
+from google.cloud import storage
+from airflow.operators.python import PythonOperator
+from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
+from airflow.exceptions import AirflowFailException
+import time
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from google.api_core import exceptions
+
+
+
+def get_Status(dag_run, id):
+    try:
+        status = dag_run.get_task_instance(id).state
+        if status == "success":
+            return "succeeded"
+        if status == "failed":
+            return "failed"
+        return None
+    except Exception:
+        return "disabled"
+
+def get_PrevTaskStatus(dag_run, id):
+    id = list(dag_run.dag.get_task(id).upstream_task_ids)[0]
+    return get_Status(dag_run, id)
+
+def get_resolved_path(filePath):
+    ssh_id = Variable.get('SSH_CONN_ID')
+    ssh_hook = SSHHook(ssh_conn_id=ssh_id)
+    ssh_client = ssh_hook.get_conn()
+    
+    stdin, stdout, stderr = ssh_client.exec_command(f'echo {filePath}')
+    resolved_path = stdout.read().decode().strip()
+    error_output = stderr.read().decode().strip()
+    if not resolved_path or error_output:
+        raise Exception(f"Failed to resolve remote path: {filePath}\nError: {error_output}")
+    ssh_client.close()
+    return resolved_path
+
+
+def get_storage_client():
+    GCP_CONN_ID = Variable.get('GCP_CONNECTION_ID')
+    hook = GCSHook(gcp_conn_id=GCP_CONN_ID)
+    return hook.get_conn()
+
+
+@task
+def gcs_file_processor(
+    gcs_bucket_name,
+    gcs_object_path,
+    data_path,
+    archive_path,
+    init_file_name,
+    output_file_prefix,
+    output_file_suffix,    
+    date_time_str,
+    mail_recipient,
+    header_file_name=None,
+    trailer_file_name=None,    
+    **kwargs
+):
+    
+    logging.info(f"gcs_bucket_name: {gcs_bucket_name}")
+    logging.info(f"gcs_object_path: {gcs_object_path}")
+    logging.info(f"data_path: {data_path}")
+    logging.info(f"archive_path: {archive_path}")
+    logging.info(f"init_file_name: {init_file_name}")
+    logging.info(f"output_file_prefix: {output_file_prefix}")
+    logging.info(f"output_file_suffix: {output_file_suffix}")
+    logging.info(f"date_time_str: {date_time_str}")
+    logging.info(f"mail_recipient: {mail_recipient}")
+    logging.info(f"header_file_name: {header_file_name}")
+    logging.info(f"trailer_file_name: {trailer_file_name}")
+
+    project = Variable.get("BQ_ProjectID")
+    logging.info(f"project: {project}")
+
+    
+    
+    
+    # storage_client = hook.get_storage_client(project_id=target_project_id)
+
+    storage_client = get_storage_client()
+    
+
+    # storage_client = storage.Client(project=project)
+
+    data_gcs = gcs_bucket_name.replace('gs://', '')
+    logging.info(f"data_gcs: {data_gcs}") 
+    bucket = storage_client.bucket(data_gcs)
+
+    archive_gcs = data_gcs.replace('outbound', 'archive')
+    logging.info(f"archive_gcs: {archive_gcs}") 
+    archive_bucket = storage_client.bucket(archive_gcs)
+
+    full_data_path = f"{gcs_object_path}{data_path}"
+    logging.info(f"full_data_path: {full_data_path}") 
+    full_archive_path = f"{gcs_object_path}{archive_path}"
+    logging.info(f"full_archive_path: {full_archive_path}") 
+
+    INIT_FILE_BLOB = bucket.blob(os.path.join(full_data_path, init_file_name))
+    
+    source_blobs_to_compose = []
+    compose_needed = False
+    
+    if header_file_name:
+        HEADER_BLOB = bucket.blob(os.path.join(full_data_path, header_file_name))
+        source_blobs_to_compose.append(HEADER_BLOB)
+        compose_needed = True
+    
+    source_blobs_to_compose.append(INIT_FILE_BLOB)
+    
+    if trailer_file_name:
+        TRAILER_BLOB = bucket.blob(os.path.join(full_data_path, trailer_file_name))
+        source_blobs_to_compose.append(TRAILER_BLOB)
+        compose_needed = True
+
+    run_date_part = date_time_str[:8]
+    SRC_FILE_NAME = f"{output_file_prefix}_{run_date_part}_{date_time_str}{output_file_suffix}"
+    
+    GCS_PROCESSING_BLOB_NAME = os.path.join(full_data_path, SRC_FILE_NAME)
+    GCS_PROCESSING_BLOB = bucket.blob(GCS_PROCESSING_BLOB_NAME)
+    
+    ARCHIVE_BLOB_NAME = os.path.join(full_archive_path, SRC_FILE_NAME)
+    ARCHIVE_BLOB = archive_bucket.blob(ARCHIVE_BLOB_NAME)
+
+    ti = kwargs['ti']
+
+    try:
+        logging.info("Starting file availability and size validation...")
+        
+        # if not INIT_FILE_BLOB.exists():
+        #     raise FileNotFoundError(f"Data file not available: {init_file_name}")
+
+        # for blob in source_blobs_to_compose:
+        #     if blob != INIT_FILE_BLOB and not blob.exists():
+        #         raise FileNotFoundError(f"Required file not available: {blob.name.split('/')[-1]}")
+
+        # INIT_FILE_BLOB.reload() 
+        # if INIT_FILE_BLOB.size is None or INIT_FILE_BLOB.size == 0:
+        #     raise ValueError(f"Data file ({init_file_name}) has zero bytes. Process aborted.")
+
+        try:
+            INIT_FILE_BLOB.reload(client=storage_client) 
+        except exceptions.NotFound as e:
+            raise FileNotFoundError(f"Data file not available: {init_file_name}. GCS Error: {e}")
+
+        if INIT_FILE_BLOB.size is None:
+            raise FileNotFoundError(f"Data file not available: {init_file_name}")
+        elif INIT_FILE_BLOB.size == 0:
+            raise ValueError(f"Data file ({init_file_name}) has zero bytes. Process aborted.")
+        
+        logging.info(f"Data file size check passed. Size: {INIT_FILE_BLOB.size} bytes.")
+
+        if compose_needed:
+            GCS_PROCESSING_BLOB.compose(source_blobs_to_compose)
+            logging.info(f"Composition successful. Uncompressed file created at {GCS_PROCESSING_BLOB.name}")
+        else:
+            # INIT_FILE_BLOB.copy_to(GCS_PROCESSING_BLOB)
+            bucket.copy_blob(
+                    INIT_FILE_BLOB, 
+                    bucket, 
+                    new_name=GCS_PROCESSING_BLOB.name
+                )
+            logging.info(f"Single file copied/renamed to {GCS_PROCESSING_BLOB.name}")
+        
+        
+        logging.info(f"Moving file to archive: {ARCHIVE_BLOB_NAME}")
+        # GCS_PROCESSING_BLOB.copy_to(ARCHIVE_BLOB)
+
+        bucket.copy_blob(
+            GCS_PROCESSING_BLOB,
+            archive_bucket,
+            new_name=ARCHIVE_BLOB_NAME
+        )
+        
+        GCS_PROCESSING_BLOB.delete()
+        logging.info(f"Deleted processing file: {GCS_PROCESSING_BLOB.name}")
+            
+        logging.info("GCS file processing completed successfully.")
+        
+        subject = f"File Feed Processing - SUCCESS in Task {ti.task_id}"
+        html_content = (
+            f"<h3>Task Success Alert</h3>"
+            f"<p> File landed in the archive: {gcs_bucket_name}/{full_archive_path}</p>"
+        )
+        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
+
+    except (FileNotFoundError, ValueError) as e:
+        error_message = f"GCS processing FAILED: {type(e).__name__}: {e}"
+        logging.error(error_message, exc_info=True)
+        
+        subject = f"File Feed Processing - FAILED in Task {ti.task_id}"
+        html_content = (
+            f"<h3>Task Failure Alert</h3>"
+            f"<p>Error: <strong>{error_message}</strong></p>"
+            f"<p>Source Data Path: {gcs_bucket_name}/{full_data_path}</p>"
+            f"<p>Check Airflow logs for full trace: <a href='{ti.log_url}'>Log Link</a></p>"
+        )
+        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
+        raise
+        
+    except Exception as e:
+        error_message = f"An unexpected error occurred: {type(e).__name__}: {e}"
+        logging.error(error_message, exc_info=True)
+
+        subject = f"File Feed Processing - UNEXPECTED FAILURE in Task {ti.task_id}"
+        html_content = (
+            f"<h3>Unexpected Task Failure Alert</h3>"
+            f"<p>Error: <strong>{error_message}</strong></p>"
+            f"<p>Source Data Path: {gcs_bucket_name}/{full_data_path}</p>"
+            f"<p>Check Airflow logs for full trace: <a href='{ti.log_url}'>Log Link</a></p>"
+        )
+        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
+        raise            
+
+# def parse_prm_file(paramFilePath):
+
+#     abs_path = Variable.get('PARAMFILE_ABS_PATH')
+#     ssh_id = Variable.get('SSH_CONN_ID')
+#     ssh_hook = SSHHook(ssh_conn_id=ssh_id)
+#     ssh_client = ssh_hook.get_conn()
+#     sftp_client = ssh_client.open_sftp()
+    
+#     remote_expr_path = abs_path + paramFilePath
+#     stdin, stdout, stderr = ssh_client.exec_command(f'echo {remote_expr_path}')
+#     resolved_path = stdout.read().decode().strip()
+#     error_output = stderr.read().decode().strip()
+#     if not resolved_path or error_output:
+#         raise Exception(f"Failed to resolve remote path: {remote_expr_path}\nError: {error_output}")
+
+#     with sftp_client.open(resolved_path, mode='r') as remote_file:
+#         output = remote_file.read().decode('utf-8')
+#     sftp_client.close()
+#     ssh_client.close()
+    
+#     data = defaultdict(dict)
+#     current_section = None
+#     if output:
+#         for line in output.splitlines():
+#             line = line.strip()
+#             if not line or line.startswith(('#', '//', ';')):
+#                 continue  # skip comments and blank lines
+#             if line.startswith('[') and line.endswith(']'):
+#                 current_section = line[1:-1]
+#                 continue
+#             match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
+#             if match and current_section:
+#                 key = match.group(1)
+#                 value = match.group(2).strip()
+#                 if value.lower() in ('true', 'false'):
+#                     value = value.lower() == 'true'
+#                 else:
+#                     try:
+#                         if '.' in value:
+#                             value = float(value)
+#                         else:
+#                             value = int(value)
+#                     except ValueError:
+#                         value = value.strip('"').strip("'")  # treat as string
+#                 data[current_section][key] = value
+#     else:
+#         return None
+#     return dict(data)
+            
+
+def parse_prm_file(paramFilePath):
+
+    gcs_base_uri = '/home/airflow/gcs/data/'
+     
+    logging.info(f"Using GCS local mount base path: {gcs_base_uri}")
+    
+    full_file_path = os.path.join(gcs_base_uri, paramFilePath.lstrip('/'))
+    
+    logging.info(f"Attempting to read parameter file from local path: {full_file_path}")
+
+
+
+    output = None
+    try:
+ 
+        output = open(os.path.join(gcs_base_uri, paramFilePath.lstrip('/')), "r").read()
+
+        logging.info("Successfully read parameter file using local file I/O.")
+        logging.info(f"output: {output}")
+            
+    except Exception as e:
+        raise Exception(f"Failed to read parameter file from local mount point at {full_file_path}. Error: {e}")
+  
+    
+    data = defaultdict(dict)
+    current_section = None
+    
+    if output:
+        for line in output.splitlines():
+            line = line.strip()
+            if not line or line.startswith(('#', '//', ';')):
+                continue  
+            
+            if line.startswith('[') and line.endswith(']'):
+                current_section = line[1:-1]
+                continue
+            
+            match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
+            if match and current_section:
+                key = match.group(1)
+                value = match.group(2).strip()
+                
+                if value.lower() in ('true', 'false'):
+                    value = value.lower() == 'true'
+                else:
+                    try:
+                        if '.' in value:
+                            value = float(value)
+                        else:
+                            value = int(value)
+                    except ValueError:
+                        value = value.strip('"').strip("'") 
+                        
+                data[current_section][key] = value
+        
+    else:
+        return None
+
+    parsed_data = dict(data)
+    logging.info(f"data: {parsed_data}")
+    return parsed_data
+
+def is_existing_file(paramFile):
+
+    if Path(paramFile).exists() and Path(paramFile).is_file():
+        return paramFile
+    else:
+        return None
+
+
+
+def get_updated_session_parameters(session_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables):
+ 
+     if wkfl_default_param and session_param_json and not workflowParamFile and not mapping_default_param:
+         variables.update(session_param_json)   
+         return variables
+     if wkfl_default_param and mapping_default_param and session_param_json and not workflowParamFile:  
+         mapping_default_param.update(variables)
+         mapping_default_param.update(session_param_json)
+         return mapping_default_param
+     if mapping_default_param and wkfl_default_param and not workflowParamFile and not session_param_json:
+         variables.update(mapping_default_param)
+         return variables
+     if mapping_default_param and session_param_json and not wkfl_default_param and not workflowParamFile:
+         mapping_default_param.update(session_param_json)
+         return mapping_default_param
+     if workflowParamFile and session_param_json and mapping_default_param:
+         mapping_default_param.update(session_param_json)  
+         mapping_default_param.update(variables or {})
+         return mapping_default_param
+     if workflowParamFile and session_param_json:
+         session_param_json.update(workflowParamFile) 
+         return session_param_json
+     if wkfl_default_param and mapping_default_param and workflowParamFile and not session_param_json:
+         mapping_default_param.update(variables)
+         return mapping_default_param
+     else:
+         return mapping_default_param if mapping_default_param else variables if wkfl_default_param else {}
+                  
+
+def set_mapping_params(id, mapping_name, session_name, wkfl_name, session_param_json, workflowParamFile, variables):
+    abs_path = '/home/airflow/gcs/data'
+    mapping_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties"))
+    mapping_default_param = eval(open(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties")).read()) if mapping_file_path else None
+    workflow_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + wkfl_name + ".properties"))
+    wkfl_default_param = workflow_file_path if workflow_file_path else None
+    if session_param_json:
+        if session_param_json.get(session_name):
+            session_level_param_json = session_param_json.get(session_name)
+        elif session_param_json.get(wkfl_name):
+            session_level_param_json = session_param_json.get(wkfl_name).get(session_name)
+        elif session_param_json.get('GLOBAL'):
+            session_level_param_json = session_param_json.get('GLOBAL')
+        else:
+            session_level_param_json = {}
+    else:
+        session_level_param_json = {}
+    var_dict = get_updated_session_parameters(session_level_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables)
+    keys = list(var_dict.keys())
+    for k in range(len(var_dict)):
+        key = keys[k]
+        Variable.set(id + "." + key, var_dict[key])
+
+
+# class KeepAliveSSHHook(SSHHook):
+#     def get_conn(self):
+#         client = super().get_conn()
+#         client.get_transport().set_keepalive(int(Variable.get('KEEP_TIME_ALIVE')))
+#         return client
+
+# SSH_CONNECTION_ID = Variable.get('SSH_CONN_ID')
+# ssh_hook = KeepAliveSSHHook(ssh_conn_id=SSH_CONNECTION_ID)
+
+
+@task
+def check_fact_load_status(target_data_mart: str, target_fact_table: str):
+    MAX_LOOP_COUNT = 480
+    SLEEP_TIME_IN_SECONDS = 180
+    
+    try:
+        BQ_CONN_ID = Variable.get('GCP_CONNECTION_ID')
+    except:
+        BQ_CONN_ID = 'google_cloud_default' 
+    
+    hook = BigQueryHook(gcp_conn_id=BQ_CONN_ID, use_legacy_sql=False)
+
+    # PROJECT_ID = "{{ var.value.BQ_ProjectID }}"
+    PROJECT_ID = Variable.get("BQ_ProjectID")
+    
+    query = f"""
+        SELECT DATE_DIFF(
+            (SELECT DATE_ADD(report_date, INTERVAL 1 DAY) 
+             FROM {PROJECT_ID}.dw_ssp.business_process_date), 
+            MAX(t.snapshot_dt), 
+            DAY
+        )
+        FROM {PROJECT_ID}.os_bbb_userv.v_bbb_ctl_target_fact AS t
+        WHERE LOWER(t.tgt_fact_table) = LOWER('{target_fact_table}')
+          AND LOWER(t.tgt_fact_schema) = LOWER('{target_data_mart}')
+          AND LOWER(t.stat_cd) = 'c'
+    """
+
+    for loop_count in range(1, MAX_LOOP_COUNT + 1):
+        print(f"Checking load status for {target_data_mart}.{target_fact_table} (Loop {loop_count}/{MAX_LOOP_COUNT}).")
+        
+        try:
+            result = hook.get_first(sql=query, parameters=None)
+            
+            stat_cd_value = result[0] if result and result[0] is not None else 1
+
+            if stat_cd_value <= 0:
+                print(f"Confirmed that {target_data_mart}.{target_fact_table} has completed successfully (Status: {stat_cd_value}).")
+                return 
+            
+            print(f"The load is still running (Status: {stat_cd_value}). Sleeping for {SLEEP_TIME_IN_SECONDS} seconds.")
+            time.sleep(SLEEP_TIME_IN_SECONDS)
+
+        except Exception as e:
+            print(f"An error occurred during BigQuery execution: {e}")
+            time.sleep(SLEEP_TIME_IN_SECONDS)
+            
+    raise AirflowFailException(
+        f"ERROR: After checking for {round(MAX_LOOP_COUNT * SLEEP_TIME_IN_SECONDS / 3600)} hours, "
+        f"{target_data_mart}.{target_fact_table} has not yet completed loading. Aborting."
+    )
+
+
+
+def prepare_wklt_NORM_100_500_O_FTV_DAILY_DISC_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None, bq_project_id = None, bq_project_pr_id = None) -> TaskGroup:
+    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
+        Start = DummyOperator(
+                task_id = 'Start',
+                do_xcom_push = False,
+        )
+
+        @task(task_id = 's_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN_param_init_logic')
+        @provide_session
+        def fn_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+                variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FTV_Disc_Daily.par')
+            set_mapping_params(id + '.' + group_id, "m_100_CTL_ETL_FEED_PROCESS_START", "s_m_100_CTL_ETL_FEED_PROCESS_START", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_ftv_daily_disc", session_param_json, "", variables)
+
+        s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN__init = fn_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN_param_init_logic()
+
+        s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN = prepare_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN_TG(parent_group = task_group, groupId = 's_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN', trigger = 'none_skipped', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+
+        @task.branch(task_id = 'branch_logic_1', trigger_rule = 'none_skipped')
+        def fn_branch_logic_1(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if Variable.get(id + '.' + current_group_id + '.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN.$JobStatus') == "succeeded":
+                targets.append(current_group_id + '.Cmd_200_bbb_check_fact_load_NORM_FTV_DAILY_DISC')
+            return targets
+
+        branch_logic_1_task = fn_branch_logic_1()
+
+        # Cmd_200_bbb_check_fact_load_NORM_FTV_DAILY_DISC = SSHOperator(
+        #         task_id = 'Cmd_200_bbb_check_fact_load_NORM_FTV_DAILY_DISC',
+        #         ssh_hook = ssh_hook,
+        #         command = """/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FTV FTV_FACT_CUST_DISC MDR_VIDEO_CHURN_NORM """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 'cmd_200_bbb_check_fact_load_norm_ftv_daily_disc',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+
+        Cmd_200_bbb_check_fact_load_NORM_FTV_DAILY_DISC = check_fact_load_status.override(task_id='Cmd_200_bbb_check_fact_load_NORM_FTV_DAILY_DISC', trigger_rule='all_success')(
+            target_data_mart='DW_FTV',
+            target_fact_table='FTV_FACT_CUST_DISC'
+        )
+   
+
+        @task.branch(task_id = 'branch_logic_2', trigger_rule = 'none_skipped')
+        def fn_branch_logic_2(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if (get_Status(context["dag_run"], current_group_id + '.' + "Cmd_200_bbb_check_fact_load_NORM_FTV_DAILY_DISC")) == "succeeded":
+                targets.append(current_group_id + '.s_m_NORM_300_T_FTV_DAILY_DISC_param_init_logic')
+            return targets
+
+        branch_logic_2_task = fn_branch_logic_2()
+
+        # s_m_NORM_300_T_FTV_DAILY_DISC_Pre_session_command = SSHOperator(
+        #         task_id = 's_m_NORM_300_T_FTV_DAILY_DISC_Pre_session_command',
+        #         ssh_hook = ssh_hook,
+        #         command = """$PMRootDir/ETL_SCRIPTS/SHARED_SCRIPTS/td_pre_cleanup.ksh DW_FTV_ADMIN FTV_TRN_DAILY_DISC INF_UTL_TBLS NORM_300_T_FTV_DAILY01_01 MLOAD $Param_LGConnectionLoad1 """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 's_m_norm_300_t_ftv_daily_disc_pre_session_command',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+
+        @task(task_id = 's_m_NORM_300_T_FTV_DAILY_DISC_param_init_logic')
+        @provide_session
+        def fn_s_m_NORM_300_T_FTV_DAILY_DISC_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+                variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FTV_Disc_Daily.par')
+            set_mapping_params(id + '.' + group_id, "m_NORM_300_T_FTV_DAILY_DISC", "s_m_NORM_300_T_FTV_DAILY_DISC", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_ftv_daily_disc", session_param_json, "", variables)
+
+        s_m_NORM_300_T_FTV_DAILY_DISC__init = fn_s_m_NORM_300_T_FTV_DAILY_DISC_param_init_logic()
+
+        s_m_NORM_300_T_FTV_DAILY_DISC = prepare_s_m_NORM_300_T_FTV_DAILY_DISC_TG(parent_group = task_group, groupId = 's_m_NORM_300_T_FTV_DAILY_DISC', trigger = 'none_skipped', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+
+        @task.branch(task_id = 'branch_logic_3', trigger_rule = 'none_skipped')
+        def fn_branch_logic_3(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if Variable.get(id + '.' + current_group_id + '.s_m_NORM_300_T_FTV_DAILY_DISC.$JobStatus') == "succeeded":
+                targets.append(next(filter(lambda task_id: task_id.startswith(current_group_id + '.' + 's_m_NORM_320_O_FTV_DAILY_DISC_OUTPUT.'), context['task'].downstream_task_ids), None))
+            return targets
+
+        branch_logic_3_task = fn_branch_logic_3()
+
+        s_m_NORM_320_O_FTV_DAILY_DISC_OUTPUT = prepare_s_m_NORM_320_O_FTV_DAILY_DISC_OUTPUT_TG(parent_group = task_group, groupId = 's_m_NORM_320_O_FTV_DAILY_DISC_OUTPUT', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+
+        @task.branch(task_id = 'branch_logic_4', trigger_rule = 'none_skipped')
+        def fn_branch_logic_4(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if Variable.get(id + '.' + current_group_id + '.s_m_NORM_320_O_FTV_DAILY_DISC_OUTPUT.$JobStatus') == "succeeded":
+                targets.append(current_group_id + '.cmd_400_sftp_NORM_FTV_DAILY_DISC')
+            return targets
+
+        branch_logic_4_task = fn_branch_logic_4()
+
+        # cmd_400_sftp_NORM_FTV_DAILY_DISC = SSHOperator(
+        #         task_id = 'cmd_400_sftp_NORM_FTV_DAILY_DISC',
+        #         ssh_hook = ssh_hook,
+        #         command = """ /usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/NORM_LISCOUNT/Bin/sftp_norm_ftv_daily_disc.ksh  """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 'cmd_400_sftp_norm_ftv_daily_disc',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+
+        RUN_DATE_TIME = "{{ dag_run.execution_date.strftime('%Y%m%d%H%M%S') }}"
+        GCS_BUCKET = Variable.get('GCS_OUTBOUND')
+        gcs_object_path = "non_dpf/mapping_output_as_file/sysmnt/etl/etlcfs02scripts/"
+
+        # GCS_BUCKET = f"{GCS_OUTBOUND}/{gcs_object_path}"
+        FAILURE_EMAIL = "mdr-etl@verizon.com"
+        # FAILURE_EMAIL = "shijin.chellappan@verizon.com"
+
+        cmd_400_sftp_NORM_FTV_DAILY_DISC = gcs_file_processor.override(
+            task_id='cmd_400_sftp_NORM_FTV_DAILY_DISC',
+            trigger_rule='all_success'
+        )(
+            gcs_bucket_name=GCS_BUCKET,
+            gcs_object_path = gcs_object_path,
+            data_path='MDR_FEEDS/NORM_LISCOUNT/Data',
+            archive_path='MDR_FEEDS/NORM_LISCOUNT/Archive',
+            init_file_name='ftv_daily_disc.txt',
+            header_file_name='ftv_daily_disc_header.txt',
+            trailer_file_name=None,
+            output_file_prefix='MDR_VIDEO_CHURN',
+            output_file_suffix='.dat',
+            date_time_str=RUN_DATE_TIME,
+            mail_recipient=FAILURE_EMAIL,
+        )
+
+        @task.branch(task_id = 'branch_logic_5', trigger_rule = 'none_skipped')
+        def fn_branch_logic_5(**context):
+            targets = []
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            if (get_Status(context["dag_run"], current_group_id + '.' + "cmd_400_sftp_NORM_FTV_DAILY_DISC")) == "succeeded":
+                targets.append(current_group_id + '.s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN_param_init_logic')
+            return targets
+
+        branch_logic_5_task = fn_branch_logic_5()
+
+        @task(task_id = 's_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN_param_init_logic')
+        @provide_session
+        def fn_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN_param_init_logic(session=None, **context):
+            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+            del task_qualifiers[-1]
+            group_id = ".".join(task_qualifiers)
+            task_qualifiers = context['task'].task_id.split(".")
+            del task_qualifiers[-1]
+            current_group_id = ".".join(task_qualifiers)
+            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+            session_param_json = None
+            variables = {}
+            try:
+                results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+                variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
+            finally:
+                session.close()
+        
+            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FTV_Disc_Daily.par')
+            set_mapping_params(id + '.' + group_id, "m_500_CTL_ETL_FEED_PROCESS_END", "s_m_500_CTL_ETL_FEED_PROCESS_END", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_ftv_daily_disc", session_param_json, "", variables)
+
+        s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN__init = fn_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN_param_init_logic()
+
+        s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN = prepare_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN_TG(parent_group = task_group, groupId = 's_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN', trigger = 'none_skipped', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+
+        # s_m_NORM_300_T_FTV_DAILY_DISC_Post_session_success_command = SSHOperator(
+        #         task_id = 's_m_NORM_300_T_FTV_DAILY_DISC_Post_session_success_command',
+        #         ssh_hook = ssh_hook,
+        #         command = """$PMRootDir/ETL_SCRIPTS/SHARED_SCRIPTS/td_post_check.ksh DW_FTV_ADMIN FTV_TRN_DAILY_DISC INF_UTL_TBLS NORM_300_T_FTV_DAILY01_01 MLOAD $Param_LGConnectionLoad1 """.format(task_group.group_id),
+        #         conn_timeout = 60,
+        #         get_pty = False,
+        #         retries = 0,
+        #         cmd_timeout = None,
+        #         environment = {
+        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+        #   'instance_name': "{{ var.value.INSTANCE_NAME }}",
+        #   'job_id': "{{ dag.dag_id }}",
+        #   'task_id': 's_m_norm_300_t_ftv_daily_disc_post_session_success_command',
+        #   'task_type': 'sshoperator'
+        # },
+        #         doc_md = "",
+        #         trigger_rule = 'all_success',
+        # )
+
+        status = DMStatusOperator(
+                task_id = 'status',
+                group_id = task_group.group_id,
+                jobName = 'wklt_NORM_100_500_O_FTV_DAILY_DISC',
+                userStatus = userStatus,
+                trigger_rule = 'all_done',
+        )
+
+
+        Start >> s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN__init >> s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FTV_DISC_90_DAY_CHURN >> branch_logic_1_task >> Cmd_200_bbb_check_fact_load_NORM_FTV_DAILY_DISC >> branch_logic_2_task >> s_m_NORM_300_T_FTV_DAILY_DISC__init >> s_m_NORM_300_T_FTV_DAILY_DISC
+        s_m_NORM_300_T_FTV_DAILY_DISC >> branch_logic_3_task >> s_m_NORM_320_O_FTV_DAILY_DISC_OUTPUT >> branch_logic_4_task >> cmd_400_sftp_NORM_FTV_DAILY_DISC >> branch_logic_5_task >> s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN__init >> s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FTV_DISC_90_DAY_CHURN >> status
+        s_m_NORM_300_T_FTV_DAILY_DISC >> status
+    return task_group
