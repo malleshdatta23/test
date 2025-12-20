@@ -22,3 +22,5 @@ Variable.set(
 )
 
 # ---- END: Explicitly seed $$FEED_NAME ----
+logging.info(f"Resolved $$FEED_NAME = {feed_name}")
+
