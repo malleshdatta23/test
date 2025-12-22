@@ -1,43 +1,48 @@
-from airflow.models import Variable
+import sys
+import os
+sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
 import airflow
 from airflow import DAG
-from airflow.utils.task_group import TaskGroup
-import sys
-sys.path.append('/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/')
 from datetime import datetime, timedelta
+from airflow.models import Variable
 from airflow.utils.db import provide_session
 from airflow.operators.dummy import DummyOperator
-import os
 from pathlib import Path
 import json
 import re
 from collections import defaultdict
 from airflow.settings import Session
 from airflow.decorators import task
-from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC.m_100_CTL_ETL_FEED_PROCESS_START import *
-from airflow.providers.ssh.operators.ssh import SSHOperator
-from airflow.providers.ssh.hooks.ssh import SSHHook
-from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_300_T_FIN_DAILY_DISC.m_NORM_300_T_FIN_DAILY_DISC import *
-from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.m_NORM_320_O_FIN_DAILY_DISC_OUTPUT import *
-from MDR_Billing.wkfl_NORM_100_500_O_FIN_DAILY_DISC.taskGroups.wklt_NORM_100_500_O_FIN_DAILY_DISC.s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC.m_500_CTL_ETL_FEED_PROCESS_END import *
-from operators.dm_status import DMStatusOperator
-#######
-from google.cloud import storage
-from airflow.operators.python import PythonOperator
+from airflow.utils.task_group import TaskGroup
+
+# ### --- FIX 2: ADDED REQUIRED IMPORTS FOR YOUR NEW LOGIC ---
 from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
 from airflow.exceptions import AirflowFailException
-import time
-from airflow.providers.google.cloud.hooks.gcs import GCSHook
-from google.api_core.exceptions import NotFound
-from google.cloud import storage
-from airflow.operators.python import PythonOperator
-from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
-from airflow.exceptions import AirflowFailException
+import logging
 import time
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from google.api_core import exceptions
-import logging
-############
+from google.api_core.exceptions import NotFound
+
+# Custom Imports
+from MDR_Billing.wkfl_NATB_O_MAIN_DAILY_FEED.taskGroups.s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB.m_100_CTL_ETL_FEED_PROCESS_START import *
+from airflow.providers.ssh.operators.ssh import SSHOperator
+from airflow.providers.ssh.hooks.ssh import SSHHook
+from MDR_Billing.wkfl_NATB_O_MAIN_DAILY_FEED.taskGroups.s_m_NATB_300_O_DAILY.m_NATB_O_DAILY_300_FEED import *
+from MDR_Billing.wkfl_NATB_O_MAIN_DAILY_FEED.taskGroups.s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END.m_500_CTL_ETL_FEED_PROCESS_END import *
+from operators.dm_status import DMStatusOperator
+from google.cloud import storage
+from airflow.operators.python import PythonOperator
+
+
+def get_var(dag_id, id, var, tg = None):
+    key = dag_id + '_' + str(id)
+    if tg != None:
+        qualifier = ".".join([key, tg, var])
+        return Variable.get(qualifier)
+    else:
+        qualifier = ".".join([key, var])
+        return Variable.get(qualifier)
 
 def get_Status(dag_run, id):
     try:
@@ -54,249 +59,6 @@ def get_PrevTaskStatus(dag_run, id):
     id = list(dag_run.dag.get_task(id).upstream_task_ids)[0]
     return get_Status(dag_run, id)
 
-def get_resolved_path(filePath):
-    ssh_id = Variable.get('SSH_CONN_ID')
-    ssh_hook = SSHHook(ssh_conn_id=ssh_id)
-    ssh_client = ssh_hook.get_conn()
-    
-    stdin, stdout, stderr = ssh_client.exec_command(f'echo {filePath}')
-    resolved_path = stdout.read().decode().strip()
-    error_output = stderr.read().decode().strip()
-    if not resolved_path or error_output:
-        raise Exception(f"Failed to resolve remote path: {filePath}\nError: {error_output}")
-    ssh_client.close()
-    return resolved_path
-
-
-def get_storage_client():
-    GCP_CONN_ID = Variable.get('GCP_CONNECTION_ID')
-    hook = GCSHook(gcp_conn_id=GCP_CONN_ID)
-    return hook.get_conn()
-
-
-@task
-def gcs_file_processor(
-    gcs_bucket_name,
-    gcs_object_path,
-    data_path,
-    archive_path,
-    init_file_name,
-    output_file_prefix,
-    output_file_suffix,    
-    date_time_str,
-    mail_recipient,
-    header_file_name=None,
-    trailer_file_name=None,    
-    **kwargs
-):
-
-    logging.info(f"gcs_bucket_name: {gcs_bucket_name}")
-    logging.info(f"gcs_object_path: {gcs_object_path}")
-    logging.info(f"data_path: {data_path}")
-    logging.info(f"archive_path: {archive_path}")
-    logging.info(f"init_file_name: {init_file_name}")
-    logging.info(f"output_file_prefix: {output_file_prefix}")
-    logging.info(f"output_file_suffix: {output_file_suffix}")
-    logging.info(f"date_time_str: {date_time_str}")
-    logging.info(f"mail_recipient: {mail_recipient}")
-    logging.info(f"header_file_name: {header_file_name}")
-    logging.info(f"trailer_file_name: {trailer_file_name}")
-
-    project = Variable.get("BQ_ProjectID")
-    logging.info(f"project: {project}")
-
-    
-    
-    
-    # storage_client = hook.get_storage_client(project_id=target_project_id)
-
-    storage_client = get_storage_client()
-    
-
-    # storage_client = storage.Client(project=project)
-
-    data_gcs = gcs_bucket_name.replace('gs://', '')
-    logging.info(f"data_gcs: {data_gcs}") 
-    bucket = storage_client.bucket(data_gcs)
-
-    archive_gcs = data_gcs.replace('outbound', 'archive')
-    logging.info(f"archive_gcs: {archive_gcs}") 
-    archive_bucket = storage_client.bucket(archive_gcs)
-
-    full_data_path = f"{gcs_object_path}{data_path}"
-    logging.info(f"full_data_path: {full_data_path}") 
-    full_archive_path = f"{gcs_object_path}{archive_path}"
-    logging.info(f"full_archive_path: {full_archive_path}") 
-
-    INIT_FILE_BLOB = bucket.blob(os.path.join(full_data_path, init_file_name))
-    
-    source_blobs_to_compose = []
-    compose_needed = False
-    
-    if header_file_name:
-        HEADER_BLOB = bucket.blob(os.path.join(full_data_path, header_file_name))
-        source_blobs_to_compose.append(HEADER_BLOB)
-        compose_needed = True
-    
-    source_blobs_to_compose.append(INIT_FILE_BLOB)
-    
-    if trailer_file_name:
-        TRAILER_BLOB = bucket.blob(os.path.join(full_data_path, trailer_file_name))
-        source_blobs_to_compose.append(TRAILER_BLOB)
-        compose_needed = True
-
-    run_date_part = date_time_str[:8]
-    SRC_FILE_NAME = f"{output_file_prefix}_{run_date_part}_{date_time_str}{output_file_suffix}"
-    
-    GCS_PROCESSING_BLOB_NAME = os.path.join(full_data_path, SRC_FILE_NAME)
-    GCS_PROCESSING_BLOB = bucket.blob(GCS_PROCESSING_BLOB_NAME)
-    
-    ARCHIVE_BLOB_NAME = os.path.join(full_archive_path, SRC_FILE_NAME)
-    ARCHIVE_BLOB = archive_bucket.blob(ARCHIVE_BLOB_NAME)
-
-    ti = kwargs['ti']
-
-    try:
-        logging.info("Starting file availability and size validation...")
-        
-        # if not INIT_FILE_BLOB.exists():
-        #     raise FileNotFoundError(f"Data file not available: {init_file_name}")
-
-        # for blob in source_blobs_to_compose:
-        #     if blob != INIT_FILE_BLOB and not blob.exists():
-        #         raise FileNotFoundError(f"Required file not available: {blob.name.split('/')[-1]}")
-
-        # INIT_FILE_BLOB.reload() 
-        # if INIT_FILE_BLOB.size is None or INIT_FILE_BLOB.size == 0:
-        #     raise ValueError(f"Data file ({init_file_name}) has zero bytes. Process aborted.")
-
-        try:
-            INIT_FILE_BLOB.reload(client=storage_client) 
-        except google.api_core.exceptions.NotFound as e:
-            raise FileNotFoundError(f"Data file not available: {init_file_name}. GCS Error: {e}")
-
-        if INIT_FILE_BLOB.size is None:
-            raise FileNotFoundError(f"Data file not available: {init_file_name}")
-        elif INIT_FILE_BLOB.size == 0:
-            raise ValueError(f"Data file ({init_file_name}) has zero bytes. Process aborted.")
-        
-        logging.info(f"Data file size check passed. Size: {INIT_FILE_BLOB.size} bytes.")
-
-        if compose_needed:
-            GCS_PROCESSING_BLOB.compose(source_blobs_to_compose)
-            logging.info(f"Composition successful. Uncompressed file created at {GCS_PROCESSING_BLOB.name}")
-        else:
-            # INIT_FILE_BLOB.copy_to(GCS_PROCESSING_BLOB)
-            bucket.copy_blob(
-                    INIT_FILE_BLOB, 
-                    bucket, 
-                    new_name=GCS_PROCESSING_BLOB.name
-                )
-            logging.info(f"Single file copied/renamed to {GCS_PROCESSING_BLOB.name}")
-        
-        
-        logging.info(f"Moving file to archive: {ARCHIVE_BLOB_NAME}")
-        # GCS_PROCESSING_BLOB.copy_to(ARCHIVE_BLOB)
-
-        bucket.copy_blob(
-            GCS_PROCESSING_BLOB,
-            archive_bucket,
-            new_name=ARCHIVE_BLOB_NAME
-        )
-        
-        GCS_PROCESSING_BLOB.delete()
-        logging.info(f"Deleted processing file: {GCS_PROCESSING_BLOB.name}")
-            
-        logging.info("GCS file processing completed successfully.")
-        
-        subject = f"File Feed Processing - SUCCESS in Task {ti.task_id}"
-        html_content = (
-            f"<h3>Task Success Alert</h3>"
-            f"<p> File landed in the archive: {gcs_bucket_name}/{full_archive_path}</p>"
-        )
-        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
-
-    except (FileNotFoundError, ValueError) as e:
-        error_message = f"GCS processing FAILED: {type(e).__name__}: {e}"
-        logging.error(error_message, exc_info=True)
-        
-        subject = f"File Feed Processing - FAILED in Task {ti.task_id}"
-        html_content = (
-            f"<h3>Task Failure Alert</h3>"
-            f"<p>Error: <strong>{error_message}</strong></p>"
-            f"<p>Source Data Path: {gcs_bucket_name}/{full_data_path}</p>"
-            f"<p>Check Airflow logs for full trace: <a href='{ti.log_url}'>Log Link</a></p>"
-        )
-        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
-        raise
-        
-    except Exception as e:
-        error_message = f"An unexpected error occurred: {type(e).__name__}: {e}"
-        logging.error(error_message, exc_info=True)
-
-        subject = f"File Feed Processing - UNEXPECTED FAILURE in Task {ti.task_id}"
-        html_content = (
-            f"<h3>Unexpected Task Failure Alert</h3>"
-            f"<p>Error: <strong>{error_message}</strong></p>"
-            f"<p>Source Data Path: {gcs_bucket_name}/{full_data_path}</p>"
-            f"<p>Check Airflow logs for full trace: <a href='{ti.log_url}'>Log Link</a></p>"
-        )
-        # send_email(to=mail_recipient, subject=subject, html_content=html_content)
-        raise 
-
-# def parse_prm_file(paramFilePath):
-#     gcs_base_uri = '/home/airflow/gcs/data/'
-#     logging.info(f"Using GCS local mount base path: {gcs_base_uri}")
-#     full_file_path = os.path.join(gcs_base_uri, paramFilePath.lstrip('/'))
-#     logging.info(f"Attempting to read parameter file from local path: {full_file_path}")
-#     output = None
-#     try:
-#         output = open(os.path.join(gcs_base_uri, paramFilePath.lstrip('/')), "r").read()
-
-#         logging.info("Successfully read parameter file using local file I/O.")
-#         logging.info(f"output: {output}")
-            
-#     except Exception as e:
-#         raise Exception(f"Failed to read parameter file from local mount point at {full_file_path}. Error: {e}")
-      
-#     data = defaultdict(dict)
-#     current_section = None
-    
-#     if output:
-#         for line in output.splitlines():
-#             line = line.strip()
-#             if not line or line.startswith(('#', '//', ';')):
-#                 continue  
-            
-
-#             if line.startswith('[') and line.endswith(']'):
-#                 current_section = line[1:-1]
-#                 continue
-            
-#             match = re.match(r'(\$\$?\w+)\s*=\s*(.*)', line)
-#             if match and current_section:
-#                 key = match.group(1)
-#                 value = match.group(2).strip()
-                
-#                 if value.lower() in ('true', 'false'):
-#                     value = value.lower() == 'true'
-#                 else:
-#                     try:
-#                         if '.' in value:
-#                             value = float(value)
-#                         else:
-#                             value = int(value)
-#                     except ValueError:
-#                         value = value.strip('"').strip("'") 
-                        
-#                 data[current_section][key] = value
-        
-#     else:
-#         return None
-
-#     parsed_data = dict(data)
-#     logging.info(f"data: {parsed_data}")
-#     return parsed_data        
 
 def parse_prm_file(paramFilePath):
     gcs_base_uri = '/home/airflow/gcs/data/'
@@ -350,7 +112,7 @@ def parse_prm_file(paramFilePath):
 
     parsed_data = dict(data)
     logging.info(f"data: {parsed_data}")
-    return parsed_data
+    return parsed_data            
 
 def is_existing_file(paramFile):
 
@@ -361,7 +123,6 @@ def is_existing_file(paramFile):
                   
 
 def get_updated_session_parameters(session_param_json, mapping_default_param, wkfl_default_param, workflowParamFile, variables):
-
  
      if wkfl_default_param and session_param_json and not workflowParamFile and not mapping_default_param:
          variables.update(session_param_json)   
@@ -391,7 +152,7 @@ def get_updated_session_parameters(session_param_json, mapping_default_param, wk
                   
 
 def set_mapping_params(id, mapping_name, session_name, wkfl_name, session_param_json, workflowParamFile, variables):
-    abs_path = '/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/data'
+    abs_path = '/home/airflow/gcs/data'
     mapping_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties"))
     mapping_default_param = eval(open(os.path.join(abs_path,"etc/prop/" + mapping_name + ".properties")).read()) if mapping_file_path else None
     workflow_file_path = is_existing_file(os.path.join(abs_path,"etc/prop/" + wkfl_name + ".properties"))
@@ -414,331 +175,511 @@ def set_mapping_params(id, mapping_name, session_name, wkfl_name, session_param_
         Variable.set(id + "." + key, var_dict[key])
 
 
-# class KeepAliveSSHHook(SSHHook):
-#     def get_conn(self):
-#         client = super().get_conn()
-#         client.get_transport().set_keepalive(int(Variable.get('KEEP_TIME_ALIVE')))
-#         return client
-
+# ### --- FIX 3: COMMENTED OUT TOP-LEVEL VARIABLE.GET ---
+# REASON: Calling Variable.get at the top level connects to the DB every 30 seconds.
+# This causes timeouts and makes the DAG disappear from the UI.
 # SSH_CONNECTION_ID = Variable.get('SSH_CONN_ID')
 # ssh_hook = KeepAliveSSHHook(ssh_conn_id=SSH_CONNECTION_ID)
 
 
+# Following are defaults which can be overridden later on
+default_args = {
+    'owner': 'dm',
+    'depends_on_past': False,
+    'start_date': datetime(2016, 4, 15),
+    'email': ['sample@mail.com'],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 0,
+    'retry_delay': timedelta(minutes=1),
+}
+
+
+# ### --- FIX 4: UPDATED FUNCTION LOGIC ---
+# REASON: Replaced the old SSH logic with the BigQuery polling logic you requested.
+# Added try/except for safe execution.
 @task
 def check_fact_load_status(target_data_mart: str, target_fact_table: str):
-    MAX_LOOP_COUNT = 480
-    SLEEP_TIME_IN_SECONDS = 180
-    
+    MAX_LOOP_COUNT = 480          # 480 × 3 min = 24 hours
+    SLEEP_TIME_IN_SECONDS = 180   # 3 minutes
+
     try:
         BQ_CONN_ID = Variable.get('GCP_CONNECTION_ID')
-    except:
-        BQ_CONN_ID = 'google_cloud_default' 
-    
-    hook = BigQueryHook(gcp_conn_id=BQ_CONN_ID, use_legacy_sql=False)
+    except KeyError:
+        BQ_CONN_ID = 'google_cloud_default'
 
-    # PROJECT_ID = "{{ var.value.BQ_ProjectID }}"
+    hook = BigQueryHook(
+        gcp_conn_id=BQ_CONN_ID,
+        use_legacy_sql=False
+    )
+
     PROJECT_ID = Variable.get("BQ_ProjectID")
-    
+
     query = f"""
         SELECT DATE_DIFF(
-            (SELECT DATE_ADD(report_date, INTERVAL 1 DAY) 
-             FROM {PROJECT_ID}.dw_ssp.business_process_date), 
-            MAX(t.snapshot_dt), 
+            (SELECT DATE_ADD(report_date, INTERVAL 1 DAY)
+             FROM {PROJECT_ID}.dw_ssp.business_process_date),
+            MAX(t.snapshot_dt),
             DAY
         )
-        FROM {PROJECT_ID}.os_bbb_userv.v_bbb_ctl_target_fact AS t
+        FROM {PROJECT_ID}.os_bbb_userv.v_bbb_ctl_target_fact t
         WHERE LOWER(t.tgt_fact_table) = LOWER('{target_fact_table}')
           AND LOWER(t.tgt_fact_schema) = LOWER('{target_data_mart}')
           AND LOWER(t.stat_cd) = 'c'
     """
 
     for loop_count in range(1, MAX_LOOP_COUNT + 1):
-        print(f"Checking load status for {target_data_mart}.{target_fact_table} (Loop {loop_count}/{MAX_LOOP_COUNT}).")
-        
-        try:
-            result = hook.get_first(sql=query, parameters=None)
-            
-            stat_cd_value = result[0] if result and result[0] is not None else 1
+        logging.info(
+            f"[{loop_count}/{MAX_LOOP_COUNT}] Checking load status for "
+            f"{target_data_mart}.{target_fact_table}"
+        )
 
-            if stat_cd_value <= 0:
-                print(f"Confirmed that {target_data_mart}.{target_fact_table} has completed successfully (Status: {stat_cd_value}).")
-                return 
-            
-            print(f"The load is still running (Status: {stat_cd_value}). Sleeping for {SLEEP_TIME_IN_SECONDS} seconds.")
+        try:
+            result = hook.get_first(sql=query)
+
+            if result and result[0] == 0:
+                logging.info(
+                    f"Fact load completed successfully for "
+                    f"{target_data_mart}.{target_fact_table}"
+                )
+                return
+
+            logging.info(
+                f"Fact load not completed yet "
+                f"(lag_days={result[0] if result else 'NULL'}). "
+                f"Sleeping for {SLEEP_TIME_IN_SECONDS} seconds."
+            )
             time.sleep(SLEEP_TIME_IN_SECONDS)
 
         except Exception as e:
-            print(f"An error occurred during BigQuery execution: {e}")
+            logging.warning(
+                f"Error while checking fact load status: {e}. "
+                f"Retrying after sleep."
+            )
             time.sleep(SLEEP_TIME_IN_SECONDS)
-            
+
     raise AirflowFailException(
-        f"ERROR: After checking for {round(MAX_LOOP_COUNT * SLEEP_TIME_IN_SECONDS / 3600)} hours, "
-        f"{target_data_mart}.{target_fact_table} has not yet completed loading. Aborting."
+        f"Fact load did NOT complete after "
+        f"{round(MAX_LOOP_COUNT * SLEEP_TIME_IN_SECONDS / 3600, 2)} hours "
+        f"for {target_data_mart}.{target_fact_table}"
     )
 
 
-def prepare_wklt_NORM_100_500_O_FIN_DAILY_DISC_TG(groupId, trigger = 'all_success', parent_group = None, dag: DAG = None, userStatus = None) -> TaskGroup:
-    with TaskGroup(group_id = groupId, default_args = dag.default_args if dag else parent_group.default_args) as task_group:
-        Start = DummyOperator(
-                task_id = 'Start',
-                do_xcom_push = False,
-        )
+with DAG('dg_gk1v_edwdo_wln_mdr_billing_wkfl_natb_o_main_daily_feed', schedule_interval=None, catchup=False, render_template_as_native_obj=False, default_args=default_args, user_defined_macros={'get_var': get_var, 'get_Status': get_Status, 'get_PrevTaskStatus': get_PrevTaskStatus}, tags=['VSAD:gk1v', 'Sub_Lob:wireline', 'Job_Type:Curation', 'Product_Type:legacy', 'LOB:wireline  ', 'Legacy_Application_Name:wkfl_NATB_O_MAIN_DAILY_FEED_Submit', 'Program_Name:EDW Modernisation']) as dag:
 
-        @task(task_id = 's_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC_param_init_logic')
-        @provide_session
-        def fn_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC_param_init_logic(session=None, **context):
-            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
-            del task_qualifiers[-1]
-            group_id = ".".join(task_qualifiers)
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            session_param_json = None
-            variables = {}
+    Start = DummyOperator(
+        task_id = 'Start',
+        do_xcom_push = False,
+    )
+
+    @task(task_id = 's_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB_param_init_logic')
+    @provide_session
+    def fn_s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB_param_init_logic(session=None, **context):
+        task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+        del task_qualifiers[-1]
+        group_id = ".".join(task_qualifiers)
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        session_param_json = None
+        variables = {}
+        try:
+            results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+            variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
+        finally:
+            session.close()
+    
+        # session_param_json = parse_prm_file('$PMRootDir/ETL_SCRIPTS/NATB/Params/NATB_DAILY_FEED.par')
+        session_param_json = parse_prm_file('ETL_SCRIPTS/NATB/Params/NATB_DAILY_FEED.par')
+        set_mapping_params(id + '.' + group_id, "m_100_CTL_ETL_FEED_PROCESS_START", "s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_natb_o_main_daily_feed", session_param_json, "", variables)
+
+    s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB__init = fn_s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB_param_init_logic()
+
+    s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB = prepare_s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB_TG(dag = dag, groupId = 's_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB', trigger = 'none_skipped', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+    
+    
+    def get_storage_client():
+        GCP_CONN_ID = Variable.get('GCP_CONNECTION_ID')
+        hook = GCSHook(gcp_conn_id=GCP_CONN_ID)
+        return hook.get_conn()
+
+
+    @task
+    def gcs_file_processor(
+        gcs_bucket_name,
+        gcs_object_path,
+        data_path,
+        archive_path,
+        init_file_name,
+        output_file_prefix,
+        output_file_suffix,    
+        date_time_str,
+        mail_recipient=None,
+        header_file_name=None,
+        trailer_file_name=None,    
+        **kwargs
+    ):
+        
+        logging.info(f"gcs_bucket_name: {gcs_bucket_name}")
+        logging.info(f"gcs_object_path: {gcs_object_path}")
+        logging.info(f"data_path: {data_path}")
+        logging.info(f"archive_path: {archive_path}")
+        logging.info(f"init_file_name: {init_file_name}")
+        logging.info(f"output_file_prefix: {output_file_prefix}")
+        logging.info(f"output_file_suffix: {output_file_suffix}")
+        logging.info(f"date_time_str: {date_time_str}")
+        logging.info(f"mail_recipient: {mail_recipient}")
+        logging.info(f"header_file_name: {header_file_name}")
+        logging.info(f"trailer_file_name: {trailer_file_name}")
+
+        project = Variable.get("BQ_ProjectID")
+        logging.info(f"project: {project}")
+
+        storage_client = get_storage_client()
+        
+        data_gcs = gcs_bucket_name.replace('gs://', '')
+        logging.info(f"data_gcs: {data_gcs}") 
+        bucket = storage_client.bucket(data_gcs)
+
+        archive_gcs = data_gcs.replace('outbound', 'archive')
+        logging.info(f"archive_gcs: {archive_gcs}") 
+        archive_bucket = storage_client.bucket(archive_gcs)
+
+        full_data_path = f"{gcs_object_path}{data_path}"
+        logging.info(f"full_data_path: {full_data_path}") 
+        full_archive_path = f"{gcs_object_path}{archive_path}"
+        logging.info(f"full_archive_path: {full_archive_path}") 
+
+        INIT_FILE_BLOB = bucket.blob(os.path.join(full_data_path, init_file_name))
+        
+        source_blobs_to_compose = []
+        compose_needed = False
+        
+        if header_file_name:
+            HEADER_BLOB = bucket.blob(os.path.join(full_data_path, header_file_name))
+            source_blobs_to_compose.append(HEADER_BLOB)
+            compose_needed = True
+        
+        source_blobs_to_compose.append(INIT_FILE_BLOB)
+        
+        if trailer_file_name:
+            TRAILER_BLOB = bucket.blob(os.path.join(full_data_path, trailer_file_name))
+            source_blobs_to_compose.append(TRAILER_BLOB)
+            compose_needed = True
+
+        run_date_part = date_time_str[:8]
+        SRC_FILE_NAME = f"{output_file_prefix}_{run_date_part}_{date_time_str}{output_file_suffix}"
+        
+        GCS_PROCESSING_BLOB_NAME = os.path.join(full_data_path, SRC_FILE_NAME)
+        GCS_PROCESSING_BLOB = bucket.blob(GCS_PROCESSING_BLOB_NAME)
+        
+        ARCHIVE_BLOB_NAME = os.path.join(full_archive_path, SRC_FILE_NAME)
+        ARCHIVE_BLOB = archive_bucket.blob(ARCHIVE_BLOB_NAME)
+
+        ti = kwargs['ti']
+
+        try:
+            logging.info("Starting file availability and size validation...")
+            
+
+
             try:
-                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
-            finally:
-                session.close()
-        
-            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
-            set_mapping_params(id + '.' + group_id, "m_100_CTL_ETL_FEED_PROCESS_START", "s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc", session_param_json, "", variables)
+                INIT_FILE_BLOB.reload(client=storage_client) 
+            except exceptions.NotFound as e:
+                raise FileNotFoundError(f"Data file not available: {init_file_name}. GCS Error: {e}")
 
-        s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC__init = fn_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC_param_init_logic()
+            if INIT_FILE_BLOB.size is None:
+                raise FileNotFoundError(f"Data file not available: {init_file_name}")
+            elif INIT_FILE_BLOB.size == 0:
+                raise ValueError(f"Data file ({init_file_name}) has zero bytes. Process aborted.")
+            
+            logging.info(f"Data file size check passed. Size: {INIT_FILE_BLOB.size} bytes.")
 
-        s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC = prepare_s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC_TG(parent_group = task_group, groupId = 's_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC', trigger = 'none_skipped')
+            if compose_needed:
+                GCS_PROCESSING_BLOB.compose(source_blobs_to_compose)
+                logging.info(f"Composition successful. Uncompressed file created at {GCS_PROCESSING_BLOB.name}")
+            else:
+                bucket.copy_blob(
+                        INIT_FILE_BLOB, 
+                        bucket, 
+                        new_name=GCS_PROCESSING_BLOB.name
+                    )
+                logging.info(f"Single file copied/renamed to {GCS_PROCESSING_BLOB.name}")
+            
+            
+            logging.info(f"Moving file to archive: {ARCHIVE_BLOB_NAME}")
 
-        @task.branch(task_id = 'branch_logic_1', trigger_rule = 'none_skipped')
-        def fn_branch_logic_1(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if "$s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC" == "succeeded":
-                targets.append(current_group_id + '.Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC')
-            return targets
+            bucket.copy_blob(
+                GCS_PROCESSING_BLOB,
+                archive_bucket,
+                new_name=ARCHIVE_BLOB_NAME
+            )
+            
+            GCS_PROCESSING_BLOB.delete()
+            logging.info(f"Deleted processing file: {GCS_PROCESSING_BLOB.name}")
+                
+            logging.info("GCS file processing completed successfully.")
+            
+            subject = f"File Feed Processing - SUCCESS in Task {ti.task_id}"
+            html_content = (
+                f"<h3>Task Success Alert</h3>"
+                f"<p> File landed in the archive: {gcs_bucket_name}/{full_archive_path}</p>"
+            )
+            # send_email(to=mail_recipient, subject=subject, html_content=html_content)
 
-        branch_logic_1_task = fn_branch_logic_1()
+        except (FileNotFoundError, ValueError) as e:
+            error_message = f"GCS processing FAILED: {type(e).__name__}: {e}"
+            logging.error(error_message, exc_info=True)
+            
+            subject = f"File Feed Processing - FAILED in Task {ti.task_id}"
+            html_content = (
+                f"<h3>Task Failure Alert</h3>"
+                f"<p>Error: <strong>{error_message}</strong></p>"
+                f"<p>Source Data Path: {gcs_bucket_name}/{full_data_path}</p>"
+                f"<p>Check Airflow logs for full trace: <a href='{ti.log_url}'>Log Link</a></p>"
+            )
+            # send_email(to=mail_recipient, subject=subject, html_content=html_content)
+            raise
 
-        # Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC = SSHOperator(
-        #         task_id = 'Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC',
-        #         ssh_hook = ssh_hook,
-        #         command = "/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FIN FIN_FACT_CUST_DISC MDR_DATA_CHURN_NORM ".format(task_group.group_id),
-        #         conn_timeout = 60,
-        #         get_pty = False,
-        #         retries = 0,
-        #         cmd_timeout = None,
-        #         environment = {
-        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
-        #   'instance_name': Variable.get('INSTANCE_NAME'),
-        #   'job_id': "{{ dag.dag_id }}",
-        #   'task_id': 'cmd_200_bbb_check_fact_load_norm_fin_daily_disc',
-        #   'task_type': 'bq_to_bq_load'
-        # },
-        #         doc_md = "",
-        #         trigger_rule = 'all_success',
-        # )
-        
-        Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC = check_fact_load_status.override(task_id='Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC', trigger_rule='all_success')(
-            target_data_mart='DW_FIN',
-            target_fact_table='FIN_FACT_CUST_DISC'
-        )
+            
+        except Exception as e:
+            error_message = f"An unexpected error occurred: {type(e).__name__}: {e}"
+            logging.error(error_message, exc_info=True)
 
-        @task.branch(task_id = 'branch_logic_2', trigger_rule = 'none_skipped')
-        def fn_branch_logic_2(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if (get_Status(context["dag_run"], current_group_id + '.' + "Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC")) == "succeeded":
-                targets.append(current_group_id + '.s_m_NORM_300_T_FIN_DAILY_DISC_param_init_logic')
-            return targets
+            subject = f"File Feed Processing - UNEXPECTED FAILURE in Task {ti.task_id}"
+            html_content = (
+                f"<h3>Unexpected Task Failure Alert</h3>"
+                f"<p>Error: <strong>{error_message}</strong></p>"
+                f"<p>Source Data Path: {gcs_bucket_name}/{full_data_path}</p>"
+                f"<p>Check Airflow logs for full trace: <a href='{ti.log_url}'>Log Link</a></p>"
+            )
+            # send_email(to=mail_recipient, subject=subject, html_content=html_content)
+            raise
 
-        branch_logic_2_task = fn_branch_logic_2()
+    # Cmd_200_bbb_check_fact_load_NATB_FTV_DASHBOARD = SSHOperator(
+    #     task_id = 'Cmd_200_bbb_check_fact_load_NATB_FTV_DASHBOARD',
+    #     ssh_hook = ssh_hook,
+    #     command = """/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FTV FTV_DASHBOARD """,
+    #     conn_timeout = 60,
+    #     get_pty = False,
+    #     retries = 0,
+    #     cmd_timeout = None,
+    #     environment = {
+    #       'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+    #       'instance_name': "{{ var.value.INSTANCE_NAME }}",
+    #       'job_id': "{{ dag.dag_id }}",
+    #       'task_id': 'cmd_200_bbb_check_fact_load_natb_ftv_dashboard',
+    #       'task_type': 'sshoperator'
+    #     },
+    #     doc_md = "",
+    #     trigger_rule = 'all_success',
+    # )
+    
+    # ### --- FIX 5: DEFINED MISSING TASK (FTV) ---
+    # REASON: The original SSHOperator is commented out. We MUST define this task variable 
+    # or Python will throw a "NameError" when it reaches the dependency chain at the bottom.
+    Cmd_200_bbb_check_fact_load_NATB_FTV_DASHBOARD = check_fact_load_status.override(
+        task_id='cmd_200_bbb_check_fact_load_natb_ftv_dashboard', 
+        trigger_rule='all_success'
+    )(
+        target_data_mart='DW_FTV',
+        target_fact_table='FTV_DASHBOARD'
+    )
 
-        # s_m_NORM_300_T_FIN_DAILY_DISC_Pre_session_command = SSHOperator(
-        #         task_id = 's_m_NORM_300_T_FIN_DAILY_DISC_Pre_session_command',
-        #         ssh_hook = ssh_hook,
-        #         command = "$PMRootDir/ETL_SCRIPTS/SHARED_SCRIPTS/td_pre_cleanup.ksh DW_FIN_ADMIN FIN_TRN_DAILY_DISC INF_UTL_TBLS NORM_300_T_FIN_DAILY01_01 MLOAD $Param_LGConnectionLoad1 ".format(task_group.group_id),
-        #         conn_timeout = 60,
-        #         get_pty = False,
-        #         retries = 0,
-        #         cmd_timeout = None,
-        #         environment = {
-        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
-        #   'instance_name': Variable.get('INSTANCE_NAME'),
-        #   'job_id': "{{ dag.dag_id }}",
-        #   'task_id': 's_m_norm_300_t_fin_daily_disc_pre_session_command',
-        #   'task_type': 'bq_to_bq_load'
-        # },
-        #         doc_md = "",
-        #         trigger_rule = 'all_success',
-        # )
+    
 
-        @task(task_id = 's_m_NORM_300_T_FIN_DAILY_DISC_param_init_logic')
-        @provide_session
-        def fn_s_m_NORM_300_T_FIN_DAILY_DISC_param_init_logic(session=None, **context):
-            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
-            del task_qualifiers[-1]
-            group_id = ".".join(task_qualifiers)
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            session_param_json = None
-            variables = {}
-            try:
-                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
-            finally:
-                session.close()
-        
-            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
-            set_mapping_params(id + '.' + group_id, "m_NORM_300_T_FIN_DAILY_DISC", "s_m_NORM_300_T_FIN_DAILY_DISC", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc", session_param_json, "", variables)
+    s_m_NATB_300_O_DAILY = prepare_s_m_NATB_300_O_DAILY_TG(dag = dag, groupId = 's_m_NATB_300_O_DAILY', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
 
-        s_m_NORM_300_T_FIN_DAILY_DISC__init = fn_s_m_NORM_300_T_FIN_DAILY_DISC_param_init_logic()
+    # cmd_400_sftp_NATB_DAILY = SSHOperator(
+    #    task_id = 'cmd_400_sftp_NATB_DAILY',
+    #    ssh_hook = ssh_hook,
+    #    command = """$ETL_HOME/ETL_SCRIPTS/NATB/Bin/sftp_NATB_DAILY_FEED.ksh """,
+    #    conn_timeout = 60,
+    #    get_pty = False,
+    #    retries = 0,
+    #    cmd_timeout = None,
+    #    environment = {
+    #      'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+    #      'instance_name': "{{ var.value.INSTANCE_NAME }}",
+    #      'job_id': "{{ dag.dag_id }}",
+    #      'task_id': 'cmd_400_sftp_natb_daily',
+    #      'task_type': 'sshoperator'
+    #    },
+    #    doc_md = "",
+    #    trigger_rule = 'all_success',
+    # )
+    
+    RUN_DATE_TIME = "{{ dag_run.execution_date.strftime('%Y%m%d%H%M%S') }}"
+    
+    # ### --- FIX 6: JINJA TEMPLATING ---
+    # REASON: Replaced 'Variable.get' with Jinja template. This stops the DAG from breaking during parsing.
+    GCS_BUCKET = "{{ var.value.GCS_OUTBOUND }}"
+    
+    gcs_object_path = "non_dpf/mapping_output_as_file/sysmnt/apps/opt/informatica/10.5.1/server/infa_shared/etluser/"
 
-        s_m_NORM_300_T_FIN_DAILY_DISC = prepare_s_m_NORM_300_T_FIN_DAILY_DISC_TG(parent_group = task_group, groupId = 's_m_NORM_300_T_FIN_DAILY_DISC', trigger = 'none_skipped')
+    FAILURE_EMAIL = "mdr-etl@verizon.com"
 
-        @task.branch(task_id = 'branch_logic_3', trigger_rule = 'none_skipped')
-        def fn_branch_logic_3(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_NORM_300_T_FIN_DAILY_DISC.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT')
-            return targets
-
-        branch_logic_3_task = fn_branch_logic_3()
-
-        s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT = prepare_s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT_TG(parent_group = task_group, groupId = 's_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT')
-
-        @task.branch(task_id = 'branch_logic_4', trigger_rule = 'none_skipped')
-        def fn_branch_logic_4(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if Variable.get(id + '.' + current_group_id + '.s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT.$JobStatus') == "succeeded":
-                targets.append(current_group_id + '.cmd_400_sftp_NORM_FIN_DAILY_DISC')
-            return targets
-
-        branch_logic_4_task = fn_branch_logic_4()
-
-        # cmd_400_sftp_NORM_FIN_DAILY_DISC = SSHOperator(
-        #         task_id = 'cmd_400_sftp_NORM_FIN_DAILY_DISC',
-        #         ssh_hook = ssh_hook,
-        #         command = "/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/NORM_LISCOUNT/Bin/sftp_norm_fin_daily_disc.ksh  ".format(task_group.group_id),
-        #         conn_timeout = 60,
-        #         get_pty = False,
-        #         retries = 0,
-        #         cmd_timeout = None,
-        #         environment = {
-        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
-        #   'instance_name': Variable.get('INSTANCE_NAME'),
-        #   'job_id': "{{ dag.dag_id }}",
-        #   'task_id': 'cmd_400_sftp_norm_fin_daily_disc',
-        #   'task_type': 'bq_to_bq_load'
-        # },
-        #         doc_md = "",
-        #         trigger_rule = 'all_success',
-        # )
-        RUN_DATE_TIME = "{{ dag_run.execution_date.strftime('%Y%m%d%H%M%S') }}"
-        GCS_BUCKET = Variable.get('GCS_OUTBOUND')
-        gcs_object_path = "non_dpf/mapping_output_as_file/sysmnt/etl/etlcfs02scripts/"
-
-        FAILURE_EMAIL = "mdr-etl@verizon.com"
-
-        cmd_400_sftp_NORM_FIN_DAILY_DISC = gcs_file_processor.override(
-            task_id='cmd_400_sftp_NORM_FIN_DAILY_DISC',
-            trigger_rule='all_success'
-        )(
-            gcs_bucket_name=GCS_BUCKET,
-            gcs_object_path = gcs_object_path,
-            data_path='MDR_FEEDS/NORM_LISCOUNT/Data',
-            archive_path='MDR_FEEDS/NORM_LISCOUNT/Archive',
-            init_file_name='fin_daily_disc.txt',
-            header_file_name='fin_daily_disc_header.txt',
-            trailer_file_name=None,
-            output_file_prefix='MDR_VIDEO_CHURN',
-            output_file_suffix='.dat',
-            date_time_str=RUN_DATE_TIME,
-            mail_recipient=None,
-        )
-
-        @task.branch(task_id = 'branch_logic_5', trigger_rule = 'none_skipped')
-        def fn_branch_logic_5(**context):
-            targets = []
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            if (get_Status(context["dag_run"], current_group_id + '.' + "cmd_400_sftp_NORM_FIN_DAILY_DISC")) == "succeeded":
-                targets.append(current_group_id + '.s_m_500_CTL_ETL_FEED_PROCESS_END_param_init_logic')
-            return targets
-
-        branch_logic_5_task = fn_branch_logic_5()
-
-        @task(task_id = 's_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_param_init_logic')
-        @provide_session
-        def fn_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_param_init_logic(session=None, **context):
-            task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
-            del task_qualifiers[-1]
-            group_id = ".".join(task_qualifiers)
-            task_qualifiers = context['task'].task_id.split(".")
-            del task_qualifiers[-1]
-            current_group_id = ".".join(task_qualifiers)
-            id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
-            session_param_json = None
-            variables = {}
-            try:
-                results = session.query(Variable).filter(Variable.key.like(f"{id}%")).all()
-                variables = {var.key.replace(id + ".", "", 1): var.get_val() for var in results}
-            finally:
-                session.close()
-        
-            session_param_json = parse_prm_file('ETL_SCRIPTS/NORM/Params/aEDW_FIN_Disc_Daily.par')
-            set_mapping_params(id + '.' + group_id, "m_500_CTL_ETL_FEED_PROCESS_END", "s_m_500_CTL_ETL_FEED_PROCESS_END", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_norm_100_500_o_fin_daily_disc", session_param_json, "", variables)
-
-        s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC__init = fn_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_param_init_logic()
-
-        s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC = prepare_s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC_TG(parent_group = task_group, groupId = 's_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC', trigger = 'none_skipped')
-
-        # s_m_NORM_300_T_FIN_DAILY_DISC_Post_session_success_command = SSHOperator(
-        #         task_id = 's_m_NORM_300_T_FIN_DAILY_DISC_Post_session_success_command',
-        #         ssh_hook = ssh_hook,
-        #         command = "$PMRootDir/ETL_SCRIPTS/SHARED_SCRIPTS/td_post_check.ksh DW_FIN_ADMIN FIN_TRN_DAILY_DISC INF_UTL_TBLS NORM_300_T_FIN_DAILY01_01 MLOAD $Param_LGConnectionLoad1 ".format(task_group.group_id),
-        #         conn_timeout = 60,
-        #         get_pty = False,
-        #         retries = 0,
-        #         cmd_timeout = None,
-        #         environment = {
-        #   'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
-        #   'instance_name': Variable.get('INSTANCE_NAME'),
-        #   'job_id': "{{ dag.dag_id }}",
-        #   'task_id': 's_m_norm_300_t_fin_daily_disc_post_session_success_command',
-        #   'task_type': 'bq_to_bq_load'
-        # },
-        #         doc_md = "",
-        #         trigger_rule = 'all_success',
-        # )
-
-        status = DMStatusOperator(
-                task_id = 'status',
-                group_id = task_group.group_id,
-                jobName = 'wklt_NORM_100_500_O_FIN_DAILY_DISC',
-                userStatus = userStatus,
-                trigger_rule = 'all_done',
-        )
+    cmd_400_sftp_NATB_DAILY = gcs_file_processor.override(
+        task_id='cmd_400_sftp_NATB_DAILY',
+        trigger_rule='all_success'
+    )(
+        gcs_bucket_name=GCS_BUCKET,
+        gcs_object_path = gcs_object_path,
+        data_path='MDR_FEEDS/NATB/Data',
+        archive_path='MDR_FEEDS/NATB/Archive',
+        init_file_name='CMB_VZW_DAILY_NATB.txt',
+        header_file_name='CMB_VZW_DAILY_NATB_header.txt',
+        trailer_file_name='CMB_VZW_DAILY_NATB_Trailer.txt',
+        output_file_prefix='CMB_VZW_DAILY_NATB',
+        output_file_suffix='.txt',
+        date_time_str=RUN_DATE_TIME,
+        mail_recipient=None,
+    )
 
 
-        Start >> s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC__init >> s_m_100_CTL_ETL_FEED_PROCESS_START_NORM_FIN_DAILY_DISC >> branch_logic_1_task >> Cmd_200_bbb_check_fact_load_NORM_FIN_DAILY_DISC >> branch_logic_2_task >> s_m_NORM_300_T_FIN_DAILY_DISC__init >> s_m_NORM_300_T_FIN_DAILY_DISC
-        s_m_NORM_300_T_FIN_DAILY_DISC >> branch_logic_3_task >> s_m_NORM_320_O_FIN_DAILY_DISC_OUTPUT >> branch_logic_4_task >> cmd_400_sftp_NORM_FIN_DAILY_DISC >> branch_logic_5_task >> s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC__init >> s_m_500_CTL_ETL_FEED_PROCESS_END_NORM_FIN_DAILY_DISC >> status
-        s_m_NORM_300_T_FIN_DAILY_DISC >> status
-    return task_group
+    @task(task_id = 's_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END_param_init_logic')
+    @provide_session
+    def fn_s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END_param_init_logic(session=None, **context):
+        task_qualifiers = list(context['task'].downstream_task_ids)[0].split(".")
+        del task_qualifiers[-1]
+        group_id = ".".join(task_qualifiers)
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id)
+        session_param_json = None
+        variables = {}
+        try:
+            results = session.query(Variable).filter(Variable.key.like(f"{id + '.' + group_id}%")).all()
+            variables = {var.key.replace(id + '.' + group_id + ".", "", 1): var.get_val() for var in results}
+        finally:
+            session.close()
+    
+        session_param_json = parse_prm_file('ETL_SCRIPTS/NATB/Params/NATB_DAILY_FEED.par')
+        set_mapping_params(id + '.' + group_id, "m_500_CTL_ETL_FEED_PROCESS_END", "s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END", "dg_gk1v_edwdo_wln_mdr_billing_wkfl_natb_o_main_daily_feed", session_param_json, "", variables)
+
+    s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END__init = fn_s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END_param_init_logic()
+
+    s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END = prepare_s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END_TG(dag = dag, groupId = 's_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END', trigger = 'none_skipped', bq_project_id="{{ var.value.BQ_ProjectID }}", bq_project_pr_id="{{ var.value.BQ_ProjectID_PR }}")
+    
+
+
+    #Cmd_200_bbb_check_fact_load_NATB_HSI_DASHBOARD = SSHOperator(
+    #   task_id = 'Cmd_200_bbb_check_fact_load_NATB_HSI_DASHBOARD',
+    #    ssh_hook = ssh_hook,
+    #    command = """/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_HSI HSI_DASHBOARD """,
+    #    conn_timeout = 60,
+    #    get_pty = False,
+    #    retries = 0,
+    #    cmd_timeout = None,
+    #    environment = {
+    #      'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+    #      'instance_name': "{{ var.value.INSTANCE_NAME }}",
+    #      'job_id': "{{ dag.dag_id }}",
+    #      'task_id': 'cmd_200_bbb_check_fact_load_natb_hsi_dashboard',
+    #      'task_type': 'sshoperator'
+    #    },
+    #    doc_md = "",
+    #    trigger_rule = 'all_success',
+    #)
+    
+    # ### --- FIX 7: DEFINED MISSING TASK (HSI) ---
+    Cmd_200_bbb_check_fact_load_NATB_HSI_DASHBOARD = check_fact_load_status.override(
+        task_id='cmd_200_bbb_check_fact_load_natb_hsi_dashboard', 
+        trigger_rule='all_success'
+    )(
+        target_data_mart='DW_HSI',
+        target_fact_table='HSI_DASHBOARD'
+    )
+    
+
+    
+    
+    #Cmd_200_bbb_check_fact_load_NATB_FDV_DASHBOARD = SSHOperator(
+    #    task_id = 'Cmd_200_bbb_check_fact_load_NATB_FDV_DASHBOARD',
+    #    ssh_hook = ssh_hook,
+    #    command = """/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FDV FDV_DASHBOARD """,
+    #    conn_timeout = 60,
+    #    get_pty = False,
+    #    retries = 0,
+    #    cmd_timeout = None,
+    #    environment = {
+    #      'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+    #      'instance_name': "{{ var.value.INSTANCE_NAME }}",
+    #      'job_id': "{{ dag.dag_id }}",
+    #      'task_id': 'cmd_200_bbb_check_fact_load_natb_fdv_dashboard',
+    #      'task_type': 'sshoperator'
+    #    },
+    #    doc_md = "",
+    #    trigger_rule = 'all_success',
+    #)
+    
+    # ### --- FIX 8: DEFINED MISSING TASK (FDV) ---
+    Cmd_200_bbb_check_fact_load_NATB_FDV_DASHBOARD = check_fact_load_status.override(
+        task_id='Cmd_200_bbb_check_fact_load_NATB_FDV_DASHBOARD', 
+        trigger_rule='all_success'
+    )(
+        target_data_mart='DW_FDV',
+        target_fact_table='FDV_DASHBOARD'
+    )
+
+    #Cmd_200_bbb_check_fact_load_NATB_FIN_DASHBOARD = SSHOperator(
+    #    task_id = 'Cmd_200_bbb_check_fact_load_NATB_FIN_DASHBOARD',
+    #    ssh_hook = ssh_hook,
+    #    command = """/usr/bin/ksh $ETL_HOME/ETL_SCRIPTS/SHARED_SCRIPTS/bbb_check_fact_load.ksh DW_FIN FIN_DASHBOARD """,
+    #    conn_timeout = 60,
+    #    get_pty = False,
+    #    retries = 0,
+    #    cmd_timeout = None,
+    #    environment = {
+    #      'run_id': "{{ dag_run.run_id | lower | replace(':', '') | replace('+', '') | replace('.', '') | replace('-', '') | replace('T', '') }}",
+    #      'instance_name': "{{ var.value.INSTANCE_NAME }}",
+    #      'job_id': "{{ dag.dag_id }}",
+    #      'task_id': 'cmd_200_bbb_check_fact_load_natb_fin_dashboard',
+    #      'task_type': 'sshoperator'
+    #    },
+    #    doc_md = "",
+    #    trigger_rule = 'all_success',
+    #)
+    
+    # ### --- FIX 9: DEFINED MISSING TASK (FIN) ---
+    Cmd_200_bbb_check_fact_load_NATB_FIN_DASHBOARD = check_fact_load_status.override(
+        task_id='Cmd_200_bbb_check_fact_load_NATB_FIN_DASHBOARD', 
+        trigger_rule='all_success'
+    )(
+        target_data_mart='DW_FIN',
+        target_fact_table='FIN_DASHBOARD'
+    )
+
+
+    dag_status = DMStatusOperator(
+        task_id = 'dag_status',
+        group_id = None,
+        trigger_rule = 'all_done',
+    )
+
+    @task(task_id = 'variable_cleanup', trigger_rule = 'all_success')
+    @provide_session
+    def fn_variable_cleanup(session=None,**context):
+        id = context['dag_run'].dag_id + '_' + str(context['dag_run'].id) + '.'
+        session.query(Variable).filter(Variable.key.contains(id)).delete(synchronize_session = False)
+
+    variable_cleanup = fn_variable_cleanup()
+
+
+    # Start >> s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB__init >> s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB
+    # s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB >> Cmd_200_bbb_check_fact_load_NATB_FTV_DASHBOARD >> s_m_NATB_300_O_DAILY >> cmd_400_sftp_NATB_DAILY >> s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END__init >> s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END >> dag_status >> variable_cleanup
+    # s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB >> Cmd_200_bbb_check_fact_load_NATB_HSI_DASHBOARD >> s_m_NATB_300_O_DAILY
+    # s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB >> cmd_200_bbb_check_fact_load_NATB_FDV_DASHBOARD >> s_m_NATB_300_O_DAILY
+    # s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB >> cmd_200_bbb_check_fact_load_NATB_FIN_DASHBOARD >> s_m_NATB_300_O_DAILY
+
+    Start >> s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB__init >> s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB
+    s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB >> Cmd_200_bbb_check_fact_load_NATB_FTV_DASHBOARD >> s_m_NATB_300_O_DAILY >> cmd_400_sftp_NATB_DAILY >> s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END__init >> s_m_500_CTL_ETL_FEED_PROCESS_DAILY_NATB_END >> dag_status >> variable_cleanup
+    s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB >> Cmd_200_bbb_check_fact_load_NATB_HSI_DASHBOARD >> s_m_NATB_300_O_DAILY
+    s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB >> Cmd_200_bbb_check_fact_load_NATB_FDV_DASHBOARD >> s_m_NATB_300_O_DAILY
+    s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB >> Cmd_200_bbb_check_fact_load_NATB_FIN_DASHBOARD >> s_m_NATB_300_O_DAILY
+
+===================================================================
+error
+======================================================
+Broken DAG: [/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NATB_O_MAIN_DAILY_FEED/dg_gk1v_edwdo_wln_mdr_billing_wkfl_natb_o_main_daily_feed.py]
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/airflow/gcs/dags/vz-it-gk1v-edwdo-0/MDR_Billing/wkfl_NATB_O_MAIN_DAILY_FEED/dg_gk1v_edwdo_wln_mdr_billing_wkfl_natb_o_main_daily_feed.py", line 36, in <module>
+    from MDR_Billing.wkfl_NATB_O_MAIN_DAILY_FEED.taskGroups.s_m_100_CTL_ETL_FEED_PROCESS_START_DAILY_NATB.m_100_CTL_ETL_FEED_PROCESS_START import *
+ModuleNotFoundError: No module named 'MDR_Billing'
