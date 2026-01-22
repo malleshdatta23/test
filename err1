@@ -1,131 +1,166 @@
-
 -- view(s) name replaced:
 -- mdr_ods_tblsv.master_coupon=mdr_ods.master_coupon
 -- dw_ssp_tblsv.ssp_bse_master_coupon=dw_ssp.ssp_bse_master_coupon
 
+-- Declaration of params (passed from Airflow):
+-- START_DATE = 2024-04-18
+-- END_DATE   = 2024-04-19
 
--- Declaration of params:
--- START_DATE=04/18/2024
--- END_DATE=04/19/2024
-
--- Edited
-
-
-CREATE OR REPLACE TABLE {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0 (lkp_coupon_cd STRING(50), coupon_cd STRING(10),
-lead_list_info STRING(1000), file_idf STRING(30), coupon_type STRING(30), coupon_stat STRING(30), create_dt datetime, redeemed_dt datetime, expiry_dt
-datetime, ban STRING(50), blg_tel_no STRING(10), sqe_adrs_id STRING(50), zip_code NUMERIC(9,0), prfl_isoc STRING(2000), dim_src_cd STRING(10),
-dim_last_mdfd_dt datetime);
+CREATE OR REPLACE TABLE {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0 (
+  lkp_coupon_cd STRING(50),
+  coupon_cd STRING(10),
+  lead_list_info STRING(1000),
+  file_idf STRING(30),
+  coupon_type STRING(30),
+  coupon_stat STRING(30),
+  create_dt DATETIME,
+  redeemed_dt DATETIME,
+  expiry_dt DATETIME,
+  ban STRING(50),
+  blg_tel_no STRING(10),
+  sqe_adrs_id STRING(50),
+  zip_code NUMERIC(9,0),
+  prfl_isoc STRING(2000),
+  dim_src_cd STRING(10),
+  dim_last_mdfd_dt DATETIME
+);
 
 BEGIN
-DECLARE START_DATE STRING DEFAULT '{{{{ get_var(dag_run.dag_id, dag_run.id, '$$START_DATE', '{0}') }}}}';
-DECLARE END_DATE STRING DEFAULT '{{{{ get_var(dag_run.dag_id, dag_run.id, '$$END_DATE', '{0}') }}}}';
-BEGIN TRANSACTION;
+  -- ✅ Parameters received from BigQueryInsertJobOperator
+  DECLARE START_DATE STRING DEFAULT @START_DATE;
+  DECLARE END_DATE STRING DEFAULT @END_DATE;
 
- -- MAIN SQL --
-INSERT INTO {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0 (lkp_coupon_cd, coupon_cd, lead_list_info, file_idf, coupon_type,
-  coupon_stat, create_dt, redeemed_dt, expiry_dt, ban, blg_tel_no, sqe_adrs_id, zip_code, prfl_isoc, dim_src_cd, dim_last_mdfd_dt)
-(WITH 
---SQ_MASTER_COUPON [Source Qualifier]
-sq_master_coupon AS (SELECT coupon_cd,
-        lead_list_info,
-        file_idf,
-        coupon_type,
-        coupon_stat,
-        create_dt,
-        redeemed_dt,
-        expiry_dt,
-        ban,
-        blg_tel_no,
-        sqe_adrs_id,
-        zip_code,
-        prfl_isoc,
-        ods_src_cd,
-        ods_last_mdfd_dt
-      FROM {{{{ var.value.BQ_ProjectID }}}}.mdr_ods.master_coupon
-      WHERE master_coupon.ODS_LAST_MDFD_DT BETWEEN  PARSE_DATE('%m/%d/%Y',START_DATE ) and  PARSE_DATE('%m/%d/%Y',END_DATE)) 
-(SELECT t4.coupon_cd AS
-        lkp_coupon_cd,
-        TRIM(t0.coupon_cd) AS coupon_cd,
-        t0.lead_list_info,
-        t0.file_idf,
-        t0.coupon_type,
-        t0.coupon_stat,
-        t0.create_dt,
-        CAST(t0.redeemed_dt AS datetime) AS redeemed_dt,
-        CAST(t0.expiry_dt AS datetime) AS expiry_dt,
-        t0.ban,
-        t0.blg_tel_no,
-        t0.sqe_adrs_id,
-        CAST(t0.zip_code AS numeric) AS zip_code,
-        t0.prfl_isoc,
-        'ODS' AS dim_src_cd,
-        CURRENT_DATETIME() AS dim_last_mdfd_dt
-      FROM sq_master_coupon AS t0
-        LEFT JOIN (SELECT coupon_cd
-          FROM {{{{ var.value.BQ_ProjectID }}}}.dw_ssp.ssp_bse_master_coupon
-          QUALIFY (ROW_NUMBER() OVER (PARTITION BY coupon_cd)) = 1) AS t4 ON t4.coupon_cd = TRIM(t0.coupon_cd)));
+  BEGIN TRANSACTION;
 
-/** 
-The stages covered in this file are :
-
-|UPD_SSP_BSE_MASTER_COUPON (Target Definition)
-|--UPD_SSP_BSE_MASTER_COUPON (Update strategy)
-|----RTR_INSERT_UPDATE (Router)
-|------LKP_SSP_BSE_MASTER_COUPON (Lookup Procedure)
-|--------EXP_INSERT_VALUES (Expression)
-|----------SQ_MASTER_COUPON (Source Qualifier)
-|------------MASTER_COUPON (Source Definition)
- **/--;
-
- -- MAIN SQL --
-UPDATE {{{{ var.value.BQ_ProjectID }}}}.dw_ssp.ssp_bse_master_coupon SET
-  dim_last_mdfd_dt = t1.dim_last_mdfd_dt FROM (SELECT lkp_coupon_cd AS coupon_cd,
-    dim_last_mdfd_dt
-  FROM {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0
-  WHERE lkp_coupon_cd IS NOT NULL) AS t1
-WHERE t1.coupon_cd = ssp_bse_master_coupon.coupon_cd;
-
-/** 
-The stages covered in this file are :
-
-|INS_SSP_BSE_MASTER_COUPON (Target Definition)
-|--RTR_INSERT_UPDATE (Router)
-|----LKP_SSP_BSE_MASTER_COUPON (Lookup Procedure)
-|------EXP_INSERT_VALUES (Expression)
-|--------SQ_MASTER_COUPON (Source Qualifier)
-|----------MASTER_COUPON (Source Definition)
- **/--;
-
- -- MAIN SQL --
-INSERT INTO {{{{ var.value.BQ_ProjectID }}}}.dw_ssp.ssp_bse_master_coupon (coupon_cd, lead_list_info, file_idf, coupon_type, coupon_stat, create_dt, redeemed_dt,
-  expiry_dt, ban, blg_tel_no, sqe_adrs_id, zip_code, prfl_isoc, dim_src_cd, dim_last_mdfd_dt)
-SELECT DISTINCT CAST(coupon_cd AS string) AS coupon_cd,
+  -- =======================
+  -- MAIN INSERT (STAGING)
+  -- =======================
+  INSERT INTO {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0 (
+    lkp_coupon_cd,
+    coupon_cd,
     lead_list_info,
     file_idf,
     coupon_type,
     coupon_stat,
     create_dt,
-    CAST(redeemed_dt AS DATE) AS redeemed_dt,
-    CAST(expiry_dt AS DATE) AS expiry_dt,
+    redeemed_dt,
+    expiry_dt,
     ban,
     blg_tel_no,
     sqe_adrs_id,
-    CAST(zip_code AS int64) AS zip_code,
+    zip_code,
     prfl_isoc,
-    CAST(dim_src_cd AS string) AS dim_src_cd,
+    dim_src_cd,
     dim_last_mdfd_dt
-  FROM {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0
+  )
+  WITH sq_master_coupon AS (
+    SELECT
+      coupon_cd,
+      lead_list_info,
+      file_idf,
+      coupon_type,
+      coupon_stat,
+      create_dt,
+      redeemed_dt,
+      expiry_dt,
+      ban,
+      blg_tel_no,
+      sqe_adrs_id,
+      zip_code,
+      prfl_isoc,
+      ods_src_cd,
+      ods_last_mdfd_dt
+    FROM {{ var.value.BQ_ProjectID }}.mdr_ods.master_coupon
+    WHERE DATE(ods_last_mdfd_dt)
+          BETWEEN DATE(CAST(START_DATE AS DATETIME))
+              AND DATE(CAST(END_DATE AS DATETIME))
+  )
+  SELECT
+    t4.coupon_cd AS lkp_coupon_cd,
+    TRIM(t0.coupon_cd) AS coupon_cd,
+    t0.lead_list_info,
+    t0.file_idf,
+    t0.coupon_type,
+    t0.coupon_stat,
+    t0.create_dt,
+    CAST(t0.redeemed_dt AS DATETIME),
+    CAST(t0.expiry_dt AS DATETIME),
+    t0.ban,
+    t0.blg_tel_no,
+    t0.sqe_adrs_id,
+    CAST(t0.zip_code AS NUMERIC),
+    t0.prfl_isoc,
+    'ODS' AS dim_src_cd,
+    CURRENT_DATETIME() AS dim_last_mdfd_dt
+  FROM sq_master_coupon t0
+  LEFT JOIN (
+    SELECT coupon_cd
+    FROM {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_bse_master_coupon
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY coupon_cd) = 1
+  ) t4
+  ON t4.coupon_cd = TRIM(t0.coupon_cd);
+
+  -- =======================
+  -- UPDATE EXISTING RECORDS
+  -- =======================
+  UPDATE {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_bse_master_coupon
+  SET dim_last_mdfd_dt = t1.dim_last_mdfd_dt
+  FROM (
+    SELECT
+      lkp_coupon_cd AS coupon_cd,
+      dim_last_mdfd_dt
+    FROM {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0
+    WHERE lkp_coupon_cd IS NOT NULL
+  ) t1
+  WHERE t1.coupon_cd = ssp_bse_master_coupon.coupon_cd;
+
+  -- =======================
+  -- INSERT NEW RECORDS
+  -- =======================
+  INSERT INTO {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_bse_master_coupon (
+    coupon_cd,
+    lead_list_info,
+    file_idf,
+    coupon_type,
+    coupon_stat,
+    create_dt,
+    redeemed_dt,
+    expiry_dt,
+    ban,
+    blg_tel_no,
+    sqe_adrs_id,
+    zip_code,
+    prfl_isoc,
+    dim_src_cd,
+    dim_last_mdfd_dt
+  )
+  SELECT DISTINCT
+    CAST(coupon_cd AS STRING),
+    lead_list_info,
+    file_idf,
+    coupon_type,
+    coupon_stat,
+    create_dt,
+    CAST(redeemed_dt AS DATE),
+    CAST(expiry_dt AS DATE),
+    ban,
+    blg_tel_no,
+    sqe_adrs_id,
+    CAST(zip_code AS INT64),
+    prfl_isoc,
+    CAST(dim_src_cd AS STRING),
+    dim_last_mdfd_dt
+  FROM {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0
   WHERE lkp_coupon_cd IS NULL
   EXCEPT DISTINCT
   SELECT *
-  FROM {{{{ var.value.BQ_ProjectID }}}}.dw_ssp.ssp_bse_master_coupon;
+  FROM {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_bse_master_coupon;
 
-COMMIT TRANSACTION;
-EXCEPTION WHEN ERROR
-  THEN
-  RAISE USING message=concat("Exception while running query : ", FORMAT(@@error.message), @@error.formatted_stack_trace);
+  COMMIT TRANSACTION;
+
+EXCEPTION WHEN ERROR THEN
   ROLLBACK TRANSACTION;
+  RAISE USING MESSAGE = FORMAT("Exception while running query: %s", @@error.message);
 END;
 
-DROP TABLE {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0;
-
+DROP TABLE {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0;
