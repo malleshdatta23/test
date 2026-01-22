@@ -1,109 +1,85 @@
-default-hostname
-*** Reading remote logs from Cloud Logging.
-[2026-01-22, 21:44:24 UTC] {local_task_job_runner.py:123} ▼ Pre task execution logs
-[2026-01-22, 21:44:24 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_ssp_wkfl_edm_dw_all_other_dimensions.Wklt_EDM_DW_ALL_OTHER_DIMENSIONS.s_m_ODS_DW_SSP_BSE_MASTER_COUPON.m_ODS_DW_SSP_BSE_MASTER_COUPON manual__2026-01-22T15:26:50.463800+00:00 [queued]>
-[2026-01-22, 21:44:25 UTC] {taskinstance.py:2616} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dg_gk1v_edwdo_wln_mdr_ssp_wkfl_edm_dw_all_other_dimensions.Wklt_EDM_DW_ALL_OTHER_DIMENSIONS.s_m_ODS_DW_SSP_BSE_MASTER_COUPON.m_ODS_DW_SSP_BSE_MASTER_COUPON manual__2026-01-22T15:26:50.463800+00:00 [queued]>
-[2026-01-22, 21:44:25 UTC] {taskinstance.py:2869} INFO - Starting attempt 8 of 8
-[2026-01-22, 21:44:25 UTC] {taskinstance.py:2892} INFO - Executing <Task(BigQueryInsertJobOperator): Wklt_EDM_DW_ALL_OTHER_DIMENSIONS.s_m_ODS_DW_SSP_BSE_MASTER_COUPON.m_ODS_DW_SSP_BSE_MASTER_COUPON> on 2026-01-22 15:26:50.463800+00:00
-[2026-01-22, 21:44:25 UTC] {standard_task_runner.py:72} INFO - Started process 738347 to run task
-[2026-01-22, 21:44:25 UTC] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'dg_gk1v_edwdo_wln_mdr_ssp_wkfl_edm_dw_all_other_dimensions', 'Wklt_EDM_DW_ALL_OTHER_DIMENSIONS.s_m_ODS_DW_SSP_BSE_MASTER_COUPON.m_ODS_DW_SSP_BSE_MASTER_COUPON', 'manual__2026-01-22T15:26:50.463800+00:00', '--job-id', '208941', '--raw', '--subdir', 'DAGS_FOLDER/vz-it-gk1v-edwdo-0/informatica/aedw-mdr-dw-ssp-datamart-edm/wkfl_edm_dw_all_other_dimensions/dg_gk1v_edwdo_wln_mdr_ssp_wkfl_edm_dw_all_other_dimensions.py', '--cfg-path', '/tmp/tmp8un8g07d']
-[2026-01-22, 21:44:25 UTC] {standard_task_runner.py:105} INFO - Job 208941: Subtask Wklt_EDM_DW_ALL_OTHER_DIMENSIONS.s_m_ODS_DW_SSP_BSE_MASTER_COUPON.m_ODS_DW_SSP_BSE_MASTER_COUPON
-[2026-01-22, 21:44:25 UTC] {task_command.py:473} INFO - Running <TaskInstance: dg_gk1v_edwdo_wln_mdr_ssp_wkfl_edm_dw_all_other_dimensions.Wklt_EDM_DW_ALL_OTHER_DIMENSIONS.s_m_ODS_DW_SSP_BSE_MASTER_COUPON.m_ODS_DW_SSP_BSE_MASTER_COUPON manual__2026-01-22T15:26:50.463800+00:00 [running]> on host airflow-worker-25drp
-[2026-01-22, 21:44:26 UTC] {abstractoperator.py:783} ERROR - Exception rendering Jinja template for task 'Wklt_EDM_DW_ALL_OTHER_DIMENSIONS.s_m_ODS_DW_SSP_BSE_MASTER_COUPON.m_ODS_DW_SSP_BSE_MASTER_COUPON', field 'configuration'. Template: {'query': {'query': '\n-- view(s) name replaced:\n-- mdr_ods_tblsv.master_coupon=mdr_ods.master_coupon\n-- dw_ssp_tblsv.ssp_bse_master_coupon=dw_ssp.ssp_bse_master_coupon\n\n\n-- Declaration of params:\n-- START_DATE=04/18/2024\n-- END_DATE=04/19/2024\n\n-- Edited\n\n\nCREATE OR REPLACE TABLE {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0 (lkp_coupon_cd STRING(50), coupon_cd STRING(10),\nlead_list_info STRING(1000), file_idf STRING(30), coupon_type STRING(30), coupon_stat STRING(30), create_dt datetime, redeemed_dt datetime, expiry_dt\ndatetime, ban STRING(50), blg_tel_no STRING(10), sqe_adrs_id STRING(50), zip_code NUMERIC(9,0), prfl_isoc STRING(2000), dim_src_cd STRING(10),\ndim_last_mdfd_dt datetime);\n\nBEGIN\nDECLARE START_DATE STRING DEFAULT \'{{{{ get_var(dag_run.dag_id, dag_run.id, \'$$START_DATE\', \'{0}\') }}}}\';\nDECLARE END_DATE STRING DEFAULT \'{{{{ get_var(dag_run.dag_id, dag_run.id, \'$$END_DATE\', \'{0}\') }}}}\';\nBEGIN TRANSACTION;\n\n -- MAIN SQL --\nINSERT INTO {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0 (lkp_coupon_cd, coupon_cd, lead_list_info, file_idf, coupon_type,\n  coupon_stat, create_dt, redeemed_dt, expiry_dt, ban, blg_tel_no, sqe_adrs_id, zip_code, prfl_isoc, dim_src_cd, dim_last_mdfd_dt)\n(WITH \n--SQ_MASTER_COUPON [Source Qualifier]\nsq_master_coupon AS (SELECT coupon_cd,\n        lead_list_info,\n        file_idf,\n        coupon_type,\n        coupon_stat,\n        create_dt,\n        redeemed_dt,\n        expiry_dt,\n        ban,\n        blg_tel_no,\n        sqe_adrs_id,\n        zip_code,\n        prfl_isoc,\n        ods_src_cd,\n        ods_last_mdfd_dt\n      FROM {{{{ var.value.BQ_ProjectID }}}}.mdr_ods.master_coupon\n      WHERE master_coupon.ODS_LAST_MDFD_DT BETWEEN  PARSE_DATE(\'%m/%d/%Y\',START_DATE ) and  PARSE_DATE(\'%m/%d/%Y\',END_DATE)) \n(SELECT t4.coupon_cd AS\n        lkp_coupon_cd,\n        TRIM(t0.coupon_cd) AS coupon_cd,\n        t0.lead_list_info,\n        t0.file_idf,\n        t0.coupon_type,\n        t0.coupon_stat,\n        t0.create_dt,\n        CAST(t0.redeemed_dt AS datetime) AS redeemed_dt,\n        CAST(t0.expiry_dt AS datetime) AS expiry_dt,\n        t0.ban,\n        t0.blg_tel_no,\n        t0.sqe_adrs_id,\n        CAST(t0.zip_code AS numeric) AS zip_code,\n        t0.prfl_isoc,\n        \'ODS\' AS dim_src_cd,\n        CURRENT_DATETIME() AS dim_last_mdfd_dt\n      FROM sq_master_coupon AS t0\n        LEFT JOIN (SELECT coupon_cd\n          FROM {{{{ var.value.BQ_ProjectID }}}}.dw_ssp.ssp_bse_master_coupon\n          QUALIFY (ROW_NUMBER() OVER (PARTITION BY coupon_cd)) = 1) AS t4 ON t4.coupon_cd = TRIM(t0.coupon_cd)));\n\n/** \nThe stages covered in this file are :\n\n|UPD_SSP_BSE_MASTER_COUPON (Target Definition)\n|--UPD_SSP_BSE_MASTER_COUPON (Update strategy)\n|----RTR_INSERT_UPDATE (Router)\n|------LKP_SSP_BSE_MASTER_COUPON (Lookup Procedure)\n|--------EXP_INSERT_VALUES (Expression)\n|----------SQ_MASTER_COUPON (Source Qualifier)\n|------------MASTER_COUPON (Source Definition)\n **/--;\n\n -- MAIN SQL --\nUPDATE {{{{ var.value.BQ_ProjectID }}}}.dw_ssp.ssp_bse_master_coupon SET\n  dim_last_mdfd_dt = t1.dim_last_mdfd_dt FROM (SELECT lkp_coupon_cd AS coupon_cd,\n    dim_last_mdfd_dt\n  FROM {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0\n  WHERE lkp_coupon_cd IS NOT NULL) AS t1\nWHERE t1.coupon_cd = ssp_bse_master_coupon.coupon_cd;\n\n/** \nThe stages covered in this file are :\n\n|INS_SSP_BSE_MASTER_COUPON (Target Definition)\n|--RTR_INSERT_UPDATE (Router)\n|----LKP_SSP_BSE_MASTER_COUPON (Lookup Procedure)\n|------EXP_INSERT_VALUES (Expression)\n|--------SQ_MASTER_COUPON (Source Qualifier)\n|----------MASTER_COUPON (Source Definition)\n **/--;\n\n -- MAIN SQL --\nINSERT INTO {{{{ var.value.BQ_ProjectID }}}}.dw_ssp.ssp_bse_master_coupon (coupon_cd, lead_list_info, file_i
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
-    rendered_content = self.render_template(
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 170, in render_template
-    template = jinja_env.from_string(value)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 1111, in from_string
-    return cls.from_code(self, self.compile(source), gs, None)
-                               ^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 771, in compile
-    self.handle_exception(source=source_hint)
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "<unknown>", line 14, in template
-jinja2.exceptions.TemplateSyntaxError: expected token ':', got '}'
-[2026-01-22, 21:44:26 UTC] {abstractoperator.py:783} ERROR - df, coupon_type, coupon_stat, create_dt, redeemed_dt,\n  expiry_dt, ban, blg_tel_no, sqe_adrs_id, zip_code, prfl_isoc, dim_src_cd, dim_last_mdfd_dt)\nSELECT DISTINCT CAST(coupon_cd AS string) AS coupon_cd,\n    lead_list_info,\n    file_idf,\n    coupon_type,\n    coupon_stat,\n    create_dt,\n    CAST(redeemed_dt AS DATE) AS redeemed_dt,\n    CAST(expiry_dt AS DATE) AS expiry_dt,\n    ban,\n    blg_tel_no,\n    sqe_adrs_id,\n    CAST(zip_code AS int64) AS zip_code,\n    prfl_isoc,\n    CAST(dim_src_cd AS string) AS dim_src_cd,\n    dim_last_mdfd_dt\n  FROM {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0\n  WHERE lkp_coupon_cd IS NULL\n  EXCEPT DISTINCT\n  SELECT *\n  FROM {{{{ var.value.BQ_ProjectID }}}}.dw_ssp.ssp_bse_master_coupon;\n\nCOMMIT TRANSACTION;\nEXCEPTION WHEN ERROR\n  THEN\n  RAISE USING message=concat("Exception while running query : ", FORMAT(@@error.message), @@error.formatted_stack_trace);\n  ROLLBACK TRANSACTION;\nEND;\n\nDROP TABLE {{{{ var.value.BQ_ProjectID }}}}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0;\n\n', 'useLegacySql': False, 'queryParameters': [{'name': 'START_DATE', 'parameterType': {'type': 'STRING'}, 'parameterValue': {'value': '{{ var.value.START_DATE }}'}}, {'name': 'END_DATE', 'parameterType': {'type': 'STRING'}, 'parameterValue': {'value': '{{ var.value.END_DATE }}'}}]}}
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
-    rendered_content = self.render_template(
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 170, in render_template
-    template = jinja_env.from_string(value)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 1111, in from_string
-    return cls.from_code(self, self.compile(source), gs, None)
-                               ^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 771, in compile
-    self.handle_exception(source=source_hint)
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "<unknown>", line 14, in template
-jinja2.exceptions.TemplateSyntaxError: expected token ':', got '}'
-[2026-01-22, 21:44:26 UTC] {taskinstance.py:3315} ERROR - Task failed with exception
-Traceback (most recent call last):
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 274, in _run_raw_task
-    TaskInstance._execute_task_with_callbacks(
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3119, in _execute_task_with_callbacks
-    task_orig = self.render_templates(context=context, jinja_env=jinja_env)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 3543, in render_templates
-    original_task.render_template_fields(context, jinja_env)
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/baseoperator.py", line 1453, in render_template_fields
-    self._do_render_template_fields(self, self.template_fields, context, jinja_env, set())
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/models/abstractoperator.py", line 775, in _do_render_template_fields
-    rendered_content = self.render_template(
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in render_template
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 185, in <dictcomp>
-    return {k: self.render_template(v, context, jinja_env, oids) for k, v in value.items()}
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/airflow/template/templater.py", line 170, in render_template
-    template = jinja_env.from_string(value)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 1111, in from_string
-    return cls.from_code(self, self.compile(source), gs, None)
-                               ^^^^^^^^^^^^^^^^^^^^
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 771, in compile
-    self.handle_exception(source=source_hint)
-  File "/opt/python3.11/lib/python3.11/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "<unknown>", line 14, in template
-jinja2.exceptions.TemplateSyntaxError: expected token ':', got '}'
-[2026-01-22, 21:44:26 UTC] {taskinstance.py:1227} INFO - Marking task as FAILED. dag_id=dg_gk1v_edwdo_wln_mdr_ssp_wkfl_edm_dw_all_other_dimensions, task_id=Wklt_EDM_DW_ALL_OTHER_DIMENSIONS.s_m_ODS_DW_SSP_BSE_MASTER_COUPON.m_ODS_DW_SSP_BSE_MASTER_COUPON, run_id=manual__2026-01-22T15:26:50.463800+00:00, execution_date=20260122T152650, start_date=20260122T214424, end_date=20260122T214426
-[2026-01-22, 21:44:27 UTC] {taskinstance.py:341} ▶ Post task execution logs
+-- Parameters passed from Airflow:
+-- @START_DATE (STRING, format: YYYY-MM-DD)
+-- @END_DATE   (STRING, format: YYYY-MM-DD)
+
+CREATE OR REPLACE TABLE {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0 (
+  lkp_coupon_cd STRING(50),
+  coupon_cd STRING(10),
+  lead_list_info STRING(1000),
+  file_idf STRING(30),
+  coupon_type STRING(30),
+  coupon_stat STRING(30),
+  create_dt DATETIME,
+  redeemed_dt DATETIME,
+  expiry_dt DATETIME,
+  ban STRING(50),
+  blg_tel_no STRING(10),
+  sqe_adrs_id STRING(50),
+  zip_code NUMERIC(9,0),
+  prfl_isoc STRING(2000),
+  dim_src_cd STRING(10),
+  dim_last_mdfd_dt DATETIME
+);
+
+BEGIN
+  -- ✅ Receive parameters from BigQueryInsertJobOperator
+  DECLARE START_DATE STRING DEFAULT @START_DATE;
+  DECLARE END_DATE STRING DEFAULT @END_DATE;
+
+  BEGIN TRANSACTION;
+
+  INSERT INTO {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0
+  WITH sq_master_coupon AS (
+    SELECT
+      coupon_cd,
+      lead_list_info,
+      file_idf,
+      coupon_type,
+      coupon_stat,
+      create_dt,
+      redeemed_dt,
+      expiry_dt,
+      ban,
+      blg_tel_no,
+      sqe_adrs_id,
+      zip_code,
+      prfl_isoc,
+      ods_last_mdfd_dt
+    FROM {{ var.value.BQ_ProjectID }}.mdr_ods.master_coupon
+    WHERE DATE(ods_last_mdfd_dt)
+          BETWEEN DATE(CAST(START_DATE AS DATETIME))
+              AND DATE(CAST(END_DATE AS DATETIME))
+  )
+  SELECT
+    t4.coupon_cd AS lkp_coupon_cd,
+    TRIM(t0.coupon_cd),
+    t0.lead_list_info,
+    t0.file_idf,
+    t0.coupon_type,
+    t0.coupon_stat,
+    t0.create_dt,
+    CAST(t0.redeemed_dt AS DATETIME),
+    CAST(t0.expiry_dt AS DATETIME),
+    t0.ban,
+    t0.blg_tel_no,
+    t0.sqe_adrs_id,
+    CAST(t0.zip_code AS NUMERIC),
+    t0.prfl_isoc,
+    'ODS',
+    CURRENT_DATETIME()
+  FROM sq_master_coupon t0
+  LEFT JOIN (
+    SELECT coupon_cd
+    FROM {{ var.value.BQ_ProjectID }}.dw_ssp.ssp_bse_master_coupon
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY coupon_cd) = 1
+  ) t4
+  ON t4.coupon_cd = TRIM(t0.coupon_cd);
+
+  COMMIT TRANSACTION;
+
+EXCEPTION WHEN ERROR THEN
+  ROLLBACK TRANSACTION;
+  RAISE USING MESSAGE = @@error.message;
+END;
+
+DROP TABLE {{ var.value.BQ_ProjectID }}.aedw360_tbls.__tmp__m_ods_dw_ssp_bse_master_coupon0;
